@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎪 歡樂幸運大抽獎 🎁</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti for Festive FX -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Noto Sans TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
+            background: radial-gradient(circle at top left, #2b1055, #7597de), linear-gradient(135deg, #0f172a 0%, #3b0764 100%);
+            min-height: 100vh;
+        }
+
+        /* Festive & Neon Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(234, 179, 8, 0.8)) drop-shadow(0 0 30px rgba(236, 72, 153, 0.6)); }
+            50% { filter: drop-shadow(0 0 25px rgba(234, 179, 8, 1)) drop-shadow(0 0 45px rgba(168, 85, 247, 0.9)); }
+        }
+        @keyframes shine {
+            100% { left: 125%; }
+        }
+
+        .animate-float {
+            animation: float 4s infinite ease-in-out;
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 2.5s infinite ease-in-out;
+        }
+
+        /* Shiny Metallic Button Effect */
+        .btn-shiny {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-shiny::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                60deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 70%
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+
+        .slot-container {
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+        }
+
+        /* Glassmorphism Dark Theme Card Styles */
+        .glass-card-dark {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card-golden {
+            background: rgba(30, 27, 75, 0.75);
+            backdrop-filter: blur(16px);
+            border: 2px solid rgba(251, 191, 36, 0.5);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.2);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #ec4899, #8b5cf6);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="text-white flex flex-col justify-between min-h-screen p-4 md:p-8">
+
+    <!-- Top Navigation / Header -->
+    <header class="max-w-6xl mx-auto w-full text-center my-3">
+        <div class="inline-block bg-slate-900/80 backdrop-blur-md px-6 py-2 rounded-full shadow-lg border border-pink-500/40 mb-3">
+            <span id="status-badge" class="inline-flex items-center text-xs md:text-sm font-bold text-pink-400">
+                <i class="fa-solid fa-spinner animate-spin mr-2"></i> 正在連線讀取 CSV 名單...
+            </span>
+        </div>
+        <h1 class="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-pink-400 to-purple-400 animate-pulse-glow tracking-wide drop-shadow-lg py-1">
+            🎪 歡樂派對幸運大抽獎 🎁
+        </h1>
+        <p class="text-pink-200/90 font-bold text-base md:text-lg mt-1 tracking-wider">✨ 驚喜時刻 · 好運連連 · 大獎即將揭曉 ✨</p>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 my-4 flex-grow items-start">
+        
+        <!-- Left Panel: Controls & Settings (4 cols) -->
+        <section class="lg:col-span-4 glass-card-dark rounded-3xl p-6 flex flex-col justify-between space-y-6">
+            <div>
+                <h2 class="text-lg font-black text-amber-300 border-b border-white/10 pb-3 mb-5 flex items-center justify-between">
+                    <span><i class="fa-solid fa-sliders text-pink-400 mr-2"></i> 抽獎功能設定</span>
+                    <i class="fa-solid fa-gear text-xs text-gray-400"></i>
+                </h2>
+                
+                <!-- Prize Name Input -->
+                <div class="mb-5">
+                    <label class="block text-xs font-bold text-pink-200 mb-2 uppercase tracking-wider">🎁 當前抽籤獎項</label>
+                    <div class="relative">
+                        <input type="text" id="prize-input" value="🏆 頭獎：豪華神秘大禮包" 
+                               class="w-full pl-4 pr-10 py-3 rounded-2xl bg-slate-900/90 border-2 border-pink-500/40 focus:border-amber-400 focus:outline-none transition font-bold text-white shadow-inner text-sm">
+                        <i class="fa-solid fa-pen text-gray-400 absolute right-3.5 top-3.5 text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Winner Count -->
+                <div class="mb-5">
+                    <label class="block text-xs font-bold text-pink-200 mb-2 uppercase tracking-wider">👥 單次抽取人數</label>
+                    <div class="relative">
+                        <select id="draw-count" class="w-full px-4 py-3 rounded-2xl bg-slate-900/90 border-2 border-pink-500/40 focus:border-amber-400 focus:outline-none transition font-bold text-white shadow-inner text-sm appearance-none cursor-pointer">
+                            <option value="1" class="bg-slate-900">一次抽 1 人</option>
+                            <option value="2" class="bg-slate-900">一次抽 2 人</option>
+                            <option value="3" class="bg-slate-900">一次抽 3 人</option>
+                            <option value="5" class="bg-slate-900">一次抽 5 人</option>
+                            <option value="10" class="bg-slate-900">一次抽 10 人</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down text-pink-400 absolute right-4 top-4 text-xs pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <!-- Repeat Option -->
+                <div class="mb-6 flex items-center justify-between bg-slate-800/80 p-4 rounded-2xl border border-white/10">
+                    <div>
+                        <span class="text-sm font-bold text-white block">允許重複中獎</span>
+                        <span class="text-[11px] text-gray-400">開啟後已中獎者可再次中獎</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="allow-repeat" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-pink-500 peer-checked:to-purple-500"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Stats Box -->
+            <div class="bg-gradient-to-br from-purple-900/40 to-slate-900/80 rounded-2xl p-4 border border-purple-500/30">
+                <div class="flex justify-between items-center text-xs font-bold text-gray-300 mb-2">
+                    <span><i class="fa-solid fa-users text-purple-400 mr-1.5"></i> 總名單人數</span>
+                    <span id="total-count" class="text-amber-400 text-base font-black">0</span>
+                </div>
+                <div class="flex justify-between items-center text-xs font-bold text-gray-300">
+                    <span><i class="fa-solid fa-user-check text-pink-400 mr-1.5"></i> 剩餘可抽人數</span>
+                    <span id="remaining-count" class="text-pink-400 text-base font-black">0</span>
+                </div>
+            </div>
+
+            <!-- Reset / Action Buttons -->
+            <div class="flex gap-3">
+                <button id="btn-reload" class="flex-1 py-3 px-3 bg-slate-800 hover:bg-slate-700 text-gray-200 font-bold rounded-2xl transition text-xs flex items-center justify-center gap-1.5 border border-white/10 shadow-lg">
+                    <i class="fa-solid fa-arrows-rotate text-purple-400"></i> 重新載入
+                </button>
+                <button id="btn-reset-history" class="flex-1 py-3 px-3 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 font-bold rounded-2xl transition text-xs flex items-center justify-center gap-1.5 border border-rose-500/30 shadow-lg">
+                    <i class="fa-solid fa-trash-can"></i> 清除紀錄
+                </button>
+            </div>
+        </section>
+
+        <!-- Middle Panel: Main Stage & Slot Machine (5 cols) -->
+        <section class="lg:col-span-5 glass-card-golden rounded-3xl p-6 md:p-8 flex flex-col items-center justify-between text-center relative overflow-hidden min-h-[480px]">
+            <!-- Stage Decoration Elements -->
+            <div class="absolute -top-12 -left-12 w-32 h-32 bg-amber-400/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -right-12 w-32 h-32 bg-pink-500/20 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <!-- Current Prize Display -->
+            <div class="w-full z-10">
+                <div id="current-prize-display" class="inline-block bg-gradient-to-r from-amber-400 via-pink-500 to-purple-600 text-white font-black px-6 py-2.5 rounded-full text-base md:text-xl shadow-xl border-2 border-amber-200 animate-float">
+                    ✨ 準備開始抽獎 ✨
+                </div>
+            </div>
+
+            <!-- Display Area: Slot Animation or Result Cards -->
+            <div class="my-6 w-full flex-grow flex items-center justify-center z-10 min-h-[220px]">
+                <!-- Idle State -->
+                <div id="idle-display" class="space-y-4">
+                    <div class="text-7xl filter drop-shadow-lg animate-bounce">🎁</div>
+                    <p class="text-lg font-black text-amber-200/80">準備好了嗎？點擊下方按鈕開獎！</p>
+                </div>
+
+                <!-- Slot Machine Scrolling State -->
+                <div id="slot-display" class="hidden w-full max-w-xs h-36 slot-container overflow-hidden relative bg-slate-950/90 rounded-3xl border-4 border-amber-400 shadow-2xl flex items-center justify-center">
+                    <div id="slot-inner" class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-pink-400 to-purple-300 space-y-4 py-2">
+                        <!-- Dynamically filled with random names -->
+                    </div>
+                </div>
+
+                <!-- Winner Display State -->
+                <div id="winner-display" class="hidden w-full space-y-3 flex flex-wrap justify-center items-center gap-3 max-h-[320px] overflow-y-auto p-2">
+                    <!-- Dynamically populated winner cards -->
+                </div>
+            </div>
+
+            <!-- Main Draw Button -->
+            <div class="w-full z-10">
+                <button id="btn-draw" class="btn-shiny w-full py-5 bg-gradient-to-r from-amber-400 via-pink-500 to-purple-600 hover:from-amber-300 hover:via-pink-400 hover:to-purple-500 text-white font-black text-2xl md:text-3xl rounded-2xl shadow-2xl transform active:scale-95 transition duration-150 border-2 border-amber-200 tracking-wider flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                    <span>幸運抽獎！</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Right Panel: Winners History (3 cols) -->
+        <section class="lg:col-span-3 glass-card-dark rounded-3xl p-6 flex flex-col h-full min-h-[480px]">
+            <h2 class="text-lg font-black text-amber-300 border-b border-white/10 pb-3 mb-4 flex items-center justify-between">
+                <span><i class="fa-solid fa-trophy text-amber-400 mr-2"></i> 中獎榮譽榜</span>
+                <span id="winner-count-tag" class="text-xs bg-gradient-to-r from-pink-500 to-purple-500 text-white font-black px-3 py-1 rounded-full shadow">0 人</span>
+            </h2>
+
+            <div id="history-list" class="flex-grow overflow-y-auto space-y-3 pr-1 max-h-[400px] lg:max-h-[460px]">
+                <!-- Empty State -->
+                <div id="history-empty" class="text-center py-16 text-gray-400">
+                    <i class="fa-solid fa-award text-5xl mb-3 opacity-30 text-amber-400"></i>
+                    <p class="font-bold text-sm text-gray-300">尚無獲獎紀錄</p>
+                    <p class="text-xs text-gray-500 mt-1">幸運得主即將登場！</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-6xl mx-auto w-full text-center text-xs text-purple-200/60 font-bold my-2">
+        🎪 歡樂派對抽獎系統 · 祝大家好運連連、喜提大獎！
+    </footer>
+
+    <!-- Audio Effects via Web Audio API -->
+    <script>
+        // Web Audio API Synthesizer for Sound FX
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+            }
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+            playTick() {
+                try {
+                    this.init();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(450 + Math.random() * 250, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.05);
+                } catch(e) {}
+            }
+            playFanfare() {
+                try {
+                    this.init();
+                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                    notes.forEach((freq, index) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, this.ctx.currentTime + index * 0.1);
+                        gain.gain.setValueAtTime(0.2, this.ctx.currentTime + index * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + index * 0.1 + 0.4);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(this.ctx.currentTime + index * 0.1);
+                        osc.stop(this.ctx.currentTime + index * 0.1 + 0.4);
+                    });
+                } catch(e) {}
+            }
+        }
+
+        const sound = new SoundFX();
+
+        // Target Google Sheet CSV URL
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRqXDtq1C4GFMEvkZm08z1YfNGrDyZ9IBxoxb527PfH93cXSz5uARXhhvinw0rZUeFyo3ic5QhAzpfj/pub?output=csv';
+
+        // State Management
+        let fullList = [];        // All imported names
+        let availableList = [];   // Remaining pool
+        let winnersHistory = [];  // Drawn winners history
+        let isDrawing = false;
+
+        // DOM Elements
+        const statusBadge = document.getElementById('status-badge');
+        const prizeInput = document.getElementById('prize-input');
+        const drawCountSelect = document.getElementById('draw-count');
+        const allowRepeatCheckbox = document.getElementById('allow-repeat');
+        const totalCountEl = document.getElementById('total-count');
+        const remainingCountEl = document.getElementById('remaining-count');
+        const currentPrizeDisplay = document.getElementById('current-prize-display');
+        
+        const idleDisplay = document.getElementById('idle-display');
+        const slotDisplay = document.getElementById('slot-display');
+        const slotInner = document.getElementById('slot-inner');
+        const winnerDisplay = document.getElementById('winner-display');
+        const historyList = document.getElementById('history-list');
+        const historyEmpty = document.getElementById('history-empty');
+        const winnerCountTag = document.getElementById('winner-count-tag');
+
+        const btnDraw = document.getElementById('btn-draw');
+        const btnReload = document.getElementById('btn-reload');
+        const btnResetHistory = document.getElementById('btn-reset-history');
+
+        // CSV Parser Logic
+        async function loadCSVData() {
+            statusBadge.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> 正在連線讀取 CSV 名單...`;
+            statusBadge.className = 'inline-flex items-center text-xs md:text-sm font-bold text-pink-400';
+
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) throw new Error('網路連線回應異常');
+                const text = await response.text();
+                
+                // Parse CSV rows cleanly
+                const lines = text.split(/\r\n|\n/);
+                const parsedNames = [];
+
+                lines.forEach(line => {
+                    const cleanLine = line.trim();
+                    if (cleanLine) {
+                        const columns = cleanLine.split(',');
+                        columns.forEach(col => {
+                            const name = col.replace(/^["']|["']$/g, '').trim();
+                            if (name && !['姓名', 'Name', '名單', '編號', 'Id', 'ID'].includes(name)) {
+                                parsedNames.push(name);
+                            }
+                        });
+                    }
+                });
+
+                if (parsedNames.length === 0) {
+                    throw new Error('名單為空或格式無法讀取');
+                }
+
+                fullList = [...parsedNames];
+                availableList = [...parsedNames];
+                updateStatsUI();
+
+                statusBadge.innerHTML = `<i class="fa-solid fa-circle-check mr-2 text-emerald-400"></i> 名單載入成功 (共 ${fullList.length} 人)`;
+                statusBadge.className = 'inline-flex items-center text-xs md:text-sm font-bold text-emerald-300';
+
+            } catch (error) {
+                console.error('Error fetching CSV:', error);
+                fullList = ['幸運兒 1號', '幸運兒 2號', '幸運兒 3號', '幸運兒 4號', '幸運兒 5號', '幸運兒 6號', '幸運兒 7號', '幸運兒 8號', '幸運兒 9號', '幸運兒 10號'];
+                availableList = [...fullList];
+                updateStatsUI();
+
+                statusBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2 text-amber-400"></i> 無法讀取線上名單，已預設備用名單 (${fullList.length}人)`;
+                statusBadge.className = 'inline-flex items-center text-xs md:text-sm font-bold text-amber-300';
+            }
+        }
+
+        // Update Statistics UI
+        function updateStatsUI() {
+            totalCountEl.textContent = fullList.length;
+            remainingCountEl.textContent = allowRepeatCheckbox.checked ? fullList.length : availableList.length;
+        }
+
+        // Update Prize Badge Title
+        prizeInput.addEventListener('input', (e) => {
+            const val = e.target.value.trim();
+            currentPrizeDisplay.textContent = val ? `✨ ${val} ✨` : '✨ 幸運大抽獎 ✨';
+        });
+
+        allowRepeatCheckbox.addEventListener('change', () => {
+            if (allowRepeatCheckbox.checked) {
+                availableList = [...fullList];
+            }
+            updateStatsUI();
+        });
+
+        // Main Draw Trigger
+        btnDraw.addEventListener('click', () => {
+            if (isDrawing) return;
+
+            const pool = allowRepeatCheckbox.checked ? fullList : availableList;
+            if (pool.length === 0) {
+                showCustomMessage('⚠️ 所有人員都已經中過獎囉！若要重新抽，請勾選「允許重複中獎」或重置紀錄。');
+                return;
+            }
+
+            const countToDraw = Math.min(parseInt(drawCountSelect.value), pool.length);
+            startDrawAnimation(countToDraw);
+        });
+
+        // Slot Animation & Winner Selection
+        function startDrawAnimation(count) {
+            isDrawing = true;
+            btnDraw.disabled = true;
+            btnDraw.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            idleDisplay.classList.add('hidden');
+            winnerDisplay.classList.add('hidden');
+            slotDisplay.classList.remove('hidden');
+
+            const pool = allowRepeatCheckbox.checked ? fullList : availableList;
+
+            let spinCounter = 0;
+            const maxSpins = 25;
+            const intervalTime = 80;
+
+            const spinInterval = setInterval(() => {
+                spinCounter++;
+                sound.playTick();
+
+                const randomName = pool[Math.floor(Math.random() * pool.length)];
+                slotInner.innerHTML = `<div class="animate-pulse tracking-wide">${randomName}</div>`;
+
+                if (spinCounter >= maxSpins) {
+                    clearInterval(spinInterval);
+                    finalizeDraw(count);
+                }
+            }, intervalTime);
+        }
+
+        // Finalize Pick & Display Results (完全隨機)
+        function finalizeDraw(count) {
+            const pool = allowRepeatCheckbox.checked ? fullList : availableList;
+            const currentWinners = [];
+            const tempPool = [...pool];
+
+            for (let i = 0; i < count; i++) {
+                if (tempPool.length === 0) break;
+                const randomIndex = Math.floor(Math.random() * tempPool.length);
+                const winnerName = tempPool.splice(randomIndex, 1)[0];
+                currentWinners.push(winnerName);
+
+                if (!allowRepeatCheckbox.checked) {
+                    const idxInAvail = availableList.indexOf(winnerName);
+                    if (idxInAvail > -1) {
+                        availableList.splice(idxInAvail, 1);
+                    }
+                }
+            }
+
+            slotDisplay.classList.add('hidden');
+            winnerDisplay.innerHTML = '';
+            winnerDisplay.classList.remove('hidden');
+
+            const prizeTitle = prizeInput.value.trim() || '幸運大獎';
+
+            currentWinners.forEach(name => {
+                const card = document.createElement('div');
+                card.className = 'bg-gradient-to-r from-amber-400 via-pink-500 to-purple-600 p-[2px] rounded-2xl shadow-2xl transform hover:scale-105 transition duration-200';
+                card.innerHTML = `
+                    <div class="bg-slate-900 px-6 py-4 rounded-[14px] text-center border border-white/10 min-w-[160px]">
+                        <div class="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">🎉 WINNER 🎉</div>
+                        <div class="text-2xl font-black text-white">${name}</div>
+                    </div>
+                `;
+                winnerDisplay.appendChild(card);
+
+                winnersHistory.unshift({
+                    name: name,
+                    prize: prizeTitle,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                });
+            });
+
+            sound.playFanfare();
+            triggerConfetti();
+
+            renderHistoryUI();
+            updateStatsUI();
+
+            isDrawing = false;
+            btnDraw.disabled = false;
+            btnDraw.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // Party Confetti Effect
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+                setTimeout(() => {
+                    confetti({ particleCount: 60, angle: 60, spread: 60, origin: { x: 0 } });
+                    confetti({ particleCount: 60, angle: 120, spread: 60, origin: { x: 1 } });
+                }, 200);
+            }
+        }
+
+        // Render History UI
+        function renderHistoryUI() {
+            if (winnersHistory.length === 0) {
+                historyEmpty.classList.remove('hidden');
+                winnerCountTag.textContent = '0 人';
+                return;
+            }
+
+            historyEmpty.classList.add('hidden');
+            winnerCountTag.textContent = `${winnersHistory.length} 人`;
+            
+            const itemsHTML = winnersHistory.map(item => `
+                <div class="bg-slate-800/80 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-lg flex items-center justify-between transition hover:border-pink-500/50">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 to-pink-500 flex items-center justify-center text-white font-black text-base shadow">
+                            🏆
+                        </div>
+                        <div>
+                            <div class="font-black text-white text-sm">${item.name}</div>
+                            <div class="text-xs font-bold text-pink-400">${item.prize}</div>
+                        </div>
+                    </div>
+                    <span class="text-[10px] text-gray-400 font-bold bg-slate-900/60 px-2 py-1 rounded-lg">${item.time}</span>
+                </div>
+            `).join('');
+
+            historyList.innerHTML = itemsHTML;
+        }
+
+        // Reset Winner History
+        btnResetHistory.addEventListener('click', () => {
+            if (winnersHistory.length === 0) return;
+            winnersHistory = [];
+            availableList = [...fullList];
+            renderHistoryUI();
+            updateStatsUI();
+            showCustomMessage('✨ 已成功重置所有中獎紀錄！');
+        });
+
+        // Reload CSV
+        btnReload.addEventListener('click', () => {
+            loadCSVData();
+        });
+
+        // Custom Friendly Toast Message
+        function showCustomMessage(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 right-6 bg-slate-900/95 text-white font-bold px-6 py-3.5 rounded-2xl shadow-2xl z-50 transition transform translate-y-full opacity-0 flex items-center gap-2 border border-pink-500/40 text-sm';
+            toast.innerHTML = `<span>${msg}</span>`;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-full', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize App on Load
+        window.onload = function() {
+            loadCSVData();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,818 @@
+<!-- ... existing code ... -->
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>探索茨城 - 自然、美食與歷史文化指南</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        matcha: {
+                            50: '#f4f8f4',
+                            100: '#e4eee4',
+                            500: '#628a63',
+                            700: '#3e5c3f',
+                            900: '#233724',
+                        },
+                        plum: {
+                            500: '#b83b5e',
+                            600: '#9b2c48',
+                        },
+                        ocean: {
+                            400: '#38bdf8',
+                            600: '#0284c7',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Microsoft JhengHei', 'PingFang TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        .hero-gradient {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%);
+        }
+        .tab-active {
+            border-bottom: 2px solid #628a63;
+            color: #628a63;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-full bg-matcha-500 text-white flex items-center justify-center font-bold text-lg shadow-md">
+                        茨
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold tracking-tight text-slate-900">IBARAKI</span>
+                        <span class="text-xs text-matcha-700 block -mt-1 font-medium">日本茨城觀光指南</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="#about" class="text-slate-600 hover:text-matcha-500 transition-colors">概覽</a>
+                    <a href="#attractions" class="text-slate-600 hover:text-matcha-500 transition-colors">必玩景點</a>
+                    <a href="#food" class="text-slate-600 hover:text-matcha-500 transition-colors">必吃美食</a>
+                    <a href="#itineraries" class="text-slate-600 hover:text-matcha-500 transition-colors">推薦行程</a>
+                    <a href="#planner" class="text-slate-600 hover:text-matcha-500 transition-colors">行程規劃工具</a>
+                </nav>
+
+                <!-- Action Button -->
+                <div class="hidden md:flex items-center">
+                    <a href="#planner" class="px-4 py-2 rounded-xl bg-matcha-500 text-white font-medium hover:bg-matcha-700 transition shadow-sm flex items-center gap-2">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i> 開始規劃
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-4 space-y-2">
+            <a href="#about" class="block py-2 text-slate-700 font-medium">概覽</a>
+            <a href="#attractions" class="block py-2 text-slate-700 font-medium">必玩景點</a>
+            <a href="#food" class="block py-2 text-slate-700 font-medium">必吃美食</a>
+            <a href="#itineraries" class="block py-2 text-slate-700 font-medium">推薦行程</a>
+            <a href="#planner" class="block py-2 text-slate-700 font-medium">行程規劃工具</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-slate-900 text-white py-24 md:py-32 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1578637387939-43c525550085?auto=format&fit=crop&w=1920&q=80" 
+                 alt="Ibaraki Landscape" class="w-full h-full object-cover object-center opacity-40"
+                 onerror="this.src='https://placehold.co/1920x1080/1e293b/ffffff?text=Ibaraki+Japan'">
+            <div class="absolute inset-0 hero-gradient"></div>
+        </div>
+
+        <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
+            <span class="inline-block px-3 py-1 rounded-full bg-matcha-500/30 text-matcha-100 text-sm font-semibold tracking-wide border border-matcha-500/40 mb-4 backdrop-blur-sm">
+                🌸 距東京僅需 1 小時車程
+            </span>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 leading-tight">
+                感受自然畫卷與頂級美味 <span class="text-matcha-500">日本茨城縣</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-8 font-light">
+                從面向太平洋的無邊花海、千年古神社，到極品常陸牛與水戶納豆 — 帶您探索這座充滿驚喜的日本寶藏之地。
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#attractions" class="px-6 py-3.5 rounded-xl bg-matcha-500 hover:bg-matcha-700 text-white font-semibold transition shadow-lg flex items-center justify-center gap-2">
+                    <i data-lucide="compass" class="w-5 h-5"></i> 探索熱門景點
+                </a>
+                <a href="#food" class="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold backdrop-blur-md transition border border-white/20 flex items-center justify-center gap-2">
+                    <i data-lucide="utensils" class="w-5 h-5"></i> 品嚐在地美饌
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Highlights Banner -->
+    <section id="about" class="py-12 bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <i data-lucide="flower-2" class="w-8 h-8 mx-auto text-matcha-500 mb-2"></i>
+                    <h3 class="font-bold text-slate-900">粉蝶花與掃帚草</h3>
+                    <p class="text-xs text-slate-500 mt-1">國營常陸海濱公園</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <i data-lucide="waves" class="w-8 h-8 mx-auto text-ocean-600 mb-2"></i>
+                    <h3 class="font-bold text-slate-900">大洗磯前神社</h3>
+                    <p class="text-xs text-slate-500 mt-1">太平洋海上鳥居</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <i data-lucide="utensils-crossed" class="w-8 h-8 mx-auto text-amber-600 mb-2"></i>
+                    <h3 class="font-bold text-slate-900">常陸牛 A5 和牛</h3>
+                    <p class="text-xs text-slate-500 mt-1">極致油脂霜降牛肉</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <i data-lucide="mountain" class="w-8 h-8 mx-auto text-plum-500 mb-2"></i>
+                    <h3 class="font-bold text-slate-900">筑波山</h3>
+                    <p class="text-xs text-slate-500 mt-1">雙峰健行與空中纜車</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Tabs Section: WHAT TO DO -->
+    <section id="attractions" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10">
+            <div>
+                <span class="text-matcha-500 font-semibold tracking-wider text-sm uppercase">精選好去處</span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-1">茨城必玩景點</h2>
+            </div>
+            <!-- Category Filter Buttons -->
+            <div class="flex flex-wrap gap-2 mt-4 md:mt-0" id="attraction-filters">
+                <button data-filter="all" class="filter-btn active-btn px-4 py-1.5 rounded-full text-sm font-medium bg-matcha-500 text-white shadow-sm">全部</button>
+                <button data-filter="nature" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-slate-200 text-slate-700 hover:bg-slate-300">自然與公園</button>
+                <button data-filter="shrine" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-slate-200 text-slate-700 hover:bg-slate-300">神社與歷史文化</button>
+                <button data-filter="adventure" class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-slate-200 text-slate-700 hover:bg-slate-300">戶外冒險與絕景</button>
+            </div>
+        </div>
+
+        <!-- Attraction Cards Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="attractions-grid">
+            
+            <!-- Hitachi Seaside Park -->
+            <div class="attraction-card bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition group" data-category="nature">
+                <div class="relative h-56 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1508873696983-2df515122519?auto=format&fit=crop&w=800&q=80" 
+                         alt="國營常陸海濱公園" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         onerror="this.src='https://placehold.co/800x600/628a63/ffffff?text=Hitachi+Seaside+Park'">
+                    <span class="absolute top-3 left-3 bg-matcha-500 text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow">自然絕景</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-xs text-slate-500 mb-2 gap-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-matcha-500"></i> ひたちなか市 (勝田)
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">國營常陸海濱公園</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        以春季見晴之丘上 450 萬株天藍色粉蝶花（琉璃唐草）及秋季滿山火紅的可愛掃帚草（コキア）聞名遐邇。
+                    </p>
+                    <div class="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-100">
+                        <span><i data-lucide="calendar" class="w-3.5 h-3.5 inline mr-1"></i> 最佳季節: 4-5月 / 10月</span>
+                        <span class="font-semibold text-slate-700">門票約 ¥450</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oarai Isosaki Shrine -->
+            <div class="attraction-card bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition group" data-category="shrine">
+                <div class="relative h-56 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=800&q=80" 
+                         alt="大洗磯前神社" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         onerror="this.src='https://placehold.co/800x600/0284c7/ffffff?text=Oarai+Isosaki+Shrine'">
+                    <span class="absolute top-3 left-3 bg-ocean-600 text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow">神社文化</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-xs text-slate-500 mb-2 gap-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-ocean-600"></i> 大洗町
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">大洗磯前神社 (神磯鳥居)</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        屹立於太平洋岩礁上的「神磯鳥居」，迎著滔滔浪花與日出晨光，是全日本最具代表性的奇幻攝影聖地之一。
+                    </p>
+                    <div class="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-100">
+                        <span><i data-lucide="sun" class="w-3.5 h-3.5 inline mr-1"></i> 推薦時間: 清晨日出</span>
+                        <span class="font-semibold text-slate-700">免費參觀</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fukuroda Falls -->
+            <div class="attraction-card bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition group" data-category="adventure">
+                <div class="relative h-56 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=800&q=80" 
+                         alt="袋田瀑布" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         onerror="this.src='https://placehold.co/800x600/3e5c3f/ffffff?text=Fukuroda+Waterfall'">
+                    <span class="absolute top-3 left-3 bg-amber-600 text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow">名勝冒險</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-xs text-slate-500 mb-2 gap-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-600"></i> 大子町
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">袋田瀑布 (袋田の滝)</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        名列「日本三大名瀑」之一。高120公尺、寬73公尺，四季景色迥異，冬季更會形成震撼的冰瀑奇觀（氷瀑）。
+                    </p>
+                    <div class="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-100">
+                        <span><i data-lucide="snowflake" class="w-3.5 h-3.5 inline mr-1"></i> 四季皆宜 / 冬季冰瀑</span>
+                        <span class="font-semibold text-slate-700">觀景隧道費 ¥300</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ryujin Suspension Bridge -->
+            <div class="attraction-card bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition group" data-category="adventure">
+                <div class="relative h-56 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" 
+                         alt="龍神大吊橋" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         onerror="this.src='https://placehold.co/800x600/10b981/ffffff?text=Ryujin+Suspension+Bridge'">
+                    <span class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow">極限冒險</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-xs text-slate-500 mb-2 gap-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600"></i> 常陸太田市
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">龍神大吊橋</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        橫跨龍神峽谷、長達 375 公尺的步行吊橋。擁有絕佳峽谷景致，也是日本最高的橋樑高空彈跳（100公尺高）發源地！
+                    </p>
+                    <div class="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-100">
+                        <span><i data-lucide="activity" class="w-3.5 h-3.5 inline mr-1"></i> 高空彈跳 / 健行</span>
+                        <span class="font-semibold text-slate-700">渡橋費 ¥320</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kashima Jingu Shrine -->
+            <div class="attraction-card bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition group" data-category="shrine">
+                <div class="relative h-56 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1578637387939-43c525550085?auto=format&fit=crop&w=800&q=80" 
+                         alt="鹿島神宮" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         onerror="this.src='https://placehold.co/800x600/9b2c48/ffffff?text=Kashima+Grand+Shrine'">
+                    <span class="absolute top-3 left-3 bg-plum-600 text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow">古剎歷史</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-xs text-slate-500 mb-2 gap-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-plum-600"></i> 鹿嶋市
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">鹿島神宮</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        東日本最古老且地位崇高的神社之一（建立於西元前600年）。神社內有古木參天的巨木參道、神鹿園與湧出清澈泉水的御一洗池。
+                    </p>
+                    <div class="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-100">
+                        <span><i data-lucide="compass" class="w-3.5 h-3.5 inline mr-1"></i> 千年歷史聖地</span>
+                        <span class="font-semibold text-slate-700">免費參觀</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kasama Pottery Village -->
+            <div class="attraction-card bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition group" data-category="shrine">
+                <div class="relative h-56 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80" 
+                         alt="笠間陶藝村" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         onerror="this.src='https://placehold.co/800x600/d97706/ffffff?text=Kasama+Pottery'">
+                    <span class="absolute top-3 left-3 bg-amber-600 text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow">傳統工藝</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-xs text-slate-500 mb-2 gap-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-600"></i> 笠間市
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">笠間陶藝藝術村</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        傳承200多年的「笠間燒」陶器重鎮。擁有藝廊市集、手作手拉胚捏陶體驗，並可順遊日本三大稻荷之一的「笠間稻荷神社」。
+                    </p>
+                    <div class="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-100">
+                        <span><i data-lucide="palette" class="w-3.5 h-3.5 inline mr-1"></i> 陶藝DIY體驗</span>
+                        <span class="font-semibold text-slate-700">依體驗項目而定</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kairakuen Garden -->
+            <div class="attraction-card bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition group" data-category="shrine">
+                <div class="relative h-56 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1528164344705-47542687990d?auto=format&fit=crop&w=800&q=80" 
+                         alt="偕樂園" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         onerror="this.src='https://placehold.co/800x600/b83b5e/ffffff?text=Kairakuen+Garden'">
+                    <span class="absolute top-3 left-3 bg-plum-500 text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow">庭園文化</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-xs text-slate-500 mb-2 gap-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-plum-500"></i> 水戶市
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">偕樂園 (水戶名園)</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        名列「日本三大名園」之一。園內種植約 100 種、3,000 株梅花樹，每年早春冬末舉辦的水戶梅花祭吸引無數遊客。
+                    </p>
+                    <div class="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-100">
+                        <span><i data-lucide="flower" class="w-3.5 h-3.5 inline mr-1"></i> 最佳賞梅期: 2月 - 3月</span>
+                        <span class="font-semibold text-slate-700">門票約 ¥300</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mount Tsukuba -->
+            <div class="attraction-card bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition group" data-category="adventure">
+                <div class="relative h-56 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80" 
+                         alt="筑波山" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         onerror="this.src='https://placehold.co/800x600/475569/ffffff?text=Mount+Tsukuba'">
+                    <span class="absolute top-3 left-3 bg-slate-700 text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow">登山健行</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-xs text-slate-500 mb-2 gap-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-700"></i> 筑波市
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">筑波山 (紫色之山)</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        日本百名山之一，自古與「西富士、東筑波」並稱。擁男體山與女體山雙峰，可乘坐登山纜車俯瞰整片關東平原。
+                    </p>
+                    <div class="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-100">
+                        <span><i data-lucide="footprints" class="w-3.5 h-3.5 inline mr-1"></i> 步道健行 / 纜車</span>
+                        <span class="font-semibold text-slate-700">登山免費 (纜車另計)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ushiku Daibutsu -->
+            <div class="attraction-card bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition group" data-category="shrine">
+                <div class="relative h-56 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80" 
+                         alt="牛久大佛" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                         onerror="this.src='https://placehold.co/800x600/628a63/ffffff?text=Ushiku+Daibutsu'">
+                    <span class="absolute top-3 left-3 bg-matcha-500 text-white text-xs font-semibold px-2.5 py-1 rounded-md shadow">地標雕像</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center text-xs text-slate-500 mb-2 gap-1">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-matcha-500"></i> 牛久市
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-2">牛久大佛</h3>
+                    <p class="text-slate-600 text-sm mb-4 leading-relaxed">
+                        高達 120 公尺，曾登金氏世界紀錄世界最高青銅立佛。內部設有 5 層展望台，可搭乘電梯升至 85 公尺處遠眺富士山。
+                    </p>
+                    <div class="flex justify-between items-center text-xs text-slate-500 pt-3 border-t border-slate-100">
+                        <span><i data-lucide="eye" class="w-3.5 h-3.5 inline mr-1"></i> 大佛內部參觀展望台</span>
+                        <span class="font-semibold text-slate-700">套票約 ¥800</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Culinary Highlights Section: WHAT TO EAT -->
+    <section id="food" class="py-16 bg-amber-50/50 border-t border-b border-amber-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-amber-700 font-semibold tracking-wider text-sm uppercase">美饌饗宴</span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-1">茨城必吃在地美食</h2>
+                <p class="text-slate-600 mt-2 text-sm">茨城縣是日本著名的農業與水產大縣，提供頂級和牛、海鮮盛宴以及獨具特色的鄉土料理。</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Mito Natto -->
+                <div class="bg-white rounded-2xl p-6 border border-amber-200/60 shadow-sm flex flex-col justify-between hover:border-amber-400 transition">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xl mb-4">
+                            🍚
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">水戶納豆 (水戸納豆)</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            水戶是日本公認的納豆聖地！採用在地小粒黃豆，並以傳統稻草包裝（稻草納豆），口感黏密且散發濃郁豆香。
+                        </p>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-3 text-xs text-amber-900 font-medium">
+                        💡 <strong>推薦吃法：</strong> 納豆拌飯、納豆蕎麥麵、甚至是納豆冰淇淋與納豆仙貝！
+                    </div>
+                </div>
+
+                <!-- Hitachi Wagyu Beef -->
+                <div class="bg-white rounded-2xl p-6 border border-amber-200/60 shadow-sm flex flex-col justify-between hover:border-amber-400 transition">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-red-100 text-red-800 flex items-center justify-center font-bold text-xl mb-4">
+                            🥩
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">常陸牛 (Hitachi Beef)</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            茨城縣精心培育的高級黑毛和牛品牌。油花分布均勻細緻，肉質極其柔軟，入口即化且肉汁香甜濃郁。
+                        </p>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-3 text-xs text-amber-900 font-medium">
+                        💡 <strong>推薦吃法：</strong> 常陸牛肋眼排、壽喜燒、或者炙燒和牛握壽司。
+                    </div>
+                </div>
+
+                <!-- Hitachi Aki Soba -->
+                <div class="bg-white rounded-2xl p-6 border border-amber-200/60 shadow-sm flex flex-col justify-between hover:border-amber-400 transition">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xl mb-4">
+                            🍜
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">常陸秋蕎麥麵 (常陸秋そば)</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            日本名列前茅的高品質蕎麥品種。以香氣高雅、甜味自然、麵條Ｑ彈有勁道而備受日本蕎麥麵饕客推崇。
+                        </p>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-3 text-xs text-amber-900 font-medium">
+                        💡 <strong>推薦吃法：</strong> 「Kenchin Soba」(搭配熱騰騰根菜野菜濃湯沾麵吃)。
+                    </div>
+                </div>
+
+                <!-- Ankou Monkfish Hotpot -->
+                <div class="bg-white rounded-2xl p-6 border border-amber-200/60 shadow-sm flex flex-col justify-between hover:border-amber-400 transition">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-xl mb-4">
+                            🍲
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">鮟鱇魚火鍋 (あんこう鍋)</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            茨城冬季最具代表性的高級美味！整隻深海鮟鱇魚從魚肉、魚皮到鮟鱇魚肝（海洋鵝肝）熬煮成濃郁味噌高湯，富含膠原蛋白。
+                        </p>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-3 text-xs text-amber-900 font-medium">
+                        💡 <strong>最佳盛產期：</strong> 11 月至次年 3 月（大洗及北茨城海岸）。
+                    </div>
+                </div>
+
+                <!-- Kasama & Ibaraki Chestnuts -->
+                <div class="bg-white rounded-2xl p-6 border border-amber-200/60 shadow-sm flex flex-col justify-between hover:border-amber-400 transition">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-yellow-100 text-amber-900 flex items-center justify-center font-bold text-xl mb-4">
+                            🌰
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">笠間栗子 (笠間の栗)</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            茨城縣是日本栗子產量第一的名產地。其中笠間栗子顆粒碩大、甜度極高，被廣泛製作成各式極品甜點。
+                        </p>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-3 text-xs text-amber-900 font-medium">
+                        💡 <strong>推薦吃法：</strong> 現擠栗子蒙布朗 (Mont Blanc)、栗子炊飯或烤栗子。
+                    </div>
+                </div>
+
+                <!-- Hoshi-imo (Dried Sweet Potato) -->
+                <div class="bg-white rounded-2xl p-6 border border-amber-200/60 shadow-sm flex flex-col justify-between hover:border-amber-400 transition">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-800 flex items-center justify-center font-bold text-xl mb-4">
+                            🍠
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">茨城地瓜乾 (ほしいも)</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            茨城縣供應全日本超過 90% 的干薯。口感Q彈綿密、天然甜美不額外添加糖，非常健康養生。
+                        </p>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-3 text-xs text-amber-900 font-medium">
+                        💡 <strong>最佳伴手禮：</strong> 稍微用微波或炭火稍微烤熱，香氣倍增！
+                    </div>
+                </div>
+
+                <!-- Melon Desserts -->
+                <div class="bg-white rounded-2xl p-6 border border-amber-200/60 shadow-sm flex flex-col justify-between hover:border-amber-400 transition">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-green-100 text-green-800 flex items-center justify-center font-bold text-xl mb-4">
+                            🍈
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">茨城哈密瓜 (茨城メロン)</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            茨城連續多年榮登日本哈密瓜產量第一！初夏（5-7月）盛產期果肉多汁香甜、清脆可口。
+                        </p>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-3 text-xs text-amber-900 font-medium">
+                        💡 <strong>推薦吃法：</strong> 整顆半剖哈密瓜填入濃郁牛奶霜淇淋！
+                    </div>
+                </div>
+
+                <!-- Fresh Seafood & Kaisen-don -->
+                <div class="bg-white rounded-2xl p-6 border border-amber-200/60 shadow-sm flex flex-col justify-between hover:border-amber-400 transition">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-cyan-100 text-cyan-800 flex items-center justify-center font-bold text-xl mb-4">
+                            🐟
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">那珂湊海鮮市場 (海鮮丼)</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            鄰近太平洋的热鬧魚市場。能以超實惠價格享用現剖生牡蠣、新鮮海膽、鮭魚卵以及爆碗的超級海鮮丼。
+                        </p>
+                    </div>
+                    <div class="bg-amber-50 rounded-xl p-3 text-xs text-amber-900 font-medium">
+                        💡 <strong>推薦地點：</strong> ひたちなか市那珂湊漁港市場。
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Itinerary Recommendations -->
+    <section id="itineraries" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-matcha-500 font-semibold tracking-wider text-sm uppercase">經典路線</span>
+            <h2 class="text-3xl font-extrabold text-slate-900 mt-1">推薦旅遊行程</h2>
+            <p class="text-slate-600 mt-2 text-sm">針對不同停留時間與旅遊偏好，為您規劃的最佳行程。</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            
+            <!-- Day Trip 1 -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between shadow-sm">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-matcha-50 text-matcha-700 text-xs font-bold rounded-full border border-matcha-200">一日遊：花海海景</span>
+                        <span class="text-xs text-slate-500">東京出發</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3">夢幻花海與海上鳥居之旅</h3>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
+                        <li class="flex gap-2">
+                            <span class="font-bold text-matcha-500">08:00</span> 從東京上野站搭乘 JR 特急常陸號前往勝田站。
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="font-bold text-matcha-500">09:30</span> 漫步國營常陸海濱公園（賞粉蝶花或掃帚草）。
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="font-bold text-matcha-500">13:00</span> 至那珂湊海鮮市場享用新鮮海鮮丼與生蠔。
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="font-bold text-matcha-500">15:30</span> 參觀大洗磯前神社神磯鳥居。
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="font-bold text-matcha-500">18:00</span> 搭車返回東京。
+                        </li>
+                    </ul>
+                </div>
+                <button onclick="copyItinerary('【茨城花海海景一日遊】常陸海濱公園 -> 那珂湊海鮮市場 -> 大洗磯前神社')" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i> 複製行程概要
+                </button>
+            </div>
+
+            <!-- Day Trip 2 -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between shadow-sm">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-plum-50 text-plum-700 text-xs font-bold rounded-full border border-plum-200">一日遊：歷史美饌</span>
+                        <span class="text-xs text-slate-500">文化與美食</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3">水戶名園與常陸牛饗宴</h3>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
+                        <li class="flex gap-2">
+                            <span class="font-bold text-plum-500">09:00</span> 抵達水戶車站。
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="font-bold text-plum-500">10:00</span> 遊覽三大名園「偕樂園」與弘道館。
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="font-bold text-plum-500">12:30</span> 品嚐頂級 A5 常陸牛牛排或壽喜燒午餐。
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="font-bold text-plum-500">14:30</span> 水戶站前選購道地水戶 straw 納豆伴手禮。
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="font-bold text-plum-500">16:30</span> 千波湖散步，隨後搭車返回東京。
+                        </li>
+                    </ul>
+                </div>
+                <button onclick="copyItinerary('【水戶歷史美食一日遊】偕樂園 -> 弘道館 -> 常陸牛午餐 -> 水戶納豆購物 -> 千波湖')" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i> 複製行程概要
+                </button>
+            </div>
+
+            <!-- 2-Day Nature -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between shadow-sm">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-amber-50 text-amber-700 text-xs font-bold rounded-full border border-amber-200">二日遊：溫泉自然</span>
+                        <span class="text-xs text-slate-500">名瀑與名山</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3">筑波山健行與袋田名瀑布</h3>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
+                        <li class="flex gap-2">
+                            <span class="font-bold text-amber-600">第一天</span> 筑波山健行或搭乘纜車登頂，入住筑波山溫泉旅館。
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="font-bold text-amber-600">第二天上午</span> 前往大子町觀賞震撼的袋田瀑布，品嚐常陸秋蕎麥麵。
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="font-bold text-amber-600">第二天下午</span> 參觀牛久大佛，傍晚返回東京。
+                        </li>
+                    </ul>
+                </div>
+                <button onclick="copyItinerary('【茨城自然溫泉二日遊】筑波山 -> 筑波溫泉 -> 袋田瀑布 -> 常陸秋蕎麥麵 -> 牛久大佛')" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i> 複製行程概要
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Interactive Travel Planner Widget -->
+    <section id="planner" class="py-16 bg-slate-900 text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <span class="text-matcha-500 font-semibold tracking-wider text-sm uppercase">客製化行程規劃</span>
+                <h2 class="text-3xl font-extrabold text-white mt-1">互動式茨城行程產生器</h2>
+                <p class="text-slate-400 text-sm mt-2">勾選您的旅遊偏好與季節，系統將即時為您生成客製化推薦！</p>
+            </div>
+
+            <div class="bg-slate-800 rounded-2xl p-6 md:p-8 border border-slate-700 shadow-xl">
+                <!-- Travel Style -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">您最感興趣的景點類型？（可多選）</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <button type="button" onclick="togglePreference(this, 'flower')" class="pref-btn p-3 rounded-xl bg-slate-700 border border-slate-600 text-xs font-medium hover:border-matcha-500 transition text-center">
+                            🌸 花海與自然
+                        </button>
+                        <button type="button" onclick="togglePreference(this, 'food')" class="pref-btn p-3 rounded-xl bg-slate-700 border border-slate-600 text-xs font-medium hover:border-matcha-500 transition text-center">
+                            🍜 美食與和牛
+                        </button>
+                        <button type="button" onclick="togglePreference(this, 'shrine')" class="pref-btn p-3 rounded-xl bg-slate-700 border border-slate-600 text-xs font-medium hover:border-matcha-500 transition text-center">
+                            ⛩️ 神社與歷史
+                        </button>
+                        <button type="button" onclick="togglePreference(this, 'adventure')" class="pref-btn p-3 rounded-xl bg-slate-700 border border-slate-600 text-xs font-medium hover:border-matcha-500 transition text-center">
+                            ⛰️ 名山健行絕景
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Season Selection -->
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-slate-300 mb-2">預計前往的季節？</label>
+                    <select id="season-select" class="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-matcha-500">
+                        <option value="spring">春季 (3月 - 5月) - 粉蝶花與偕樂園梅花</option>
+                        <option value="summer">夏季 (6月 - 8月) - 頂級哈密瓜與大洗海濱</option>
+                        <option value="autumn">秋季 (9月 - 11月) - 滿山紅掃帚草與袋田楓葉</option>
+                        <option value="winter">冬季 (12月 - 2月) - 袋田冰瀑與鮟鱇魚火鍋</option>
+                    </select>
+                </div>
+
+                <!-- Generated Checklist output -->
+                <div class="mt-8 pt-6 border-t border-slate-700">
+                    <h4 class="text-sm font-bold text-matcha-500 uppercase tracking-wider mb-3">您的專屬行程建議卡：</h4>
+                    <div id="planner-output" class="space-y-2 text-sm text-slate-300">
+                        <p class="text-slate-500 italic">請選擇上方選項以顯示您的專屬行程推薦...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex justify-center items-center gap-2 mb-4">
+                <div class="w-7 h-7 rounded-full bg-matcha-500 text-white flex items-center justify-center font-bold text-xs">茨</div>
+                <span class="text-lg font-bold text-white tracking-tight">IBARAKI TRAVEL GUIDE 茨城觀光</span>
+            </div>
+            <p class="text-xs text-slate-500 max-w-md mx-auto mb-6">
+                探索日本茨城縣的四季自然美景、豐富歷史人文與極致在地美食。
+            </p>
+            <p class="text-xs text-slate-600">© 2026 茨城旅遊指南 Ibaraki Travel Guide.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive Script -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Attraction Category Filter
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const attractionCards = document.querySelectorAll('.attraction-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active classes
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-matcha-500', 'text-white', 'shadow-sm');
+                    b.classList.add('bg-slate-200', 'text-slate-700');
+                });
+                
+                // Add active to selected
+                btn.classList.add('bg-matcha-500', 'text-white', 'shadow-sm');
+                btn.classList.remove('bg-slate-200', 'text-slate-700');
+
+                const filter = btn.getAttribute('data-filter');
+
+                attractionCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Interactive Planner Preferences Logic
+        let activePreferences = new Set();
+
+        function togglePreference(btn, pref) {
+            if (activePreferences.has(pref)) {
+                activePreferences.delete(pref);
+                btn.classList.remove('bg-matcha-500', 'text-white', 'border-matcha-500');
+                btn.classList.add('bg-slate-700', 'text-slate-200');
+            } else {
+                activePreferences.add(pref);
+                btn.classList.add('bg-matcha-500', 'text-white', 'border-matcha-500');
+                btn.classList.remove('bg-slate-700');
+            }
+            updatePlannerOutput();
+        }
+
+        document.getElementById('season-select').addEventListener('change', updatePlannerOutput);
+
+        function updatePlannerOutput() {
+            const season = document.getElementById('season-select').value;
+            const outputDiv = document.getElementById('planner-output');
+            
+            let items = [];
+
+            if (season === 'spring') {
+                items.push("🌸 <strong>國營常陸海濱公園：</strong> 欣賞見晴之丘上盛開的 450 萬株天藍色粉蝶花。");
+                items.push("🌸 <strong>水戶偕樂園：</strong> 體驗早春梅花祭與漫步日式名園。");
+            } else if (season === 'summer') {
+                items.push("🍈 <strong>茨城哈密瓜盛宴：</strong> 盛產季節！必嚐半剖哈密瓜加濃郁牛奶霜淇淋。");
+                items.push("🌊 <strong>大洗海岸：</strong> 吹海風、漫步神磯鳥居與走訪水族館。");
+            } else if (season === 'autumn') {
+                items.push("🍂 <strong>常陸海濱公園：</strong> 觀賞整座山丘轉為滿山火紅的可愛掃帚草。");
+                items.push("🍁 <strong>袋田瀑布賞楓：</strong> 欣賞紅葉包圍下的四大層壯麗瀑布。");
+            } else if (season === 'winter') {
+                items.push("❄️ <strong>鮟鱇魚火鍋：</strong> 冬季必吃！富含膠原蛋白與濃郁味噌魚肝高湯。");
+                items.push("🧊 <strong>袋田冰瀑奇觀：</strong> 氣溫極低時整座瀑布凝結成巨型冰壁。");
+            }
+
+            if (activePreferences.has('food')) {
+                items.push("🍚 <strong>美食亮點：</strong> 品嚐水戶稻草納豆、A5 級常陸牛排與那珂湊現剖生蠔海鮮丼。");
+            }
+            if (activePreferences.has('shrine')) {
+                items.push("⛩️ <strong>文化亮點：</strong> 參訪千年古剎鹿島神宮、大洗海上鳥居與 120 米牛久大佛。");
+            }
+            if (activePreferences.has('adventure')) {
+                items.push("⛰️ <strong>冒險亮點：</strong> 挑戰龍神大吊橋高空彈跳，或搭纜車登筑波山俯瞰關東平原。");
+            }
+
+            if (items.length === 0) {
+                outputDiv.innerHTML = `<p class="text-slate-400 italic">請選擇上方選項以產生客製化行程點。</p>`;
+            } else {
+                outputDiv.innerHTML = items.map(item => `
+                    <div class="p-3 rounded-lg bg-slate-700/60 border border-slate-600 flex items-start gap-2">
+                        <i data-lucide="check-circle-2" class="w-4 h-4 text-matcha-500 shrink-0 mt-0.5"></i>
+                        <span>${item}</span>
+                    </div>
+                `).join('');
+                lucide.createIcons();
+            }
+        }
+
+        // Copy Itinerary Text Utility
+        function copyItinerary(text) {
+            const tempInput = document.createElement("input");
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            // Subtle Toast Notice
+            const toast = document.createElement("div");
+            toast.className = "fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-lg border border-slate-700 text-xs font-medium z-50 animate-bounce";
+            toast.innerText = "已複製行程至剪貼簿: " + text;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        // Run initial planner calculation
+        updatePlannerOutput();
+    </script>
+</body>
+</html>

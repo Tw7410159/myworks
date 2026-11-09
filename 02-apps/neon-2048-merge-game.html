@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>霓虹數字彈珠 - Neon Drop & Merge 2048</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Matter.js (2D 物理引擎) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #050714;
+      font-family: 'Outfit', sans-serif;
+    }
+    .font-orbitron {
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    /* 玻璃擬態 */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+    .glass-btn {
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .glass-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* 連擊 Combo 動畫 */
+    .combo-popup {
+      position: absolute;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      color: #ff007f;
+      text-shadow: 0 0 15px #ff007f, 0 0 30px #ff007f;
+      pointer-events: none;
+      animation: comboAnim 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      z-index: 60;
+    }
+    @keyframes comboAnim {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(-10deg); }
+      40% { opacity: 1; transform: translate(-50%, -50%) scale(1.3) rotate(5deg); }
+      100% { opacity: 0; transform: translate(-50%, -80px) scale(1) rotate(0deg); }
+    }
+  </style>
+</head>
+<body class="relative w-screen h-screen overflow-hidden text-white flex flex-col justify-between items-center select-none">
+
+  <!-- 背景粒子 Canvas -->
+  <canvas id="bgCanvas" class="absolute inset-0 pointer-events-none z-0"></canvas>
+  <!-- 特效爆裂 Canvas -->
+  <canvas id="fxCanvas" class="absolute inset-0 pointer-events-none z-30"></canvas>
+
+  <!-- 頂部 HUD -->
+  <header class="z-20 w-[92%] max-w-md mt-4 glass-panel rounded-3xl p-3.5 flex items-center justify-between border border-cyan-500/20 shadow-cyan-950/40">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-fuchsia-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-fuchsia-500/30">
+        <i class="fa-solid fa-circle-dot text-xl text-white"></i>
+      </div>
+      <div>
+        <h1 class="text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 via-cyan-300 to-amber-300 font-orbitron">NEON DROP</h1>
+        <p class="text-[8px] text-fuchsia-300/80 font-bold tracking-[0.25em] uppercase">PHYSICS MERGE 2048</p>
+      </div>
+    </div>
+
+    <!-- 狀態資訊與分數 -->
+    <div class="flex gap-2">
+      <div class="relative bg-slate-950/80 px-3 py-1.5 rounded-2xl border border-cyan-500/30 text-center min-w-[70px]">
+        <div class="text-[8px] text-cyan-400 font-black uppercase tracking-widest">SCORE</div>
+        <div id="scoreDisplay" class="text-base font-black text-white font-orbitron">0</div>
+      </div>
+      <div class="bg-slate-950/80 px-3 py-1.5 rounded-2xl border border-amber-500/30 text-center min-w-[70px]">
+        <div class="text-[8px] text-amber-400 font-black uppercase tracking-widest">BEST</div>
+        <div id="bestDisplay" class="text-base font-black text-amber-300 font-orbitron">0</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 工具欄與下一個球預覽 -->
+  <div class="z-20 w-[92%] max-w-md my-1.5 flex items-center justify-between px-2">
+    <!-- 下一顆球預覽 -->
+    <div class="flex items-center gap-2 bg-slate-900/50 px-3 py-1.5 rounded-2xl border border-white/10">
+      <span class="text-xs text-slate-400 font-bold">NEXT:</span>
+      <div id="nextBallPreview" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black font-orbitron shadow-md">
+        2
+      </div>
+    </div>
+
+    <!-- 按鈕區 -->
+    <div class="flex gap-2">
+      <button id="btnShake" class="glass-btn w-9 h-9 rounded-xl text-fuchsia-400 flex items-center justify-center text-sm" title="震撼彈開 (洗牌)">
+        <i class="fa-solid fa-bolt"></i>
+      </button>
+      <button id="btnRestart" class="glass-btn w-9 h-9 rounded-xl text-emerald-400 flex items-center justify-center text-sm" title="重來">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+      <button id="btnSound" class="glass-btn w-9 h-9 rounded-xl text-amber-400 flex items-center justify-center text-sm" title="音效">
+        <i class="fa-solid fa-volume-high"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- 物理遊戲主要 Viewport 容器 -->
+  <main id="gameContainer" class="z-10 w-[92%] max-w-md flex-1 mb-3 glass-panel rounded-[2.5rem] relative overflow-hidden border border-white/15 flex items-center justify-center">
+    <!-- 警戒危險線 -->
+    <div class="absolute top-16 left-0 w-full border-b-2 border-dashed border-rose-500/40 pointer-events-none z-10 flex justify-end px-3">
+      <span class="text-[9px] text-rose-400/80 font-bold font-orbitron tracking-widest uppercase">DANGER LINE</span>
+    </div>
+    
+    <!-- Matter.js Canvas 會注入在此 -->
+    <div id="canvasHolder" class="w-full h-full"></div>
+    <!-- 浮動 Combo 容器 -->
+    <div id="comboContainer" class="absolute inset-0 pointer-events-none z-40"></div>
+  </main>
+
+  <!-- 遊戲結束 Modal -->
+  <div id="gameModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-xl p-4">
+    <div class="glass-panel max-w-sm w-full rounded-3xl p-6 text-center border border-fuchsia-500/40 shadow-2xl relative overflow-hidden">
+      <div class="w-20 h-20 bg-gradient-to-tr from-fuchsia-500/30 to-cyan-500/30 text-fuchsia-400 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-fuchsia-400/40 shadow-lg shadow-fuchsia-500/20">
+        <i class="fa-solid fa-skull text-3xl"></i>
+      </div>
+      <h2 id="modalTitle" class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-cyan-400 mb-1 font-orbitron tracking-wide">CONTAINMENT BREACH</h2>
+      <p class="text-slate-300 text-xs mb-5 font-medium">霓虹彈珠超過警戒線！無法繼續調和。</p>
+
+      <div class="bg-slate-950/80 p-4 rounded-2xl border border-white/10 flex justify-around text-xs font-bold mb-6">
+        <div>
+          <div class="text-slate-400 text-[10px] uppercase tracking-wider mb-1">最終分數</div>
+          <div id="modalScore" class="text-cyan-400 text-2xl font-orbitron">0</div>
+        </div>
+        <div class="border-r border-white/10"></div>
+        <div>
+          <div class="text-slate-400 text-[10px] uppercase tracking-wider mb-1">最高紀錄</div>
+          <div id="modalBest" class="text-amber-400 text-2xl font-orbitron">0</div>
+        </div>
+      </div>
+
+      <button id="btnModalRestart" class="glass-btn w-full py-4 rounded-2xl bg-gradient-to-r from-fuchsia-600 to-cyan-500 text-white font-black text-sm tracking-wider uppercase shadow-xl shadow-fuchsia-500/25 border-fuchsia-300/40">
+        重新開始 <i class="fa-solid fa-rotate-right ml-1"></i>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       1. 音效引擎 (Web Audio API)
+       ========================================================================== */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      toggle() {
+        this.enabled = !this.enabled;
+        return this.enabled;
+      }
+      playDrop() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      playMerge(val, combo = 1) {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        const pitchMultiplier = Math.min(2.5, 1 + combo * 0.15);
+        const baseFreq = (200 + Math.log2(val) * 50) * pitchMultiplier;
+        
+        osc.frequency.setValueAtTime(baseFreq, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, this.ctx.currentTime + 0.14);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.14);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.14);
+      }
+      playShockwave() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.3);
+      }
+    }
+    const sound = new SoundEngine();
+
+    /* ==========================================================================
+       2. 特效 Canvas (網格與合成粒子)
+       ========================================================================== */
+    const bgCanvas = document.getElementById('bgCanvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    const fxCanvas = document.getElementById('fxCanvas');
+    const fxCtx = fxCanvas.getContext('2d');
+    
+    let fxParticles = [];
+
+    function resizeCanvases() {
+      bgCanvas.width = fxCanvas.width = window.innerWidth;
+      bgCanvas.height = fxCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvases);
+    resizeCanvases();
+
+    function createMergeEffect(x, y, color) {
+      for (let i = 0; i < 20; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 6 + 2;
+        fxParticles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          radius: Math.random() * 4 + 2,
+          color,
+          alpha: 1,
+          decay: Math.random() * 0.03 + 0.02
+        });
+      }
+    }
+
+    function renderFxLoop() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      // 微光質感點點背景
+      bgCtx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+      for (let i = 0; i < 40; i++) {
+        const x = (Math.sin(i * 99 + Date.now() * 0.0005) * 0.5 + 0.5) * bgCanvas.width;
+        const y = (Math.cos(i * 33 + Date.now() * 0.0005) * 0.5 + 0.5) * bgCanvas.height;
+        bgCtx.beginPath();
+        bgCtx.arc(x, y, 1.5, 0, Math.PI * 2);
+        bgCtx.fill();
+      }
+
+      fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+      for (let i = fxParticles.length - 1; i >= 0; i--) {
+        const p = fxParticles[i];
+        fxCtx.save();
+        fxCtx.globalAlpha = p.alpha;
+        fxCtx.fillStyle = p.color;
+        fxCtx.shadowColor = p.color;
+        fxCtx.shadowBlur = 10;
+        fxCtx.beginPath();
+        fxCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        fxCtx.fill();
+        fxCtx.restore();
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.94;
+        p.vy *= 0.94;
+        p.alpha -= p.decay;
+        if (p.alpha <= 0) fxParticles.splice(i, 1);
+      }
+      requestAnimationFrame(renderFxLoop);
+    }
+    renderFxLoop();
+
+    /* ==========================================================================
+       3. 彈珠數據與樣式設置
+       ========================================================================== */
+    const BALL_CONFIG = {
+      2:    { radius: 22, color: '#1e293b', border: '#38bdf8', text: '#38bdf8' },
+      4:    { radius: 27, color: '#0369a1', border: '#7dd3fc', text: '#ffffff' },
+      8:    { radius: 33, color: '#047857', border: '#34d399', text: '#ffffff' },
+      16:   { radius: 39, color: '#b45309', border: '#fbbf24', text: '#ffffff' },
+      32:   { radius: 45, color: '#c2410c', border: '#fb923c', text: '#ffffff' },
+      64:   { radius: 52, color: '#be123c', border: '#f43f5e', text: '#ffffff' },
+      128:  { radius: 59, color: '#7e22ce', border: '#c084fc', text: '#ffffff' },
+      256:  { radius: 66, color: '#a21caf', border: '#f0abfc', text: '#ffffff' },
+      512:  { radius: 74, color: '#0d9488', border: '#2dd4bf', text: '#ffffff' },
+      1024: { radius: 82, color: '#4338ca', border: '#818cf8', text: '#ffffff' },
+      2048: { radius: 90, color: '#eab308', border: '#ffffff', text: '#ffffff' }
+    };
+
+    function getBallInfo(val) {
+      if (BALL_CONFIG[val]) return BALL_CONFIG[val];
+      return { radius: 95, color: '#ec4899', border: '#ffffff', text: '#ffffff' };
+    }
+
+    /* ==========================================================================
+       4. Matter.js 物理引擎整合
+       ========================================================================== */
+    const { Engine, Render, Runner, Bodies, Composite, Body, Events, Vector } = Matter;
+
+    let engine, render, runner;
+    let gameWidth = 0, gameHeight = 0;
+    let nextValue = 2;
+    let score = 0;
+    let bestScore = parseInt(localStorage.getItem('neon_drop_best') || '0', 10);
+    let canDrop = true;
+    let dropX = 0;
+    let isGameOver = false;
+    let dangerTimer = 0;
+
+    const gameContainer = document.getElementById('gameContainer');
+    const canvasHolder = document.getElementById('canvasHolder');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const bestDisplay = document.getElementById('bestDisplay');
+    const nextBallPreview = document.getElementById('nextBallPreview');
+    const comboContainer = document.getElementById('comboContainer');
+
+    function getRandomNextValue() {
+      const vals = [2, 4, 8, 16];
+      return vals[Math.floor(Math.random() * vals.length)];
+    }
+
+    function updateNextPreview() {
+      const info = getBallInfo(nextValue);
+      nextBallPreview.textContent = nextValue;
+      nextBallPreview.style.background = info.color;
+      nextBallPreview.style.borderColor = info.border;
+      nextBallPreview.style.color = info.text;
+    }
+
+    function initPhysics() {
+      // 清理舊環境
+      if (engine) {
+        Engine.clear(engine);
+        Render.stop(render);
+        Runner.stop(runner);
+        canvasHolder.innerHTML = '';
+      }
+
+      gameWidth = gameContainer.clientWidth;
+      gameHeight = gameContainer.clientHeight;
+      dropX = gameWidth / 2;
+
+      engine = Engine.create({
+        gravity: { x: 0, y: 1.2 }
+      });
+
+      render = Render.create({
+        element: canvasHolder,
+        engine: engine,
+        options: {
+          width: gameWidth,
+          height: gameHeight,
+          wireframes: false,
+          background: 'transparent'
+        }
+      });
+
+      Render.run(render);
+      runner = Runner.create();
+      Runner.run(runner, engine);
+
+      // 牆壁邊界
+      const wallThickness = 60;
+      const ground = Bodies.rectangle(gameWidth / 2, gameHeight + wallThickness / 2 - 5, gameWidth * 2, wallThickness, { isStatic: true, friction: 0.5, restitution: 0.2 });
+      const leftWall = Bodies.rectangle(-wallThickness / 2 + 5, gameHeight / 2, wallThickness, gameHeight * 2, { isStatic: true, friction: 0.5, restitution: 0.2 });
+      const rightWall = Bodies.rectangle(gameWidth + wallThickness / 2 - 5, gameHeight / 2, wallThickness, gameHeight * 2, { isStatic: true, friction: 0.5, restitution: 0.2 });
+
+      Composite.add(engine.world, [ground, leftWall, rightWall]);
+
+      // 碰撞偵測 (合成邏輯)
+      Events.on(engine, 'collisionStart', handleCollisions);
+
+      // 自訂渲染 (繪製霓虹彈珠文字與外框)
+      Events.on(render, 'afterRender', customRender);
+
+      // 遊戲定時檢查危險線
+      Events.on(engine, 'afterUpdate', checkDangerLine);
+
+      nextValue = getRandomNextValue();
+      updateNextPreview();
+      score = 0;
+      scoreDisplay.textContent = score;
+      bestDisplay.textContent = bestScore;
+      isGameOver = false;
+      document.getElementById('gameModal').classList.add('hidden');
+    }
+
+    /* 處理碰撞合成 */
+    let comboCount = 0;
+    let comboTimer = null;
+
+    function handleCollisions(event) {
+      const pairs = event.pairs;
+      const toRemove = [];
+
+      pairs.forEach(pair => {
+        const { bodyA, bodyB } = pair;
+        if (bodyA.val && bodyB.val && bodyA.val === bodyB.val && !bodyA.isMerging && !bodyB.isMerging) {
+          bodyA.isMerging = true;
+          bodyB.isMerging = true;
+
+          const newVal = bodyA.val * 2;
+          const midX = (bodyA.position.x + bodyB.position.x) / 2;
+          const midY = (bodyA.position.y + bodyB.position.y) / 2;
+
+          toRemove.push(bodyA, bodyB);
+
+          // 連擊計算
+          comboCount++;
+          clearTimeout(comboTimer);
+          comboTimer = setTimeout(() => { comboCount = 0; }, 1200);
+
+          sound.playMerge(newVal, comboCount);
+
+          // 產生新合成的球
+          setTimeout(() => {
+            spawnBall(midX, midY, newVal, false);
+            const info = getBallInfo(newVal);
+            const rect = canvasHolder.getBoundingClientRect();
+            createMergeEffect(rect.left + midX, rect.top + midY, info.border);
+
+            // 得分
+            score += newVal;
+            scoreDisplay.textContent = score;
+            if (score > bestScore) {
+              bestScore = score;
+              bestDisplay.textContent = bestScore;
+              localStorage.setItem('neon_drop_best', bestScore);
+            }
+
+            // Combo 特效
+            if (comboCount > 1) {
+              showComboPopup(midX, midY, comboCount);
+            }
+          }, 20);
+        }
+      });
+
+      toRemove.forEach(b => Composite.remove(engine.world, b));
+    }
+
+    function showComboPopup(x, y, count) {
+      const pop = document.createElement('div');
+      pop.className = 'combo-popup';
+      pop.textContent = `${count}x COMBO!`;
+      pop.style.left = `${x}px`;
+      pop.style.top = `${y}px`;
+      comboContainer.appendChild(pop);
+      setTimeout(() => pop.remove(), 800);
+    }
+
+    /* 產生球體 */
+    function spawnBall(x, y, val, isDropping = true) {
+      const info = getBallInfo(val);
+      const ball = Bodies.circle(x, y, info.radius, {
+        restitution: 0.3,
+        friction: 0.1,
+        density: 0.002,
+        render: { visible: false } // 使用自訂渲染
+      });
+      ball.val = val;
+      ball.spawnTime = Date.now();
+      Composite.add(engine.world, ball);
+
+      if (isDropping) {
+        sound.playDrop();
+      }
+      return ball;
+    }
+
+    /* 自訂繪製彈珠 */
+    function customRender() {
+      const ctx = render.context;
+      const bodies = Composite.allBodies(engine.world);
+
+      // 繪製頂部瞄準線與預覽
+      if (canDrop && !isGameOver) {
+        const info = getBallInfo(nextValue);
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(dropX, 60);
+        ctx.lineTo(dropX, gameHeight);
+        ctx.stroke();
+
+        // 預覽落球
+        ctx.fillStyle = info.color;
+        ctx.strokeStyle = info.border;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = info.border;
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(dropX, 35, info.radius * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = info.text;
+        ctx.font = '900 12px Orbitron';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(nextValue, dropX, 35);
+        ctx.restore();
+      }
+
+      // 繪製場景上所有彈珠
+      bodies.forEach(body => {
+        if (!body.val) return;
+
+        const { x, y } = body.position;
+        const val = body.val;
+        const info = getBallInfo(val);
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(body.angle);
+
+        // 外層霓虹發光圓圈
+        ctx.fillStyle = info.color;
+        ctx.strokeStyle = info.border;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = info.border;
+        ctx.shadowBlur = val >= 64 ? 20 : 10;
+        ctx.beginPath();
+        ctx.arc(0, 0, info.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 內部質感光圈
+        ctx.beginPath();
+        ctx.arc(-info.radius * 0.3, -info.radius * 0.3, info.radius * 0.25, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.fill();
+
+        // 數字標籤
+        ctx.rotate(-body.angle); // 文字保持水平
+        ctx.fillStyle = info.text;
+        const fontSize = info.radius > 50 ? 22 : (info.radius > 35 ? 18 : 14);
+        ctx.font = `900 ${fontSize}px Orbitron`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowBlur = 4;
+        ctx.fillText(val, 0, 0);
+
+        ctx.restore();
+      });
+    }
+
+    /* 檢查是否超過頂部危險線 */
+    function checkDangerLine() {
+      if (isGameOver) return;
+      const bodies = Composite.allBodies(engine.world);
+      let overflow = false;
+
+      bodies.forEach(b => {
+        if (b.val && Date.now() - b.spawnTime > 2000) {
+          if (b.position.y - getBallInfo(b.val).radius < 65) {
+            overflow = true;
+          }
+        }
+      });
+
+      if (overflow) {
+        dangerTimer++;
+        if (dangerTimer > 100) { // 連續超過約 1.5 秒則結束
+          isGameOver = true;
+          showGameOver();
+        }
+      } else {
+        dangerTimer = Math.max(0, dangerTimer - 1);
+      }
+    }
+
+    function showGameOver() {
+      document.getElementById('modalScore').textContent = score;
+      document.getElementById('modalBest').textContent = bestScore;
+      document.getElementById('gameModal').classList.remove('hidden');
+    }
+
+    /* 洗牌震撼彈 (將所有彈珠向上爆彈解鎖局勢) */
+    function triggerShockwave() {
+      if (isGameOver) return;
+      sound.playShockwave();
+      const bodies = Composite.allBodies(engine.world);
+      bodies.forEach(b => {
+        if (b.val) {
+          const forceMagnitude = 0.05 * b.mass;
+          Body.applyForce(b, b.position, {
+            x: (Math.random() - 0.5) * forceMagnitude,
+            y: -forceMagnitude * 1.5
+          });
+        }
+      });
+    }
+
+    /* ==========================================================================
+       5. 操作控制事件
+       ========================================================================== */
+    function handleMove(clientX) {
+      const rect = gameContainer.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const info = getBallInfo(nextValue);
+      const margin = info.radius + 10;
+      dropX = Math.max(margin, Math.min(gameWidth - margin, x));
+    }
+
+    function handleDrop() {
+      if (!canDrop || isGameOver) return;
+      canDrop = false;
+
+      spawnBall(dropX, 40, nextValue, true);
+
+      nextValue = getRandomNextValue();
+      updateNextPreview();
+
+      setTimeout(() => {
+        canDrop = true;
+      }, 500);
+    }
+
+    // 滑鼠事件
+    gameContainer.addEventListener('mousemove', (e) => handleMove(e.clientX));
+    gameContainer.addEventListener('click', handleDrop);
+
+    // 觸控手勢
+    gameContainer.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) handleMove(e.touches[0].clientX);
+    }, { passive: true });
+
+    gameContainer.addEventListener('touchend', () => {
+      handleDrop();
+    });
+
+    // 按鈕綁定
+    document.getElementById('btnShake').addEventListener('click', triggerShockwave);
+    document.getElementById('btnRestart').addEventListener('click', initPhysics);
+    document.getElementById('btnModalRestart').addEventListener('click', initPhysics);
+    document.getElementById('btnSound').addEventListener('click', (e) => {
+      const active = sound.toggle();
+      e.currentTarget.style.opacity = active ? '1' : '0.4';
+    });
+
+    // 頁面載入後啟動物理世界
+    window.onload = () => {
+      initPhysics();
+    };
+  </script>
+</body>
+</html>

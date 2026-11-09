@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wen | 建築與室內設計・視覺設計・3D建模作品集</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Wen 的個人專業作品集與履歷。具備建築與室內設計、視覺設計、3D建模等經驗。曾參與美國紐約室內設計專案、建築師事務所及工業技術研究院相關工作。">
+    <meta name="keywords" content="Wen, 建築設計, 室內設計, 3D建模, 視覺設計, SketchUp, 3D Max, AutoCAD, 紐約室內設計, 工研院">
+    <meta name="author" content="Wen">
+    <link rel="canonical" href="https://www.linkedin.com/in/wenchin-tseng/">
+
+    <!-- Open Graph / Facebook / Line -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.linkedin.com/in/wenchin-tseng/">
+    <meta property="og:title" content="Wen | 建築與室內設計・視覺設計・3D建模作品集">
+    <meta property="og:description" content="具備建築與室內設計、視覺設計、3D建模等經驗。曾參與美國紐約室內設計專案、建築師事務所及工業技術研究院相關工作。">
+    <meta property="og:image" content="https://i.pinimg.com/736x/8f/c9/71/8fc971597bb32fb7785be31b34693a15.jpg">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#FF5722',
+                            amber: '#FFB300',
+                            purple: '#7C3AED',
+                            pink: '#EC4899',
+                            darkBg: '#0A0F1D',
+                            cardDark: '#111827'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'PingFang TC', 'Microsoft JhengHei', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Structured Data (JSON-LD) for SEO / GEO / AEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://www.linkedin.com/in/wenchin-tseng/#person",
+          "name": "Wen",
+          "jobTitle": "建築與室內設計師 / 視覺設計師 / 3D建模師",
+          "sameAs": [
+            "https://www.linkedin.com/in/wenchin-tseng/",
+            "https://www.pinterest.com/pin/1105844883538443975/"
+          ],
+          "knowsAbout": ["建築設計", "室內設計", "視覺提案", "3D建模", "AutoCAD", "3D Max", "SketchUp", "Photoshop", "InDesign"]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Wen 的專業背景與學經歷有哪些？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Wen 具備建築與室內設計、視覺設計及 3D 建模等豐富實務經驗。曾參與美國紐約室內設計專案、台灣知名建築師事務所及工業技術研究院（ITRI）相關前瞻專案。"
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Wen 熟悉哪些設計工具與繪圖軟體？",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "精通 AutoCAD、3D Max、SketchUp、Adobe Photoshop、InDesign 等多款專業 2D/3D 設計與視覺繪圖軟體。"
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        .badge-gradient {
+            background: linear-gradient(135deg, #FF5722 0%, #FFB300 100%);
+        }
+        .purple-gradient {
+            background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+        }
+        .architect-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+        .light .architect-grid {
+            background-image: 
+                linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+        }
+        @keyframes soundWave {
+            0%, 100% { height: 4px; }
+            50% { height: 16px; }
+        }
+        .wave-bar {
+            animation: soundWave 1.2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-brand-darkBg text-slate-100 font-sans transition-colors duration-300 dark:bg-[#0A0F1D] dark:text-slate-100 light:bg-slate-50 light:text-slate-800 architect-grid">
+
+    <!-- 音樂組件 -->
+    <audio id="bg-audio" loop preload="auto">
+        <source src="https://img.ai365.fans/artworks/58e269b4-20dc-4815-929c-cd34c9d33332/alctx43fe2g.mp4" type="audio/mp4">
+    </audio>
+
+    <!-- 導覽列 Navbar -->
+    <header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-slate-950/70 border-b border-slate-800/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl badge-gradient flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-brand-orange/20">
+                    W
+                </div>
+                <span class="text-xl font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 group-hover:from-brand-amber group-hover:to-brand-orange transition-all">
+                    WEN<span class="text-brand-orange">.DESIGN</span>
+                </span>
+            </a>
+
+            <!-- 選單項目 -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <a href="#about" class="hover:text-brand-orange transition-colors">關於我</a>
+                <a href="#skills" class="hover:text-brand-orange transition-colors">核心技能</a>
+                <a href="#experience" class="hover:text-brand-orange transition-colors">專案經驗</a>
+                <a href="#workflow" class="hover:text-brand-orange transition-colors">工作流程</a>
+                <a href="#faq" class="hover:text-brand-orange transition-colors">常見問答</a>
+                <a href="#contact" class="hover:text-brand-orange transition-colors">聯絡諮詢</a>
+            </nav>
+
+            <!-- 右側按鈕區 (音樂/主題切換) -->
+            <div class="hidden md:flex items-center space-x-4">
+                <!-- 音樂開關按鈕 -->
+                <button id="music-btn" onclick="toggleAudio()" class="px-4 py-2 rounded-xl bg-slate-900 border border-slate-700/80 hover:border-brand-orange text-xs font-semibold flex items-center space-x-2.5 transition-all shadow-md">
+                    <span id="music-icon" class="text-slate-400"><i class="fa-solid fa-music"></i></span>
+                    <span id="music-text" class="text-slate-300">背景音樂</span>
+                    <div id="wave-container" class="hidden flex items-end space-x-0.5 h-4 ml-1">
+                        <div class="w-0.5 bg-brand-amber wave-bar" style="animation-delay: 0.1s"></div>
+                        <div class="w-0.5 bg-brand-orange wave-bar" style="animation-delay: 0.3s"></div>
+                        <div class="w-0.5 bg-brand-purple wave-bar" style="animation-delay: 0.2s"></div>
+                    </div>
+                </button>
+
+                <!-- LinkedIn 捷徑 -->
+                <a href="https://www.linkedin.com/in/wenchin-tseng/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 hover:border-brand-orange flex items-center justify-center text-slate-300 hover:text-white transition-all">
+                    <i class="fa-brands fa-linkedin-in text-lg"></i>
+                </a>
+            </div>
+
+            <!-- 手機版選單按鈕 -->
+            <div class="flex items-center space-x-3 md:hidden">
+                <button onclick="toggleAudio()" class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-brand-amber">
+                    <i class="fa-solid fa-music"></i>
+                </button>
+                <button onclick="toggleMobileMenu()" class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 手機版選單選單區塊 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-950 border-b border-slate-800 px-6 py-6 space-y-4">
+            <a href="#about" onclick="toggleMobileMenu()" class="block text-base font-medium text-slate-300 hover:text-brand-orange">關於我</a>
+            <a href="#skills" onclick="toggleMobileMenu()" class="block text-base font-medium text-slate-300 hover:text-brand-orange">核心技能</a>
+            <a href="#experience" onclick="toggleMobileMenu()" class="block text-base font-medium text-slate-300 hover:text-brand-orange">專案經驗</a>
+            <a href="#workflow" onclick="toggleMobileMenu()" class="block text-base font-medium text-slate-300 hover:text-brand-orange">工作流程</a>
+            <a href="#faq" onclick="toggleMobileMenu()" class="block text-base font-medium text-slate-300 hover:text-brand-orange">常見問答</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="block text-base font-medium text-slate-300 hover:text-brand-orange">聯絡諮詢</a>
+            <div class="pt-4 border-t border-slate-800 flex space-x-4">
+                <a href="https://www.linkedin.com/in/wenchin-tseng/" target="_blank" class="px-4 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs flex items-center space-x-2">
+                    <i class="fa-brands fa-linkedin"></i>
+                    <span>LinkedIn 履歷</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero 主視圖區塊 -->
+    <section id="about" class="pt-36 pb-20 md:pt-44 md:pb-32 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- 靜態與大頭照展示區塊 -->
+                <div class="lg:col-span-5 flex flex-col items-center justify-center">
+                    <div class="relative group">
+                        <div class="absolute -inset-1 rounded-3xl badge-gradient blur-xl opacity-50 group-hover:opacity-80 transition duration-500"></div>
+                        <div class="relative w-64 h-80 sm:w-72 sm:h-96 rounded-3xl overflow-hidden border-2 border-slate-700/80 shadow-2xl bg-slate-900">
+                            <!-- 個人照片背景展示圖案 -->
+                            <div class="w-full h-full bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent absolute z-10"></div>
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" alt="Wen 大頭照" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            
+                            <div class="absolute bottom-6 left-6 right-6 z-20">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold badge-gradient text-slate-950 tracking-wide uppercase">
+                                    DESIGNER PORTFOLIO
+                                </span>
+                                <h3 class="text-2xl font-black mt-2 text-white">Wen</h3>
+                                <p class="text-xs text-slate-300">建築與室內設計 / 3D 視覺建模</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文字導引與文字介紹區塊 -->
+                <div class="lg:col-span-7 space-y-6 text-left">
+                    <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-slate-900/80 border border-slate-800 text-brand-amber text-xs font-semibold">
+                        <i class="fa-solid fa-sparkles"></i>
+                        <span>兼具理性空間規劃與感性視覺美學</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
+                        重塑空間邏輯 <br>
+                        <span class="bg-clip-text text-transparent badge-gradient">以 3D 擬真賦予設計生命力</span>
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+                        具備建築與室內設計、視覺設計與 3D 建模等多元實務經驗。曾參與<strong class="text-white">美國紐約室內設計專案</strong>、<strong class="text-white">建築師事務所</strong>及<strong class="text-white">工業技術研究院 (ITRI)</strong> 相關工作，熟悉從需求發想、圖面與模型呈現到完整提案製作的精準工作流程。
+                    </p>
+
+                    <!-- 特質簡籤 -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                        <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
+                            <i class="fa-solid fa-shield-halved text-brand-orange mb-1"></i>
+                            <div class="text-xs font-bold text-slate-200">責任感與耐心</div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
+                            <i class="fa-solid fa-lightbulb text-brand-amber mb-1"></i>
+                            <div class="text-xs font-bold text-slate-200">踏實創造力</div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
+                            <i class="fa-solid fa-users text-brand-purple mb-1"></i>
+                            <div class="text-xs font-bold text-slate-200">親和團隊力</div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-center">
+                            <i class="fa-solid fa-book-open text-brand-pink mb-1"></i>
+                            <div class="text-xs font-bold text-slate-200">持續學習態</div>
+                        </div>
+                    </div>
+
+                    <!-- 操作按鈕 -->
+                    <div class="flex flex-wrap gap-4 pt-4">
+                        <a href="#contact" class="px-8 py-4 rounded-xl badge-gradient text-slate-950 font-black text-sm hover:opacity-95 transition-all shadow-xl shadow-brand-orange/20 flex items-center space-x-2">
+                            <span>立即開啟專案合作</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/wenchin-tseng/" target="_blank" rel="noopener noreferrer" class="px-6 py-4 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-200 font-bold text-sm transition-all flex items-center space-x-2">
+                            <i class="fa-brands fa-linkedin text-lg text-blue-400"></i>
+                            <span>檢視完整 LinkedIn 履歷</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid 核心技能與經歷區塊 -->
+    <section id="skills" class="py-20 bg-slate-950/60 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-xs font-bold tracking-widest text-brand-orange uppercase mb-2">Core Competencies</h2>
+                <p class="text-3xl sm:text-4xl font-black text-white">專業技能與工具全景</p>
+            </div>
+
+            <!-- Bento 排版 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                
+                <!-- 卡片 1: 設計與視覺 -->
+                <div class="md:col-span-2 p-8 rounded-3xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-all">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-orange/20 text-brand-orange flex items-center justify-center text-xl font-bold mb-6">
+                        <i class="fa-solid fa-compass-drafting"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">設計與視覺 (Design & Vision)</h3>
+                    <p class="text-slate-400 text-sm mb-6 leading-relaxed">擅長釐清空間架構與動線規劃，將概念具象化為高度質感的視覺提案與平面設計作品。</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-200 border border-slate-700">空間規劃</span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-200 border border-slate-700">視覺提案</span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-200 border border-slate-700">平面設計</span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-200 border border-slate-700">藝術繪畫</span>
+                    </div>
+                </div>
+
+                <!-- 卡片 2: 3D 與多媒體 -->
+                <div class="md:col-span-2 p-8 rounded-3xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-all">
+                    <div class="w-12 h-12 rounded-2xl bg-brand-amber/20 text-brand-amber flex items-center justify-center text-xl font-bold mb-6">
+                        <i class="fa-solid fa-cubes"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">多媒體與 3D 視覺 (3D & Visuals)</h3>
+                    <p class="text-slate-400 text-sm mb-6 leading-relaxed">透過精準建模與細緻光影質感的渲染，重現建築與室內擬真情境。</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-200 border border-slate-700">3D 空間建模</span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-200 border border-slate-700">擬真情境圖製作</span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-200 border border-slate-700">材質與光影表現</span>
+                    </div>
+                </div>
+
+                <!-- 卡片 3: 數位工具 (全寬) -->
+                <div class="md:col-span-3 lg:col-span-4 p-8 rounded-3xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-all">
+                    <h3 class="text-xl font-bold text-white mb-6">數位設計工具工具庫 (Digital Tools)</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 text-center">
+                        <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800">
+                            <i class="fa-solid fa-layer-group text-2xl text-blue-400 mb-2"></i>
+                            <div class="text-sm font-bold text-white">AutoCAD</div>
+                            <div class="text-[10px] text-slate-500">2D工程圖面</div>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800">
+                            <i class="fa-solid fa-cube text-2xl text-red-400 mb-2"></i>
+                            <div class="text-sm font-bold text-white">3D Max</div>
+                            <div class="text-[10px] text-slate-500">高階3D建模</div>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800">
+                            <i class="fa-solid fa-shapes text-2xl text-amber-400 mb-2"></i>
+                            <div class="text-sm font-bold text-white">SketchUp</div>
+                            <div class="text-[10px] text-slate-500">快速空間草案</div>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800">
+                            <i class="fa-solid fa-image text-2xl text-sky-400 mb-2"></i>
+                            <div class="text-sm font-bold text-white">Photoshop</div>
+                            <div class="text-[10px] text-slate-500">影像後期處理</div>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800">
+                            <i class="fa-solid fa-book text-2xl text-pink-400 mb-2"></i>
+                            <div class="text-sm font-bold text-white">InDesign</div>
+                            <div class="text-[10px] text-slate-500">簡報版型排版</div>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-950/80 border border-slate-800">
+                            <i class="fa-solid fa-file-lines text-2xl text-emerald-400 mb-2"></i>
+                            <div class="text-sm font-bold text-white">MS Office</div>
+                            <div class="text-[10px] text-slate-500">專案資訊彙整</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 工作流程 Workflow -->
+    <section id="workflow" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-xs font-bold tracking-widest text-brand-orange uppercase mb-2">Methodology</h2>
+                <p class="text-3xl sm:text-4xl font-black text-white">踏實嚴謹的工作流程</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-8 rounded-3xl bg-slate-900/60 border border-slate-800 relative">
+                    <div class="text-4xl font-black text-slate-800 mb-4">01</div>
+                    <h3 class="text-xl font-bold text-white mb-2">需求釐清與資訊整理</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">深入傾聽業主或團隊需求，妥善分析整合背景資訊，釐清專案痛點與核心目標。</p>
+                </div>
+                <div class="p-8 rounded-3xl bg-slate-900/60 border border-slate-800 relative">
+                    <div class="text-4xl font-black text-slate-800 mb-4">02</div>
+                    <h3 class="text-xl font-bold text-white mb-2">圖面與 3D 模型繪製</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">運用 AutoCAD, SketchUp, 3D Max 將發想轉化為精確尺寸圖面與立體擬真模型。</p>
+                </div>
+                <div class="p-8 rounded-3xl bg-slate-900/60 border border-slate-800 relative">
+                    <div class="text-4xl font-black text-slate-800 mb-4">03</div>
+                    <h3 class="text-xl font-bold text-white mb-2">高質感提案與簡報製作</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">整合 3D 渲染圖與視覺版型，產出極具說服力的提案成果，確保專案流暢推進。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 常見問答 (FAQ) - SEO/GEO/AEO 模組 -->
+    <section id="faq" class="py-20 bg-slate-950/60 border-t border-slate-800/80">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-xs font-bold tracking-widest text-brand-orange uppercase mb-2">FAQ</h2>
+                <p class="text-3xl font-black text-white">常見問答與背景資訊</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
+                    <h3 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-circle-question text-brand-orange mr-2"></i>Wen 的專業背景背景是什麼？</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Wen 擁有建築與室內設計、視覺設計與 3D 建模的完整實務經驗。歷練涵蓋美國紐約室內設計專案、建築師事務所及台灣工業技術研究院（ITRI）等單位。</p>
+                </div>
+                <div class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
+                    <h3 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-circle-question text-brand-orange mr-2"></i>可以提供哪些領域的設計合作？</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">提供從住宅/商業空間規劃、2D 工程圖繪製、3D 空間擬真建模渲染，到平面視覺設計與簡報提案製作的全方位專業支援。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 聯絡區塊 (表單直接寫入 Google 試算表) -->
+    <section id="contact" class="py-20 relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-xs font-bold tracking-widest text-brand-orange uppercase mb-2">Get In Touch</h2>
+                <p class="text-3xl sm:text-4xl font-black text-white">開啟您的空間與視覺專案</p>
+                <p class="text-slate-400 text-sm mt-2">填寫以下表單，資料將自動寫入資料庫，我會盡快與您聯繫。</p>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800/80 rounded-3xl p-8 sm:p-12 shadow-2xl">
+                <form id="contact-form" class="space-y-6" onsubmit="handleFormSubmit(event)">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-2">您的姓名</label>
+                            <input type="text" id="form-name" name="name" required class="w-full px-4 py-3.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white focus:outline-none focus:border-brand-orange transition-colors text-sm" placeholder="例如：王小明">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 uppercase mb-2">電子郵件</label>
+                            <input type="email" id="form-email" name="email" required class="w-full px-4 py-3.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white focus:outline-none focus:border-brand-orange transition-colors text-sm" placeholder="name@example.com">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-2">諮詢主題</label>
+                        <select id="form-subject" name="subject" class="w-full px-4 py-3.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white focus:outline-none focus:border-brand-orange transition-colors text-sm">
+                            <option value="建築與室內設計合作">建築與室內設計合作</option>
+                            <option value="3D 建模與情境圖渲染">3D 建模與情境圖渲染</option>
+                            <option value="視覺提案與平面設計">視覺提案與平面設計</option>
+                            <option value="其他合作洽談">其他合作洽談</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-2">訊息內容</label>
+                        <textarea id="form-message" name="message" rows="4" required class="w-full px-4 py-3.5 rounded-xl bg-slate-800/80 border border-slate-700 text-white focus:outline-none focus:border-brand-orange transition-colors text-sm" placeholder="請描述您的專案需求或想討論的內容..."></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="w-full py-4 rounded-xl badge-gradient text-slate-950 font-black text-base hover:opacity-95 transition-all shadow-xl shadow-brand-orange/20 text-center flex items-center justify-center">
+                        <i class="fa-solid fa-paper-plane mr-2" id="submit-btn-icon"></i> <span id="submit-btn-text">發送訊息</span>
+                    </button>
+                </form>
+
+                <!-- 成功反饋浮籤 -->
+                <div id="toast-message" class="hidden mt-4 p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-sm text-center">
+                    <i class="fa-solid fa-circle-check mr-2"></i> 感謝您的來信！訊息已成功存入 Google 試算表，我會盡快回覆您。
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800/80 py-10 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>© 2026 Wen. All rights reserved. 建築・室內設計・3D建模</div>
+            <div class="flex space-x-6 text-base">
+                <a href="https://www.linkedin.com/in/wenchin-tseng/" target="_blank" class="text-slate-400 hover:text-white"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://www.pinterest.com/pin/1105844883538443975/" target="_blank" class="text-slate-400 hover:text-white"><i class="fa-brands fa-pinterest"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript 腳本區塊 -->
+    <script>
+        // 設定 Google Apps Script Web App URL
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyPLumTYNHwzFevnLc5q21ZaUTH3reI95LY46D-EvuMobN4FKbcbOBn9zWsammsLrsKLw/exec';
+
+        // 背景音樂控制開關
+        let isPlaying = false;
+        function toggleAudio() {
+            const audio = document.getElementById('bg-audio');
+            const musicText = document.getElementById('music-text');
+            const waveContainer = document.getElementById('wave-container');
+            const musicIcon = document.getElementById('music-icon');
+
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                if(musicText) musicText.innerText = '背景音樂';
+                if(waveContainer) waveContainer.classList.add('hidden');
+                if(musicIcon) musicIcon.className = 'text-slate-400';
+            } else {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    if(musicText) musicText.innerText = '播放中';
+                    if(waveContainer) waveContainer.classList.remove('hidden');
+                    if(musicIcon) musicIcon.className = 'text-brand-amber';
+                }).catch(err => {
+                    console.log("Audio play blocked by browser:", err);
+                });
+            }
+        }
+
+        // 手機版導覽選單開關
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // 處理表單提交至 Google Apps Script
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const submitBtnText = document.getElementById('submit-btn-text');
+            const submitBtnIcon = document.getElementById('submit-btn-icon');
+            const toast = document.getElementById('toast-message');
+
+            const formData = {
+                name: document.getElementById('form-name').value,
+                email: document.getElementById('form-email').value,
+                subject: document.getElementById('form-subject').value,
+                message: document.getElementById('form-message').value
+            };
+
+            submitBtn.disabled = true;
+            submitBtnText.innerText = '傳送中...';
+            submitBtnIcon.className = 'fa-solid fa-spinner fa-spin mr-2';
+
+            try {
+                if (GAS_WEB_APP_URL && !GAS_WEB_APP_URL.includes('YOUR_GOOGLE_APPS_SCRIPT')) {
+                    await fetch(GAS_WEB_APP_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                }
+
+                toast.classList.remove('hidden');
+                document.getElementById('contact-form').reset();
+            } catch (error) {
+                console.error('Form Submit Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtnText.innerText = '發送訊息';
+                submitBtnIcon.className = 'fa-solid fa-paper-plane mr-2';
+
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 6000);
+            }
+        }
+    </script>
+</body>
+</html>

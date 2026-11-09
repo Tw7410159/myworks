@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>明星桌布數字時鐘</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Minimalist Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;800&family=Montserrat:wght@300;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+        .clock-font-inter { font-family: 'Inter', sans-serif; }
+        .clock-font-montserrat { font-family: 'Montserrat', sans-serif; }
+        .clock-font-mono { font-family: 'Share Tech Mono', monospace; }
+
+        /* Smooth Background Transitions */
+        .bg-layer {
+            transition: opacity 1s ease-in-out, transform 8s ease-out;
+        }
+        
+        /* Glassmorphism settings drawer */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Custom Scrollbar for image list */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Hide elements dynamically in auto-hide controls mode */
+        .autohide-controls {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        body:hover .autohide-controls,
+        .autohide-controls.force-show {
+            opacity: 1;
+        }
+
+        /* Text shadow for legibility over bright wallpapers */
+        .text-drop-shadow {
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 1px 4px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body class="relative w-screen h-screen bg-black text-white overflow-hidden">
+
+    <!-- Wallpaper Container (Dual Layers for Crossfade Transition) -->
+    <div id="wallpaper-container" class="absolute inset-0 z-0 bg-slate-950">
+        <div id="bg-layer-a" class="bg-layer absolute inset-0 bg-cover bg-center opacity-100 scale-100"></div>
+        <div id="bg-layer-b" class="bg-layer absolute inset-0 bg-cover bg-center opacity-0 scale-100"></div>
+        <!-- Overlay Layer for contrast adjustment -->
+        <div id="bg-overlay" class="absolute inset-0 bg-black/30 pointer-events-none transition-opacity duration-300"></div>
+    </div>
+
+    <!-- Center Clock & Date Container -->
+    <main class="relative z-10 flex flex-col items-center justify-center w-full h-full p-4 pointer-events-none">
+        <div id="clock-box" class="flex flex-col items-center text-center text-drop-shadow transition-all duration-300">
+            <!-- Digital Clock Display -->
+            <div id="clock-display" class="clock-font-inter font-light tracking-tight text-7xl sm:text-8xl md:text-9xl lg:text-[11rem] leading-none select-none">
+                00:00:00
+            </div>
+            
+            <!-- Date Display -->
+            <div id="date-display" class="mt-4 text-base sm:text-xl md:text-2xl font-normal tracking-widest opacity-90 uppercase">
+                2026年11月01日 星期日
+            </div>
+            
+            <!-- Optional Subtitle/Status message -->
+            <div id="quote-display" class="mt-2 text-xs sm:text-sm font-light opacity-75 tracking-wider italic">
+                <!-- Dynamically populated or customized -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Gear Button (Top Right / Bottom Right configurable) -->
+    <button id="gear-btn" 
+            class="autohide-controls absolute top-6 right-6 z-30 p-3.5 text-white/70 hover:text-white bg-black/30 hover:bg-black/60 rounded-full blur-backdrop border border-white/10 transition-all duration-300 hover:rotate-90 shadow-lg cursor-pointer focus:outline-none"
+            title="開啟設定">
+        <i class="fa-solid fa-gear text-xl sm:text-2xl"></i>
+    </button>
+
+    <!-- Fullscreen Toggle Button -->
+    <button id="fullscreen-btn" 
+            class="autohide-controls absolute top-6 right-20 z-30 p-3.5 text-white/70 hover:text-white bg-black/30 hover:bg-black/60 rounded-full blur-backdrop border border-white/10 transition-all duration-300 shadow-lg cursor-pointer focus:outline-none"
+            title="全螢幕切換">
+        <i class="fa-solid fa-expand text-xl sm:text-2xl"></i>
+    </button>
+
+    <!-- Manual Image Switch Control (Bottom Center) -->
+    <div id="wallpaper-controls" class="autohide-controls absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-3 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-lg">
+        <button id="prev-bg-btn" class="text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition" title="上一張">
+            <i class="fa-solid fa-chevron-left text-sm"></i>
+        </button>
+        <span id="bg-counter" class="text-xs tracking-wider text-white/70 font-mono">1 / 1</span>
+        <button id="next-bg-btn" class="text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition" title="下一張">
+            <i class="fa-solid fa-chevron-right text-sm"></i>
+        </button>
+        <div class="h-4 w-[1px] bg-white/20 my-auto"></div>
+        <button id="pause-slideshow-btn" class="text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition" title="暫停/播放輪播">
+            <i class="fa-solid fa-pause text-sm" id="pause-icon"></i>
+        </button>
+    </div>
+
+    <!-- Slide-over Settings Drawer -->
+    <aside id="settings-panel" class="fixed inset-y-0 right-0 z-40 w-full sm:w-96 glass-panel translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-2xl">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-6 py-5 border-b border-white/10">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-[#00d2ff] fa-sliders text-cyan-400"></i>
+                <h2 class="text-lg font-semibold tracking-wide text-white">壁紙與時鐘設定</h2>
+            </div>
+            <button id="close-settings-btn" class="text-white/60 hover:text-white p-2 rounded-lg hover:bg-white/10 transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+
+            <!-- Section 1: Image Source Settings -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-widest">壁紙來源 (CSV 網址)</h3>
+                <div class="space-y-2">
+                    <input type="text" id="csv-url-input" 
+                           class="w-full bg-slate-900/80 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400 transition"
+                           placeholder="輸入 CSV 連結..." />
+                    <button id="reload-csv-btn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-medium text-xs py-2 px-3 rounded-lg transition flex items-center justify-center space-x-2 shadow">
+                        <i class="fa-solid fa-rotate text-xs"></i>
+                        <span>重新載入壁紙清單</span>
+                    </button>
+                </div>
+                <!-- Status indicator -->
+                <div id="csv-status" class="text-[11px] text-emerald-400 flex items-center space-x-1">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>已載入 0 張圖片</span>
+                </div>
+            </div>
+
+            <hr class="border-white/10" />
+
+            <!-- Section 2: Slideshow Controls -->
+            <div class="space-y-4">
+                <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-widest">輪播設定</h3>
+                
+                <div class="flex items-center justify-between">
+                    <label for="auto-slide-toggle" class="text-sm text-white/90">自動切換輪播</label>
+                    <input type="checkbox" id="auto-slide-toggle" class="w-4 h-4 accent-cyan-400 cursor-pointer rounded" checked>
+                </div>
+
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs text-white/70">
+                        <span>輪播間隔時間</span>
+                        <span id="interval-val-text">10 秒</span>
+                    </div>
+                    <input type="range" id="interval-range" min="3" max="60" step="1" value="10" 
+                           class="w-full accent-cyan-400 cursor-pointer">
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label for="random-slide-toggle" class="text-sm text-white/90">隨機播放順序</label>
+                    <input type="checkbox" id="random-slide-toggle" class="w-4 h-4 accent-cyan-400 cursor-pointer rounded">
+                </div>
+            </div>
+
+            <hr class="border-white/10" />
+
+            <!-- Section 3: Clock Appearance -->
+            <div class="space-y-4">
+                <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-widest">時鐘樣式設定</h3>
+                
+                <!-- Font Choice -->
+                <div class="space-y-1">
+                    <label class="text-xs text-white/70">字體風格</label>
+                    <select id="clock-font-select" class="w-full bg-slate-900/80 border border-white/15 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400">
+                        <option value="clock-font-inter">極簡現代 (Inter)</option>
+                        <option value="clock-font-montserrat">大氣無襯線 (Montserrat)</option>
+                        <option value="clock-font-mono">科技極簡 (Share Tech Mono)</option>
+                    </select>
+                </div>
+
+                <!-- Clock Scale Slider -->
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs text-white/70">
+                        <span>時鐘大小</span>
+                        <span id="clock-size-text">100%</span>
+                    </div>
+                    <input type="range" id="clock-size-range" min="50" max="150" step="5" value="100" 
+                           class="w-full accent-cyan-400 cursor-pointer">
+                </div>
+
+                <!-- Time Format Toggles -->
+                <div class="grid grid-cols-2 gap-3 pt-1">
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="show-seconds-toggle" class="w-4 h-4 accent-cyan-400 cursor-pointer rounded" checked>
+                        <label for="show-seconds-toggle" class="text-xs text-white/90">顯示秒數</label>
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="format-24h-toggle" class="w-4 h-4 accent-cyan-400 cursor-pointer rounded" checked>
+                            <label for="format-24h-toggle" class="text-xs text-white/90">24小時制</label>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="show-date-toggle" class="w-4 h-4 accent-cyan-400 cursor-pointer rounded" checked>
+                        <label for="show-date-toggle" class="text-xs text-white/90">顯示日期</label>
+                    </div>
+                </div>
+
+                <!-- Dim Darkening Overlay -->
+                <div class="space-y-1">
+                    <div class="flex justify-between text-xs text-white/70">
+                        <span>背景暗化遮罩</span>
+                        <span id="overlay-val-text">30%</span>
+                    </div>
+                    <input type="range" id="overlay-range" min="0" max="80" step="5" value="30" 
+                           class="w-full accent-cyan-400 cursor-pointer">
+                </div>
+            </div>
+
+            <hr class="border-white/10" />
+
+            <!-- Section 4: Image Gallery Preview / Selection -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-widest">明星壁紙圖庫</h3>
+                <div id="gallery-grid" class="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto custom-scrollbar p-1">
+                    <!-- Thumbnails dynamically rendered -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="p-4 border-t border-white/10 bg-slate-900/50 text-center">
+            <span class="text-[10px] text-white/40 tracking-wider uppercase">Celebrity Wallpaper Clock • Minimalist Edition</span>
+        </div>
+    </aside>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 border border-white/20 text-white text-xs px-4 py-2.5 rounded-full shadow-2xl opacity-0 pointer-events-none transition-all duration-300 flex items-center space-x-2">
+        <i class="fa-solid fa-circle-info text-cyan-400" id="toast-icon"></i>
+        <span id="toast-message">通知訊息</span>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // Default CSV provided by user
+        const DEFAULT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVbxZ8fSRB5ze59VPtXUs7EmzV-cU_4YM3pFg7ofXYIX_34W70e0FoTWoKB6XBWjkoy2-L1Fl6wZqh/pub?output=csv";
+
+        // Fallback default wallpapers if CSV is empty or unreachable
+        const FALLBACK_IMAGES = [
+            "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1920&q=80",
+            "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1920&q=80",
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80"
+        ];
+
+        // Application State
+        const state = {
+            csvUrl: localStorage.getItem('celebrity_wallpaper_csv') || DEFAULT_CSV_URL,
+            images: [],
+            currentIndex: 0,
+            activeLayer: 'A', // 'A' or 'B' for smooth crossfade
+            isSlideshowPlaying: true,
+            slideshowInterval: parseInt(localStorage.getItem('clock_interval')) || 10,
+            isRandom: localStorage.getItem('clock_random') === 'true',
+            fontStyle: localStorage.getItem('clock_font') || 'clock-font-inter',
+            clockScale: parseInt(localStorage.getItem('clock_scale')) || 100,
+            showSeconds: localStorage.getItem('clock_show_seconds') !== 'false',
+            format24h: localStorage.getItem('clock_24h') !== 'false',
+            showDate: localStorage.getItem('clock_show_date') !== 'false',
+            overlayOpacity: parseInt(localStorage.getItem('clock_overlay')) || 30,
+            timerId: null
+        };
+
+        // DOM Elements
+        const bgLayerA = document.getElementById('bg-layer-a');
+        const bgLayerB = document.getElementById('bg-layer-b');
+        const bgOverlay = document.getElementById('bg-overlay');
+        const clockDisplay = document.getElementById('clock-display');
+        const dateDisplay = document.getElementById('date-display');
+        const clockBox = document.getElementById('clock-box');
+        
+        // Control & Drawer Elements
+        const gearBtn = document.getElementById('gear-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const settingsPanel = document.getElementById('settings-panel');
+        const closeSettingsBtn = document.getElementById('close-settings-btn');
+        
+        // Form Controls inside Drawer
+        const csvUrlInput = document.getElementById('csv-url-input');
+        const reloadCsvBtn = document.getElementById('reload-csv-btn');
+        const csvStatus = document.getElementById('csv-status');
+        const autoSlideToggle = document.getElementById('auto-slide-toggle');
+        const intervalRange = document.getElementById('interval-range');
+        const intervalValText = document.getElementById('interval-val-text');
+        const randomSlideToggle = document.getElementById('random-slide-toggle');
+        const clockFontSelect = document.getElementById('clock-font-select');
+        const clockSizeRange = document.getElementById('clock-size-range');
+        const clockSizeText = document.getElementById('clock-size-text');
+        const showSecondsToggle = document.getElementById('show-seconds-toggle');
+        const format24hToggle = document.getElementById('format-24h-toggle');
+        const showDateToggle = document.getElementById('show-date-toggle');
+        const overlayRange = document.getElementById('overlay-range');
+        const overlayValText = document.getElementById('overlay-val-text');
+        const galleryGrid = document.getElementById('gallery-grid');
+        
+        // Bottom Bar Elements
+        const prevBgBtn = document.getElementById('prev-bg-btn');
+        const nextBgBtn = document.getElementById('next-bg-btn');
+        const bgCounter = document.getElementById('bg-counter');
+        const pauseSlideshowBtn = document.getElementById('pause-slideshow-btn');
+        const pauseIcon = document.getElementById('pause-icon');
+
+        // Toast element
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        // Initializer
+        window.onload = () => {
+            initClock();
+            initSettingsUI();
+            fetchWallpapersFromCSV();
+            setupEventListeners();
+        };
+
+        // --- Clock Logic ---
+        function initClock() {
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        function updateClock() {
+            const now = new Date();
+            
+            // Format Time
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            let ampm = '';
+
+            if (!state.format24h) {
+                ampm = hours >= 12 ? ' PM' : ' AM';
+                hours = hours % 12 || 12;
+            }
+            
+            const hoursStr = String(hours).padStart(2, '0');
+            
+            if (state.showSeconds) {
+                clockDisplay.textContent = `${hoursStr}:${minutes}:${seconds}${ampm}`;
+            } else {
+                clockDisplay.textContent = `${hoursStr}:${minutes}${ampm}`;
+            }
+
+            // Format Date
+            if (state.showDate) {
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const date = String(now.getDate()).padStart(2, '0');
+                const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+                const dayName = days[now.getDay()];
+                
+                dateDisplay.textContent = `${year}年${month}月${date}日 ${dayName}`;
+                dateDisplay.style.display = 'block';
+            } else {
+                dateDisplay.style.display = 'none';
+            }
+        }
+
+        // --- CSV Fetcher & Parser ---
+        async function fetchWallpapersFromCSV() {
+            showToast("正在載入壁紙資料...");
+            try {
+                const response = await fetch(state.csvUrl);
+                if (!response.ok) throw new Error("HTTP error " + response.status);
+                
+                const csvText = await response.text();
+                const parsedUrls = parseCSVUrls(csvText);
+
+                if (parsedUrls.length > 0) {
+                    state.images = parsedUrls;
+                    csvStatus.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>成功載入 ${parsedUrls.length} 張明星圖片</span>`;
+                    csvStatus.className = "text-[11px] text-emerald-400 flex items-center space-x-1";
+                    showToast(`已成功載入 ${parsedUrls.length} 張圖片`);
+                } else {
+                    throw new Error("CSV 中未找到有效的圖片網址");
+                }
+            } catch (error) {
+                console.warn("無法讀取 CSV，將使用預設壁紙:", error);
+                state.images = FALLBACK_IMAGES;
+                csvStatus.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> <span class="text-amber-400">無法讀取 CSV，已載入預設圖片</span>`;
+                showToast("CSV 讀取失敗，使用預設壁紙", "error");
+            }
+
+            state.currentIndex = 0;
+            renderGallery();
+            applyWallpaper(state.currentIndex);
+            restartSlideshowTimer();
+        }
+
+        // Extract image URLs from CSV (Handles simple lists, quotes, Google Drive links, direct image URLs)
+        function parseCSVUrls(text) {
+            const lines = text.split(/\r\n|\n/);
+            const urlRegex = /(https?:\/\/[^\s,"]+)/gi;
+            const validUrls = [];
+
+            lines.forEach(line => {
+                const matches = line.match(urlRegex);
+                if (matches) {
+                    matches.forEach(url => {
+                        // Clean up Google Drive view links to direct image export links if necessary
+                        let cleanUrl = url.trim().replace(/^"/, '').replace(/"$/, '');
+                        if (cleanUrl.includes('drive.google.com/file/d/')) {
+                            const fileIdMatch = cleanUrl.match(/\/d\/([^\/]+)/);
+                            if (fileIdMatch && fileIdMatch[1]) {
+                                cleanUrl = `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
+                            }
+                        }
+                        
+                        // Basic image/web link filtering
+                        if (cleanUrl.length > 10 && !validUrls.includes(cleanUrl)) {
+                            validUrls.push(cleanUrl);
+                        }
+                    });
+                }
+            });
+
+            return validUrls;
+        }
+
+        // --- Wallpaper Rendering & Crossfade ---
+        function applyWallpaper(index) {
+            if (!state.images || state.images.length === 0) return;
+
+            const targetUrl = state.images[index];
+            const currentLayer = state.activeLayer === 'A' ? bgLayerA : bgLayerB;
+            const nextLayer = state.activeLayer === 'A' ? bgLayerB : bgLayerA;
+
+            // Preload Image for smooth transition
+            const img = new Image();
+            img.onload = () => {
+                nextLayer.style.backgroundImage = `url('${targetUrl}')`;
+                
+                // Crossfade animation
+                nextLayer.style.opacity = '1';
+                currentLayer.style.opacity = '0';
+
+                // Zoom effect for dynamic feel
+                nextLayer.style.transform = 'scale(1.03)';
+                setTimeout(() => {
+                    nextLayer.style.transform = 'scale(1.0)';
+                }, 50);
+
+                state.activeLayer = state.activeLayer === 'A' ? 'B' : 'A';
+                updateCounterUI();
+            };
+
+            img.onerror = () => {
+                console.warn("無法載入圖片: " + targetUrl);
+                // Fallback attempt to next image if fails
+                if (state.images.length > 1) {
+                    setTimeout(() => nextWallpaper(), 1000);
+                }
+            };
+
+            img.src = targetUrl;
+        }
+
+        function nextWallpaper() {
+            if (state.images.length === 0) return;
+            if (state.isRandom) {
+                let randomIndex = Math.floor(Math.random() * state.images.length);
+                if (randomIndex === state.currentIndex && state.images.length > 1) {
+                    randomIndex = (randomIndex + 1) % state.images.length;
+                }
+                state.currentIndex = randomIndex;
+            } else {
+                state.currentIndex = (state.currentIndex + 1) % state.images.length;
+            }
+            applyWallpaper(state.currentIndex);
+        }
+
+        function prevWallpaper() {
+            if (state.images.length === 0) return;
+            state.currentIndex = (state.currentIndex - 1 + state.images.length) % state.images.length;
+            applyWallpaper(state.currentIndex);
+        }
+
+        function restartSlideshowTimer() {
+            if (state.timerId) clearInterval(state.timerId);
+            if (state.isSlideshowPlaying) {
+                state.timerId = setInterval(() => {
+                    nextWallpaper();
+                }, state.slideshowInterval * 1000);
+            }
+        }
+
+        function updateCounterUI() {
+            bgCounter.textContent = `${state.currentIndex + 1} / ${state.images.length}`;
+            
+            // Highlight thumbnail in settings grid
+            const thumbs = galleryGrid.querySelectorAll('.gallery-thumb');
+            thumbs.forEach((thumb, idx) => {
+                if (idx === state.currentIndex) {
+                    thumb.classList.add('ring-2', 'ring-cyan-400', 'scale-95');
+                } else {
+                    thumb.classList.remove('ring-2', 'ring-cyan-400', 'scale-95');
+                }
+            });
+        }
+
+        // --- Gallery Thumbnails inside Settings Drawer ---
+        function renderGallery() {
+            galleryGrid.innerHTML = '';
+            state.images.forEach((url, idx) => {
+                const item = document.createElement('div');
+                item.className = `gallery-thumb relative aspect-video bg-slate-800 rounded-md overflow-hidden cursor-pointer hover:opacity-80 transition transform duration-200`;
+                item.innerHTML = `
+                    <img src="${url}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/150x100/1e293b/ffffff?text=Image+Error'" alt="壁紙 ${idx+1}"/>
+                    <div class="absolute inset-0 bg-black/20 flex items-end p-1">
+                        <span class="text-[9px] font-mono text-white/80 bg-black/50 px-1 rounded">#${idx+1}</span>
+                    </div>
+                `;
+                item.addEventListener('click', () => {
+                    state.currentIndex = idx;
+                    applyWallpaper(state.currentIndex);
+                    restartSlideshowTimer();
+                });
+                galleryGrid.appendChild(item);
+            });
+            updateCounterUI();
+        }
+
+        // --- Settings State Sync & LocalStorage ---
+        function initSettingsUI() {
+            csvUrlInput.value = state.csvUrl;
+            autoSlideToggle.checked = state.isSlideshowPlaying;
+            intervalRange.value = state.slideshowInterval;
+            intervalValText.textContent = `${state.slideshowInterval} 秒`;
+            randomSlideToggle.checked = state.isRandom;
+            clockFontSelect.value = state.fontStyle;
+            clockSizeRange.value = state.clockScale;
+            clockSizeText.textContent = `${state.clockScale}%`;
+            showSecondsToggle.checked = state.showSeconds;
+            format24hToggle.checked = state.format24h;
+            showDateToggle.checked = state.showDate;
+            overlayRange.value = state.overlayOpacity;
+            overlayValText.textContent = `${state.overlayOpacity}%`;
+
+            applyVisualSettings();
+        }
+
+        function applyVisualSettings() {
+            // Apply font
+            clockDisplay.className = `${state.fontStyle} font-light tracking-tight text-7xl sm:text-8xl md:text-9xl lg:text-[11rem] leading-none select-none`;
+            
+            // Apply scale
+            clockBox.style.transform = `scale(${state.clockScale / 100})`;
+            
+            // Apply overlay dark opacity
+            bgOverlay.style.opacity = state.overlayOpacity / 100;
+        }
+
+        // --- Event Listeners Setup ---
+        function setupEventListeners() {
+            // Drawer Controls
+            gearBtn.addEventListener('click', () => {
+                settingsPanel.classList.remove('translate-x-full');
+                gearBtn.classList.add('force-show');
+            });
+
+            closeSettingsBtn.addEventListener('click', closeSettings);
+
+            // Close settings when clicking outside on wallpaper
+            document.addEventListener('click', (e) => {
+                if (!settingsPanel.contains(e.target) && !gearBtn.contains(e.target) && !settingsPanel.classList.contains('translate-x-full')) {
+                    closeSettings();
+                }
+            });
+
+            function closeSettings() {
+                settingsPanel.classList.add('translate-x-full');
+                gearBtn.classList.remove('force-show');
+            }
+
+            // CSV reload
+            reloadCsvBtn.addEventListener('click', () => {
+                const newUrl = csvUrlInput.value.trim();
+                if (newUrl) {
+                    state.csvUrl = newUrl;
+                    localStorage.setItem('celebrity_wallpaper_csv', newUrl);
+                    fetchWallpapersFromCSV();
+                }
+            });
+
+            // Slideshow options
+            autoSlideToggle.addEventListener('change', (e) => {
+                state.isSlideshowPlaying = e.target.checked;
+                updatePauseIcon();
+                restartSlideshowTimer();
+            });
+
+            intervalRange.addEventListener('input', (e) => {
+                state.slideshowInterval = parseInt(e.target.value);
+                intervalValText.textContent = `${state.slideshowInterval} 秒`;
+                localStorage.setItem('clock_interval', state.slideshowInterval);
+                restartSlideshowTimer();
+            });
+
+            randomSlideToggle.addEventListener('change', (e) => {
+                state.isRandom = e.target.checked;
+                localStorage.setItem('clock_random', state.isRandom);
+            });
+
+            // Clock styling controls
+            clockFontSelect.addEventListener('change', (e) => {
+                state.fontStyle = e.target.value;
+                localStorage.setItem('clock_font', state.fontStyle);
+                applyVisualSettings();
+            });
+
+            clockSizeRange.addEventListener('input', (e) => {
+                state.clockScale = parseInt(e.target.value);
+                clockSizeText.textContent = `${state.clockScale}%`;
+                localStorage.setItem('clock_scale', state.clockScale);
+                applyVisualSettings();
+            });
+
+            showSecondsToggle.addEventListener('change', (e) => {
+                state.showSeconds = e.target.checked;
+                localStorage.setItem('clock_show_seconds', state.showSeconds);
+                updateClock();
+            });
+
+            format24hToggle.addEventListener('change', (e) => {
+                state.format24h = e.target.checked;
+                localStorage.setItem('clock_24h', state.format24h);
+                updateClock();
+            });
+
+            showDateToggle.addEventListener('change', (e) => {
+                state.showDate = e.target.checked;
+                localStorage.setItem('clock_show_date', state.showDate);
+                updateClock();
+            });
+
+            overlayRange.addEventListener('input', (e) => {
+                state.overlayOpacity = parseInt(e.target.value);
+                overlayValText.textContent = `${state.overlayOpacity}%`;
+                localStorage.setItem('clock_overlay', state.overlayOpacity);
+                applyVisualSettings();
+            });
+
+            // Bottom bar wallpaper controls
+            prevBgBtn.addEventListener('click', () => {
+                prevWallpaper();
+                restartSlideshowTimer();
+            });
+
+            nextBgBtn.addEventListener('click', () => {
+                nextWallpaper();
+                restartSlideshowTimer();
+            });
+
+            pauseSlideshowBtn.addEventListener('click', () => {
+                state.isSlideshowPlaying = !state.isSlideshowPlaying;
+                autoSlideToggle.checked = state.isSlideshowPlaying;
+                updatePauseIcon();
+                restartSlideshowTimer();
+            });
+
+            // Fullscreen Toggle
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        showToast("無法啟用全螢幕模式", "error");
+                    });
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            });
+
+            // Keyboard Shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+                
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    nextWallpaper();
+                    restartSlideshowTimer();
+                } else if (e.key === 'ArrowLeft') {
+                    prevWallpaper();
+                    restartSlideshowTimer();
+                } else if (e.key === 'f' || e.key === 'F') {
+                    fullscreenBtn.click();
+                } else if (e.key === 's' || e.key === 'S') {
+                    gearBtn.click();
+                }
+            });
+        }
+
+        function updatePauseIcon() {
+            if (state.isSlideshowPlaying) {
+                pauseIcon.className = "fa-solid fa-pause text-sm";
+            } else {
+                pauseIcon.className = "fa-solid fa-play text-sm";
+            }
+        }
+
+        // Notification Toast Helper
+        function showToast(message, type = "info") {
+            toastMessage.textContent = message;
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

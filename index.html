@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>我的網頁作品集 ✨ Wen's Whimsical Playground</title>
+    
+    <!-- Google Fonts: Fredoka / Nunito / Zen Maru Gothic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: {
+                            50: '#FDFCF7',
+                            100: '#FAF7EE',
+                            200: '#F4EEDC',
+                        },
+                        whim: {
+                            purple: '#A855F7',
+                            lavender: '#EDE9FE',
+                            yellow: '#FEF08A',
+                            peach: '#FFEDD5',
+                            coral: '#FB7185',
+                            mint: '#D1FAE5',
+                            sky: '#BAE6FD',
+                            ink: '#1E1B4B',
+                            cardBorder: '#312E81',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Nunito', 'Zen Maru Gothic', '-apple-system', 'BlinkMacSystemFont', 'PingFang TC', 'Microsoft JhengHei', 'sans-serif'],
+                        display: ['Fredoka', 'Zen Maru Gothic', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* Mobile scrollbar hiding */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Whimsical Dot Grid Canvas */
+        body {
+            background-color: #FAF8F5;
+            background-image: 
+                radial-gradient(#E2D9CC 1.2px, transparent 1.2px),
+                radial-gradient(#F3E8FF 2px, transparent 2px);
+            background-size: 24px 24px, 96px 96px;
+            background-position: 0 0, 48px 48px;
+        }
+
+        /* Whimsical Tactile Shadows (Neubrutalism-Lite / Playful Sticker Feel) */
+        .whim-card {
+            background: #FFFFFF;
+            border: 2px solid #2A2438;
+            box-shadow: 4px 4px 0px #2A2438;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .whim-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #2A2438;
+        }
+        .whim-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #2A2438;
+        }
+
+        .whim-btn {
+            border: 2px solid #2A2438;
+            box-shadow: 3px 3px 0px #2A2438;
+            transition: all 0.15s ease-in-out;
+        }
+        .whim-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px #2A2438;
+        }
+        .whim-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #2A2438;
+        }
+
+        /* Tape & Sticker Decor */
+        .washi-tape {
+            background: rgba(254, 240, 138, 0.85);
+            border: 1px dashed rgba(202, 138, 4, 0.4);
+            transform: rotate(-2deg);
+        }
+
+        /* Floating Animation */
+        @keyframes gentle-float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(1.5deg); }
+        }
+        .animate-float {
+            animation: gentle-float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="text-slate-900 min-h-screen flex flex-col font-sans selection:bg-purple-200 selection:text-purple-900 pb-24 sm:pb-12 relative overflow-x-hidden">
+
+    <!-- 浮動背景裝飾塗鴉符號 -->
+    <div class="fixed top-20 left-4 text-3xl opacity-30 pointer-events-none select-none animate-float">✦</div>
+    <div class="fixed top-48 right-6 text-2xl opacity-25 pointer-events-none select-none animate-float" style="animation-delay: 1.5s;">🎈</div>
+    <div class="fixed bottom-32 left-8 text-3xl opacity-20 pointer-events-none select-none animate-float" style="animation-delay: 2.5s;">🧸</div>
+    <div class="fixed top-96 right-10 text-2xl opacity-25 pointer-events-none select-none animate-float" style="animation-delay: 3s;">✨</div>
+
+    <!-- 手機頂部固定導覽 (Whimsical Header) -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-[#FAF8F5]/90 border-b-2 border-slate-900 px-4 py-3 sm:px-6">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
+            <!-- Logo & Brand -->
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-2xl bg-amber-300 border-2 border-slate-900 flex items-center justify-center text-slate-900 font-display font-black text-lg shadow-[2px_2px_0px_#2A2438]">
+                    W✦
+                </div>
+                <div>
+                    <span class="font-display font-black text-base text-slate-900 tracking-tight block leading-tight">我的網頁作品集</span>
+                    <span class="text-[11px] text-purple-700 font-bold block">Wen's Whimsical Lab 🎨</span>
+                </div>
+            </div>
+
+            <!-- 導覽按鈕 -->
+            <nav class="flex items-center gap-2">
+                <a href="#about" class="whim-btn px-3 py-1.5 rounded-xl bg-white hover:bg-amber-50 text-slate-900 text-xs font-bold flex items-center gap-1.5">
+                    <span>🧸</span>
+                    <span>關於我</span>
+                </a>
+                <a href="#catalog" class="whim-btn px-3.5 py-1.5 rounded-xl bg-purple-400 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-1.5">
+                    <span>📂</span>
+                    <span>作品目錄</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主內容區 -->
+    <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-12 w-full space-y-8">
+
+        <!-- ======================= Hero 標題區 ======================= -->
+        <section class="text-center pt-2 pb-1 relative">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border-2 border-slate-900 text-xs font-black shadow-[2px_2px_0px_#2A2438] mb-3">
+                <span class="animate-spin text-sm">🎡</span>
+                <span class="text-purple-900">MOBILE-FIRST INTERACTIVE PLAYGROUND</span>
+                <span class="text-amber-500">✨</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl font-display font-black text-slate-900 tracking-tight leading-tight mb-3">
+                我的網頁作品集
+                <span class="inline-block animate-bounce">🎈</span>
+            </h1>
+
+            <p class="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed font-semibold">
+                集結空間設計思維、有趣的前端互動應用、本地資安防護工具與旅行生活提案。
+            </p>
+        </section>
+
+        <!-- ======================= 關於我 (About Me - Whimsical Scrapbook Card) ======================= -->
+        <section id="about" class="scroll-mt-20">
+            <div class="whim-card rounded-3xl p-5 sm:p-7 relative overflow-hidden bg-gradient-to-br from-[#FFFDF9] via-[#FAF5FF] to-[#FFF1F2]">
+                
+                <!-- 紙膠帶裝飾 (Washi Tape) -->
+                <div class="absolute -top-3 left-8 washi-tape px-6 py-1 text-[10px] font-black text-amber-900 uppercase tracking-widest shadow-sm">
+                    HELLO WORLD! ✦
+                </div>
+
+                <div class="flex items-center gap-2 mb-4 pt-1 text-purple-800 font-display font-black text-xs sm:text-sm uppercase tracking-wider">
+                    <span>🌟</span> 創作者手札・About Creator
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+                    <!-- 個人頭像 -->
+                    <div class="relative shrink-0">
+                        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl overflow-hidden border-2 border-slate-900 shadow-[4px_4px_0px_#2A2438] bg-amber-100 rotate-[-2deg] hover:rotate-0 transition-transform">
+                            <img src="01-portfolio/wen-profile-photo.jpeg" 
+                                 alt="Wen Profile" 
+                                 class="w-full h-full object-cover object-center"
+                                 onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'">
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 bg-yellow-300 border-2 border-slate-900 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-full shadow-[2px_2px_0px_#2A2438]">
+                            Wen ✨
+                        </div>
+                    </div>
+
+                    <!-- 創作者文字內容 -->
+                    <div class="flex-grow text-center sm:text-left space-y-2.5">
+                        <div>
+                            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                <h2 class="text-xl sm:text-2xl font-display font-black text-slate-900">Wen 曾</h2>
+                                <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-900 font-black border border-purple-300">
+                                    建築空間設計師・前端應用創作者
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1 font-semibold">美學視覺 ✦ 3D空間建模 ✦ 互動體驗 ✦ 實戰AI應用</p>
+                        </div>
+
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                            具有豐富的建築與室內空間設計、視覺設計與 3D 建模實戰歷練。曾參與美國紐約室內設計案、知名建築師事務所及工研院前瞻專案。擅長將嚴謹工程結構思維與柔和溫暖的視覺美感結合，打造有溫度又實用的數位體驗。
+                        </p>
+
+                        <!-- 可愛技能標籤 -->
+                        <div class="flex flex-wrap gap-1.5 justify-center sm:justify-start pt-1">
+                            <span class="px-2.5 py-1 rounded-xl bg-amber-100 text-amber-900 text-xs font-bold border border-amber-300 shadow-[1px_1px_0px_#2A2438]">📐 建築室內空間</span>
+                            <span class="px-2.5 py-1 rounded-xl bg-purple-100 text-purple-900 text-xs font-bold border border-purple-300 shadow-[1px_1px_0px_#2A2438]">🎨 視覺美學提案</span>
+                            <span class="px-2.5 py-1 rounded-xl bg-pink-100 text-pink-900 text-xs font-bold border border-pink-300 shadow-[1px_1px_0px_#2A2438]">🧊 3D Max / SketchUp</span>
+                            <span class="px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-900 text-xs font-bold border border-emerald-300 shadow-[1px_1px_0px_#2A2438]">💻 現代前端應用</span>
+                            <span class="px-2.5 py-1 rounded-xl bg-sky-100 text-sky-900 text-xs font-bold border border-sky-300 shadow-[1px_1px_0px_#2A2438]">🤖 AI 職場實戰</span>
+                        </div>
+
+                        <!-- 外部按鈕 -->
+                        <div class="pt-2 flex flex-wrap gap-2.5 justify-center sm:justify-start">
+                            <a href="01-portfolio/wen-design-portfolio.html" class="whim-btn px-4 py-2 rounded-2xl bg-amber-300 hover:bg-amber-400 text-slate-900 text-xs font-black flex items-center gap-1.5">
+                                <span>📖</span>
+                                <span>翻閱建築與視覺設計完整作品集</span>
+                                <span>➔</span>
+                            </a>
+                            <a href="https://www.linkedin.com/in/wenchin-tseng/" target="_blank" class="whim-btn px-3.5 py-2 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold flex items-center gap-1.5">
+                                <i class="fa-brands fa-linkedin text-blue-600 text-sm"></i>
+                                <span>LinkedIn 交流</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= 作品目錄區 (Catalog) ======================= -->
+        <section id="catalog" class="scroll-mt-20 space-y-4">
+            
+            <!-- 標題與計數 -->
+            <div class="flex items-end justify-between">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-display font-black text-slate-900 flex items-center gap-2">
+                        <span>🎪</span>
+                        <span>作品展示目錄</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 font-semibold mt-0.5">每件作品均附專屬小圖卡、100字簡介、使用 API 與應用情境</p>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs px-2.5 py-1 rounded-full bg-purple-100 border border-purple-300 text-purple-900 font-black font-mono" id="totalCountBadge">
+                        共 12 件作品 ✦
+                    </span>
+                </div>
+            </div>
+
+            <!-- 手機橫向滾動膠囊按鈕 (Whimsical Pastel Filter Pills) -->
+            <div class="overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 py-1 flex items-center gap-2">
+                <button data-cat="all" class="cat-pill whim-btn shrink-0 px-3.5 py-1.5 rounded-2xl text-xs font-black bg-purple-500 text-white">
+                    🌈 全部 (12)
+                </button>
+                <button data-cat="portfolio" class="cat-pill whim-btn shrink-0 px-3.5 py-1.5 rounded-2xl text-xs font-black bg-white hover:bg-amber-50 text-slate-800">
+                    📐 作品集 (1)
+                </button>
+                <button data-cat="apps" class="cat-pill whim-btn shrink-0 px-3.5 py-1.5 rounded-2xl text-xs font-black bg-white hover:bg-purple-50 text-slate-800">
+                    🎮 互動應用 (5)
+                </button>
+                <button data-cat="tools" class="cat-pill whim-btn shrink-0 px-3.5 py-1.5 rounded-2xl text-xs font-black bg-white hover:bg-blue-50 text-slate-800">
+                    🛠️ 實用工具 (4)
+                </button>
+                <button data-cat="travel" class="cat-pill whim-btn shrink-0 px-3.5 py-1.5 rounded-2xl text-xs font-black bg-white hover:bg-emerald-50 text-slate-800">
+                    ✈️ 漫遊指南 (2)
+                </button>
+                <button data-cat="media" class="cat-pill whim-btn shrink-0 px-3.5 py-1.5 rounded-2xl text-xs font-black bg-white hover:bg-pink-50 text-slate-800">
+                    🎧 影音時光 (1)
+                </button>
+            </div>
+
+            <!-- ======================= 作品小圖卡清單 (12 Cards) ======================= -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2" id="cardsGrid">
+
+                <!-- 01: Wen 建築與視覺設計作品集 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="portfolio">
+                    <!-- 小圖卡頂部 -->
+                    <div class="h-32 relative bg-gradient-to-r from-amber-200 via-orange-200 to-yellow-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 個人作品集 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">Wen 建築與視覺作品集</h3>
+                            <span class="text-[11px] text-amber-900 font-mono font-bold">01-portfolio / portfolio.html</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            🏛️
+                        </div>
+                    </div>
+
+                    <!-- 內容主體 -->
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                本作品集呈現 Wen 於建築設計、室內裝修、視覺規劃與 3D 建模的多維度專業實力。彙整美國紐約室內專案、建築師事務所及工研院前瞻計畫，結合細膩美學與嚴謹工程思維，全方位呈現專業履歷與作品。
+                            </p>
+                        </div>
+
+                        <!-- 使用到的 API -->
+                        <div class="bg-amber-50/80 rounded-2xl p-2.5 border border-amber-200">
+                            <div class="text-[10px] font-black text-amber-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">HTML5 Semantic</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">JSON-LD Schema</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">Tailwind CSS 3.x</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">Smooth Scroll</span>
+                            </div>
+                        </div>
+
+                        <!-- 應用場景 -->
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                個人求職面試、建築與室內空間設計提案接洽、大型實務案場成果展示。
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 打開按鈕 -->
+                    <div class="p-4 pt-0">
+                        <a href="01-portfolio/wen-design-portfolio.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-amber-300 hover:bg-amber-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開作品集專案</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 02: 合併現金流量表分析儀表板 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="apps">
+                    <div class="h-32 relative bg-gradient-to-r from-emerald-200 via-teal-200 to-green-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 數據視覺化 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">現金流量表分析儀表板</h3>
+                            <span class="text-[11px] text-emerald-900 font-mono font-bold">02-apps / cash-flow-analysis</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            📊
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                專為投資分析與財務管理量身打造的視覺化看板。清晰拆解企業營業活動、投資活動與籌資活動之現金流動走向，直觀掌握自由現金流與期末現金餘額水位，幫助投資人快速洞察企業獲利體質與潛在營運風險。
+                            </p>
+                        </div>
+
+                        <div class="bg-emerald-50/80 rounded-2xl p-2.5 border border-emerald-200">
+                            <div class="text-[10px] font-black text-emerald-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-emerald-300 text-slate-800 text-[10px] font-bold">Chart.js Visual</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-emerald-300 text-slate-800 text-[10px] font-bold">HTML5 Canvas</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-emerald-300 text-slate-800 text-[10px] font-bold">Intl.NumberFormat</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-emerald-300 text-slate-800 text-[10px] font-bold">DOM Manipulation</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                股市投資人財報健康度評估、企業高層季度營運資金監控、商業財務分析與決策模擬。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="02-apps/cash-flow-analysis-dashboard.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-emerald-300 hover:bg-emerald-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開儀表板專案</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 03: 霓虹數字彈珠 (Neon 2048) -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="apps">
+                    <div class="h-32 relative bg-gradient-to-r from-purple-200 via-pink-200 to-rose-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 休閒遊戲 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">霓虹數字彈珠 (Neon 2048)</h3>
+                            <span class="text-[11px] text-purple-900 font-mono font-bold">02-apps / neon-2048-merge</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            👾
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                融合賽博龐克發光視覺與物理下落機制的數字合成彈珠遊戲。玩家透過點擊發射帶有數字的霓虹彈珠，碰撞相同數值即可觸發流暢融合動畫與連擊音效，挑戰合成 2048 極限高分，帶給玩家極致的視覺解壓快感。
+                            </p>
+                        </div>
+
+                        <div class="bg-purple-50/80 rounded-2xl p-2.5 border border-purple-200">
+                            <div class="text-[10px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-purple-300 text-slate-800 text-[10px] font-bold">HTML5 Canvas 2D</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-purple-300 text-slate-800 text-[10px] font-bold">RequestAnimationFrame</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-purple-300 text-slate-800 text-[10px] font-bold">Web Audio API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-purple-300 text-slate-800 text-[10px] font-bold">Touch Events</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                行動手機端休閒娛樂、手眼協調敏捷度鍛鍊、碎片化時間放鬆與街機復古遊戲體驗。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="02-apps/neon-2048-merge-game.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-purple-300 hover:bg-purple-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開遊戲立即遊玩</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 04: 楊老大飲料店點餐系統 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="apps">
+                    <div class="h-32 relative bg-gradient-to-r from-yellow-200 via-amber-200 to-orange-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 餐飲電商 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">楊老大飲料店點餐系統</h3>
+                            <span class="text-[11px] text-amber-900 font-mono font-bold">02-apps / drink-shop-order</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            🧋
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                專為手搖茶飲設計的直覺式點餐介面。支援茶飲選品、甜度、冰塊、珍珠椰果等配料細緻客製化規格，並具備即時計算購物車金額與送出訂單明細功能，介面親切流暢，完美模擬真實門市流暢點餐體驗。
+                            </p>
+                        </div>
+
+                        <div class="bg-amber-50/80 rounded-2xl p-2.5 border border-amber-200">
+                            <div class="text-[10px] font-black text-amber-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">LocalStorage API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">DOM Events</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">Intl Currency</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">Touch UI</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                實體手搖茶飲門市掃碼自助手點餐、外帶自取預訂介面、餐飲品牌點餐結帳原型驗證。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="02-apps/drink-shop-ordering.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-yellow-300 hover:bg-yellow-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開點餐系統</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 05: 台灣即時天氣觀測 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="apps">
+                    <div class="h-32 relative bg-gradient-to-r from-sky-200 via-blue-200 to-indigo-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 即時氣候 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">台灣即時天氣觀測</h3>
+                            <span class="text-[11px] text-sky-900 font-mono font-bold">02-apps / taiwan-live-weather</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            🌤️
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                整合台灣中央氣象署即時公開觀測數據，即刻呈現各縣市氣溫、降雨機率、風向與體感指數。介面搭配動態氣象圖示與細緻漸層背景，讓使用者一指輕滑即可掌握全台最新天氣變化，出行與防雨一手掌握。
+                            </p>
+                        </div>
+
+                        <div class="bg-sky-50/80 rounded-2xl p-2.5 border border-sky-200">
+                            <div class="text-[10px] font-black text-sky-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-sky-300 text-slate-800 text-[10px] font-bold">Fetch API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-sky-300 text-slate-800 text-[10px] font-bold">CWA Open Weather</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-sky-300 text-slate-800 text-[10px] font-bold">Geolocation API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-sky-300 text-slate-800 text-[10px] font-bold">Async / Await</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                每日晨間出門穿著與攜傘決策、假日戶外露營或健行天候預測、跨縣市商務出差氣溫速查。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="02-apps/taiwan-live-weather.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-sky-300 hover:bg-sky-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開即時天氣</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 06: 歡樂幸運大抽獎 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="apps">
+                    <div class="h-32 relative bg-gradient-to-r from-rose-200 via-pink-200 to-amber-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 派對娛樂 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">歡樂幸運大抽獎</h3>
+                            <span class="text-[11px] text-rose-900 font-mono font-bold">02-apps / party-lucky-draw</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            🎁
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                充滿節慶歡樂氣氛的活動抽獎神器。支援主辦方自由匯入自訂名單與獎項內容，具備炫麗旋轉光效、緊張倒數音效與漫天彩帶慶祝特效，並能即時記錄已中獎人員防重複，輕鬆炒熱派對現場最高潮氣氛。
+                            </p>
+                        </div>
+
+                        <div class="bg-rose-50/80 rounded-2xl p-2.5 border border-rose-200">
+                            <div class="text-[10px] font-black text-rose-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-rose-300 text-slate-800 text-[10px] font-bold">Web Audio (音效)</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-rose-300 text-slate-800 text-[10px] font-bold">Canvas Confetti</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-rose-300 text-slate-800 text-[10px] font-bold">LocalStorage API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-rose-300 text-slate-800 text-[10px] font-bold">Fullscreen API</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                企業年終尾牙春酒、校園班級社團團康聯誼、線上社群直播抽獎贈品互動現場。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="02-apps/party-lucky-draw.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-rose-300 hover:bg-rose-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開抽獎系統</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 07: 企業級資料去識別化工具 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="tools">
+                    <div class="h-32 relative bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 資安隱私 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">企業級資料去識別化工具</h3>
+                            <span class="text-[11px] text-blue-900 font-mono font-bold">03-tools / data-anonymizer-pro</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            🛡️
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                專為資安合規打造的高效資料去識別化工具。完全於使用者本地瀏覽器端運作，可精準辨識並遮蔽身分證字號、手機號碼、電子信箱及銀行帳號等多種個資，零資料外傳風險，確保企業與個人在處理機敏數據時的隱私安全。
+                            </p>
+                        </div>
+
+                        <div class="bg-blue-50/80 rounded-2xl p-2.5 border border-blue-200">
+                            <div class="text-[10px] font-black text-blue-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-blue-300 text-slate-800 text-[10px] font-bold">RegExp Matching</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-blue-300 text-slate-800 text-[10px] font-bold">Clipboard API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-blue-300 text-slate-800 text-[10px] font-bold">FileReader API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-blue-300 text-slate-800 text-[10px] font-bold">Blob & Download</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                企業內部資安個資脫敏、交件前客戶隱私遮蔽、AI 提示詞 (LLM Prompt) 機密個資安全過濾。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="03-tools/data-anonymizer-pro.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-blue-300 hover:bg-blue-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開資安去識別化工具</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 08: 本地端個資假名化工具 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="tools">
+                    <div class="h-32 relative bg-gradient-to-r from-teal-200 via-cyan-200 to-sky-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 資料假名化 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">本地端個資假名化工具</h3>
+                            <span class="text-[11px] text-teal-900 font-mono font-bold">03-tools / data-pseudonymizer</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            🎭
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                提供彈性假名替換機制的本地端資料轉換工具。透過自定義對照映射或雜湊代號，將真實姓名與機密識別碼轉換為虛擬代稱，並保留文字結構關聯性，便於後續統計分析與模型訓練，兼顧資料隱私性與內容可讀性。
+                            </p>
+                        </div>
+
+                        <div class="bg-teal-50/80 rounded-2xl p-2.5 border border-teal-200">
+                            <div class="text-[10px] font-black text-teal-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-teal-300 text-slate-800 text-[10px] font-bold">Web Crypto API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-teal-300 text-slate-800 text-[10px] font-bold">Regex Replacer</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-teal-300 text-slate-800 text-[10px] font-bold">LocalStorage API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-teal-300 text-slate-800 text-[10px] font-bold">Mapping Engine</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                法律案卷個資去名化、醫療學術統計去標識、向生成式 AI 諮詢前內部專案名稱代換。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="03-tools/data-pseudonymizer.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-teal-300 hover:bg-teal-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開假名化工具</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 09: 專注倒數計時器 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="tools">
+                    <div class="h-32 relative bg-gradient-to-r from-orange-200 via-amber-200 to-rose-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 專注時間 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">專注倒數計時器</h3>
+                            <span class="text-[11px] text-orange-900 font-mono font-bold">03-tools / focus-countdown-timer</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            ⏳
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                簡約純粹的專注力計時輔助工具。採用醒目大字體介面與低干擾配色，支援快速設定倒數時間、自訂提醒音效與進度環圈動畫，幫助使用者在工作、閱讀或冥想中隔絕雜訊，進入高效的心流專注狀態。
+                            </p>
+                        </div>
+
+                        <div class="bg-orange-50/80 rounded-2xl p-2.5 border border-orange-200">
+                            <div class="text-[10px] font-black text-orange-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-orange-300 text-slate-800 text-[10px] font-bold">Window.setInterval</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-orange-300 text-slate-800 text-[10px] font-bold">Web Audio API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-orange-300 text-slate-800 text-[10px] font-bold">Page Visibility</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-orange-300 text-slate-800 text-[10px] font-bold">SVG Circle Stroke</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                個人番茄鐘專注工作衝刺、讀書模擬考試限時測驗、會議簡報發言倒數管理。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="03-tools/focus-countdown-timer.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-orange-300 hover:bg-orange-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開專注計時器</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 10: 明星桌布數字時鐘 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="tools">
+                    <div class="h-32 relative bg-gradient-to-r from-pink-200 via-purple-200 to-indigo-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 桌面時鐘 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">明星桌布數字時鐘</h3>
+                            <span class="text-[11px] text-pink-900 font-mono font-bold">03-tools / wallpaper-clock</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            🕰️
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                融合視覺美學的高清桌布數位時鐘。支援全螢幕顯示、精美背景圖片切換與俐落的數位時間跳動，提供沉浸舒適的桌面視覺體驗，適合將舊手機或平板立於案頭化身為質感十足的科技氛圍鐘。
+                            </p>
+                        </div>
+
+                        <div class="bg-pink-50/80 rounded-2xl p-2.5 border border-pink-200">
+                            <div class="text-[10px] font-black text-pink-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-pink-300 text-slate-800 text-[10px] font-bold">Date & Time API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-pink-300 text-slate-800 text-[10px] font-bold">Fullscreen API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-pink-300 text-slate-800 text-[10px] font-bold">Screen Wake Lock</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-pink-300 text-slate-800 text-[10px] font-bold">CSS Transforms</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                辦公桌立式平板時間顯示、螢幕休眠保護兼時鐘、臥室夜間微光極簡數字鬧鐘。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="03-tools/celebrity-wallpaper-clock.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-pink-300 hover:bg-pink-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開桌布時鐘</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 11: 台南兩天一夜文青慢活之旅 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="travel">
+                    <div class="h-32 relative bg-gradient-to-r from-amber-200 via-orange-200 to-yellow-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 府城慢遊 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">台南兩天一夜慢活之旅</h3>
+                            <span class="text-[11px] text-amber-900 font-mono font-bold">04-travel / tainan-2day-slow</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            🏮
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                精選台南古都精華的慢步調行程指南。詳細串聯神農街歷史老屋、國華街經典小吃、美術館藝文巡禮與特色巷弄咖啡館，並提供具體交通建議與停留節奏，讓旅人能放慢腳步，深刻品味古城獨有的生活風情。
+                            </p>
+                        </div>
+
+                        <div class="bg-amber-50/80 rounded-2xl p-2.5 border border-amber-200">
+                            <div class="text-[10px] font-black text-amber-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">IntersectionObserver</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">CSS Scroll Snap</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">Geo URI Map Intent</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-amber-300 text-slate-800 text-[10px] font-bold">Responsive Grid</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                週末情侶小旅行、文青獨旅散步、府城在地排隊美食地圖即時導覽。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="04-travel/tainan-2day-slow-travel.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-amber-300 hover:bg-amber-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開台南慢活行程</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 12: 探索茨城・自然與文化指南 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="travel">
+                    <div class="h-32 relative bg-gradient-to-r from-emerald-200 via-teal-200 to-cyan-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 日本深度遊 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">探索茨城・自然與文化指南</h3>
+                            <span class="text-[11px] text-emerald-900 font-mono font-bold">04-travel / ibaraki-guide</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            🌸
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                專為日本關東深度漫遊量身撰寫的旅遊指引。深入介紹常陸海濱公園琉璃唐草花海、日本三名園之偕樂園、大洗磯前神社海上鳥居等知名美景，並涵蓋特色伴手禮與交通指南，提供一目了然且圖文並茂的行前參考。
+                            </p>
+                        </div>
+
+                        <div class="bg-emerald-50/80 rounded-2xl p-2.5 border border-emerald-200">
+                            <div class="text-[10px] font-black text-emerald-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-emerald-300 text-slate-800 text-[10px] font-bold">Responsive Layout</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-emerald-300 text-slate-800 text-[10px] font-bold">Web Share API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-emerald-300 text-slate-800 text-[10px] font-bold">FontAwesome Icons</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-emerald-300 text-slate-800 text-[10px] font-bold">Lazy Image Load</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                日本東京近郊自由行攻略規劃、季節花海攝影景點指引、深度日式庭園古蹟巡禮。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="04-travel/ibaraki-travel-guide.html" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-emerald-300 hover:bg-emerald-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開茨城旅遊指南</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 13: Beneath The Current 影音多媒體 -->
+                <div class="work-card whim-card rounded-3xl overflow-hidden flex flex-col justify-between" data-cat="media">
+                    <div class="h-32 relative bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 border-b-2 border-slate-900 p-4 flex items-center justify-between">
+                        <div class="relative z-10">
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-white border border-slate-900 text-slate-900 shadow-[1px_1px_0px_#2A2438] mb-1">
+                                ✦ 氛圍影音 ✦
+                            </span>
+                            <h3 class="font-display font-black text-lg text-slate-900 leading-tight">Beneath The Current</h3>
+                            <span class="text-[11px] text-indigo-900 font-mono font-bold">05-media / ambient-music.mp4</span>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-white border-2 border-slate-900 shadow-[2px_2px_0px_#2A2438] flex items-center justify-center text-2xl shrink-0">
+                            🎧
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-5 flex-grow space-y-3">
+                        <div>
+                            <div class="text-[11px] font-black text-purple-900 mb-1 flex items-center gap-1">
+                                <span>📝</span> 100字作品簡介
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                                沉浸式環境音效與視覺動態影片。透過低頻流動的合成器聲響與深海流光意象，營造安寧靜謐的心靈沉思空間，能有效隔絕外界環境嘈雜干擾，帶來深層平靜，適合專案開發與專注衝刺時播放。
+                            </p>
+                        </div>
+
+                        <div class="bg-indigo-50/80 rounded-2xl p-2.5 border border-indigo-200">
+                            <div class="text-[10px] font-black text-indigo-900 mb-1 flex items-center gap-1">
+                                <span>🧰</span> 使用到的 API / 核心技術
+                            </div>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-indigo-300 text-slate-800 text-[10px] font-bold">HTML5 Video API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-indigo-300 text-slate-800 text-[10px] font-bold">Media Session</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-indigo-300 text-slate-800 text-[10px] font-bold">Fullscreen API</span>
+                                <span class="px-2 py-0.5 rounded-md bg-white border border-indigo-300 text-slate-800 text-[10px] font-bold">H.264 / AAC Codec</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="text-[11px] font-black text-rose-700 mb-0.5 flex items-center gap-1">
+                                <span>🎯</span> 應用場景
+                            </div>
+                            <p class="text-xs text-slate-600 font-semibold">
+                                程式開發與深度寫作背景伴奏音樂、瑜珈冥想白噪音營造、放鬆減壓沉浸式體驗。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 pt-0">
+                        <a href="05-media/beneath-the-current-ambient-music.mp4" target="_blank" class="whim-btn w-full py-2.5 px-4 rounded-2xl bg-indigo-300 hover:bg-indigo-400 text-slate-900 font-display font-black text-xs sm:text-sm flex items-center justify-center gap-2">
+                            <span>打開並播放影片</span>
+                            <span>➔</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 手機底部浮動快捷導航列 (Whimsical Mobile Bottom Bar) -->
+    <div class="fixed bottom-3 left-1/2 -translate-x-1/2 z-40 w-[90%] max-w-sm sm:hidden">
+        <div class="whim-card rounded-3xl p-2 px-5 flex items-center justify-around text-xs bg-white/95 backdrop-blur-md">
+            <a href="#about" class="flex flex-col items-center gap-0.5 text-slate-800 font-black py-1">
+                <span class="text-base">🧸</span>
+                <span class="text-[10px]">關於我</span>
+            </a>
+            <div class="w-0.5 h-6 bg-slate-300 rounded-full"></div>
+            <a href="#catalog" class="flex flex-col items-center gap-0.5 text-purple-700 font-black py-1">
+                <span class="text-base">📂</span>
+                <span class="text-[10px]">作品目錄</span>
+            </a>
+            <div class="w-0.5 h-6 bg-slate-300 rounded-full"></div>
+            <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex flex-col items-center gap-0.5 text-amber-600 font-black py-1">
+                <span class="text-base">🎈</span>
+                <span class="text-[10px]">回頂部</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 頁尾 -->
+    <footer class="border-t-2 border-slate-900 bg-white py-6 text-center text-xs text-slate-600">
+        <div class="max-w-5xl mx-auto px-4 space-y-1">
+            <p class="font-bold">© 2026 Wen. 我的網頁作品集 ✨ All Rights Reserved.</p>
+            <p class="text-[11px] text-purple-700 font-semibold">Whimsical Creative Style & Mobile-First Web Experience</p>
+        </div>
+    </footer>
+
+    <!-- 分類切換互動邏輯 -->
+    <script>
+        const catPills = document.querySelectorAll('.cat-pill');
+        const workCards = document.querySelectorAll('.work-card');
+        const countBadge = document.getElementById('totalCountBadge');
+
+        catPills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                const targetCat = pill.getAttribute('data-cat');
+
+                catPills.forEach(p => {
+                    p.classList.remove('bg-purple-500', 'text-white');
+                    p.classList.add('bg-white', 'text-slate-800');
+                });
+                pill.classList.remove('bg-white', 'text-slate-800');
+                pill.classList.add('bg-purple-500', 'text-white');
+
+                let count = 0;
+                workCards.forEach(card => {
+                    const cardCat = card.getAttribute('data-cat');
+                    if (targetCat === 'all' || cardCat === targetCat) {
+                        card.style.display = 'flex';
+                        count++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                if (countBadge) {
+                    countBadge.textContent = `共 ${count} 件作品 ✦`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

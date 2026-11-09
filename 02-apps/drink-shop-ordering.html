@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楊老大飲料店 - 用心泡好茶，老大最堅持！</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font: Noto Sans TC -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            amber: '#f59e0b',
+                            warm: '#fffbeb',
+                            dark: '#78350f',
+                            green: '#15803d',
+                            red: '#dc2626'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #fefce8;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col">
+
+    <!-- Top Announcement Banner -->
+    <div class="bg-gradient-to-r from-red-600 via-amber-500 to-red-600 text-white py-2 px-4 text-center font-bold text-sm md:text-base shadow-md flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-fire animate-bounce text-yellow-300"></i>
+        <span>🔥 今日限定！全品項買一送一（優惠至今日午夜 24:00 截止）| 外送專線熱烈預訂中！</span>
+    </div>
+
+    <!-- Header Section -->
+    <header class="bg-amber-100 border-b-4 border-amber-400 sticky top-0 z-30 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- Brand Logo & Slogan -->
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 md:w-14 md:h-14 bg-amber-400 rounded-full flex items-center justify-center border-2 border-amber-600 shadow-inner overflow-hidden flex-shrink-0">
+                    <img id="brand-logo-img" src="" alt="楊老大 Logo" class="w-full h-full object-cover hidden" onerror="this.classList.add('hidden'); document.getElementById('brand-logo-fallback').classList.remove('hidden');">
+                    <span id="brand-logo-fallback" class="text-2xl md:text-3xl font-black text-amber-900">楊</span>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black text-amber-950 tracking-wider">楊老大 <span class="text-lg md:text-xl font-bold text-amber-800">飲料店</span></h1>
+                    <p class="text-xs md:text-sm font-bold text-amber-800 flex items-center gap-1">
+                        <i class="fa-solid fa-leaf text-green-600"></i> 用心泡好茶，老大最堅持！
+                    </p>
+                </div>
+            </div>
+
+            <!-- Cart Trigger Button (Mobile Floating & Desktop Nav) -->
+            <button onclick="toggleCart()" class="relative bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-full shadow-lg transition duration-200 flex items-center space-x-2">
+                <i class="fa-solid fa-basket-shopping text-lg"></i>
+                <span class="hidden md:inline">點餐購物車</span>
+                <span id="cart-count" class="bg-red-600 text-white text-xs font-black rounded-full h-5 w-5 flex items-center justify-center">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <div class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Left Menu List Section (Takes 2 Columns on Desktop) -->
+        <main class="lg:col-span-2 space-y-8">
+            
+            <!-- Category Tabs / Navigation -->
+            <div class="flex space-x-2 overflow-x-auto pb-2 scrollbar-none border-b border-amber-200">
+                <a href="#cat-0" class="bg-amber-500 text-white font-bold px-4 py-2 rounded-full whitespace-nowrap text-sm shadow hover:bg-amber-600 transition">🔥 老大招牌推薦</a>
+                <a href="#cat-1" class="bg-white text-amber-900 border border-amber-300 font-bold px-4 py-2 rounded-full whitespace-nowrap text-sm shadow-sm hover:bg-amber-100 transition">🍃 經典原茶系列</a>
+                <a href="#cat-2" class="bg-white text-amber-900 border border-amber-300 font-bold px-4 py-2 rounded-full whitespace-nowrap text-sm shadow-sm hover:bg-amber-100 transition">🧋 濃郁奶茶與鮮奶</a>
+                <a href="#cat-3" class="bg-white text-amber-900 border border-amber-300 font-bold px-4 py-2 rounded-full whitespace-nowrap text-sm shadow-sm hover:bg-amber-100 transition">🍋 消暑冰沙與果茶</a>
+            </div>
+
+            <!-- Menu Container dynamically populated -->
+            <div id="menu-container" class="space-y-8">
+                <!-- Javascript will inject categories here -->
+            </div>
+
+            <!-- Sugar & Ice Options Description Card -->
+            <div class="bg-amber-50 rounded-2xl p-5 border-2 border-dashed border-amber-300 shadow-sm">
+                <h3 class="text-lg font-bold text-amber-900 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-amber-600"></i> 甜度與冰量選擇說明
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-white p-3 rounded-xl shadow-xs border border-amber-100">
+                        <p class="font-bold text-amber-800 mb-1"><i class="fa-solid fa-cube text-blue-400"></i> 冰量調整：</p>
+                        <p class="text-gray-600">去冰 / 微冰 / 少冰 / 正常冰</p>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl shadow-xs border border-amber-100">
+                        <p class="font-bold text-amber-800 mb-1"><i class="fa-solid fa-spoon text-yellow-500"></i> 甜度調整：</p>
+                        <p class="text-gray-600">微糖 / 半糖 / 少糖 / 全糖</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Side: Order Summary / Sidebar -->
+        <aside class="lg:col-span-1">
+            <div class="sticky top-24 bg-white rounded-2xl shadow-xl border-2 border-amber-200 overflow-hidden">
+                <!-- Sidebar Header -->
+                <div class="bg-amber-500 text-white px-5 py-4 flex justify-between items-center">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-list"></i> 您的訂單單據
+                    </h2>
+                    <span id="cart-total-badge" class="bg-amber-700 text-xs px-2.5 py-1 rounded-full font-semibold">0 項商品</span>
+                </div>
+
+                <!-- Cart Items Container -->
+                <div id="cart-items" class="p-4 max-h-80 overflow-y-auto custom-scrollbar divide-y divide-gray-100">
+                    <div class="text-center py-8 text-gray-400">
+                        <i class="fa-solid fa-mug-hot text-4xl mb-2 text-amber-200"></i>
+                        <p>購物車空空的，快去選購好茶吧！</p>
+                    </div>
+                </div>
+
+                <!-- Footer Summary & Checkout -->
+                <div class="p-5 bg-amber-50 border-t border-amber-100 space-y-4">
+                    <div class="flex justify-between items-center text-gray-600 text-sm">
+                        <span>小計：</span>
+                        <span id="subtotal-price" class="font-bold text-gray-800">NT$ 0</span>
+                    </div>
+                    <div class="flex justify-between items-center text-gray-600 text-sm">
+                        <span>今日限定 (買一送一折扣)：</span>
+                        <span id="discount-price" class="font-bold text-red-600">- NT$ 0</span>
+                    </div>
+                    <div class="flex justify-between items-center text-lg font-black text-amber-950 border-t border-amber-200 pt-2">
+                        <span>總計金額：</span>
+                        <span id="total-price" class="text-2xl text-red-600">NT$ 0</span>
+                    </div>
+
+                    <button onclick="openCheckoutModal()" id="checkout-btn" disabled class="w-full bg-gray-300 text-gray-500 font-bold py-3 rounded-xl shadow transition duration-200 flex items-center justify-center space-x-2 cursor-not-allowed">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>確認送出訂單</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Footer & Store Info Section -->
+    <footer class="bg-amber-950 text-amber-100 mt-12 border-t-4 border-amber-500">
+        <div class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            <!-- Address & Phone -->
+            <div>
+                <h3 class="text-amber-400 font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-store"></i> 店家資訊
+                </h3>
+                <ul class="space-y-2 text-amber-200">
+                    <li><i class="fa-solid fa-phone text-amber-400 w-5"></i> 外送專線：<a href="tel:0212345678" class="hover:underline font-bold text-white">02-1234-5678</a></li>
+                    <li><i class="fa-solid fa-location-dot text-amber-400 w-5"></i> 地址：台北市大安區和平路123號</li>
+                    <li><i class="fa-solid fa-clock text-amber-400 w-5"></i> 營業時間：10:00 - 22:00</li>
+                </ul>
+            </div>
+
+            <!-- Promotions -->
+            <div>
+                <h3 class="text-amber-400 font-bold text-lg mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-bullhorn"></i> 最新促銷活動
+                </h3>
+                <div class="bg-amber-900/50 p-3 rounded-xl border border-amber-800 text-amber-200 leading-relaxed">
+                    🔥 <strong class="text-white">今日限時震撼優惠！</strong><br>
+                    全品項飲品享有 <span class="text-amber-400 font-bold">買一送一</span> 優惠！活動僅到 <span class="text-red-400 font-bold">今日午夜 24:00 截止</span>，歡迎搶先下單預訂！
+                </div>
+            </div>
+
+            <!-- QR Code Simulation -->
+            <div class="flex flex-col items-center md:items-end justify-center">
+                <div class="bg-white p-2 rounded-xl shadow-md text-center">
+                    <div class="w-24 h-24 bg-gray-200 rounded border flex items-center justify-center text-gray-800 font-bold text-xs p-2">
+                        <i class="fa-solid fa-qrcode text-5xl text-gray-800"></i>
+                    </div>
+                    <p class="text-[10px] text-gray-600 font-bold mt-1">掃碼線上點餐/優惠</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-amber-900 py-3 text-center text-xs text-amber-400 border-t border-amber-800">
+            &copy; 2026 楊老大飲料店 版權所有. 用心泡好茶，老大最堅持！
+        </div>
+    </footer>
+
+    <!-- Add to Cart Item Customization Modal -->
+    <div id="item-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full overflow-hidden shadow-2xl animate-fade-in">
+            <!-- Modal Header -->
+            <div class="bg-amber-500 text-white p-4 flex justify-between items-center">
+                <h3 id="modal-item-name" class="text-xl font-bold">飲品名稱</h3>
+                <button onclick="closeModal()" class="text-white/80 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
+                <!-- Size Selector -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">容量選擇：</label>
+                    <div id="size-options" class="grid grid-cols-3 gap-2">
+                        <!-- Dynamic Size Buttons -->
+                    </div>
+                </div>
+
+                <!-- Sugar Selector -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">甜度調整：</label>
+                    <div id="sugar-options" class="grid grid-cols-4 gap-2 text-xs">
+                        <button onclick="selectOption('sugar', '微糖')" class="sugar-btn p-2 rounded-lg border text-center font-semibold border-amber-400 bg-amber-50 text-amber-900">微糖</button>
+                        <button onclick="selectOption('sugar', '半糖')" class="sugar-btn p-2 rounded-lg border text-center font-semibold border-gray-200 hover:border-amber-400">半糖</button>
+                        <button onclick="selectOption('sugar', '少糖')" class="sugar-btn p-2 rounded-lg border text-center font-semibold border-gray-200 hover:border-amber-400">少糖</button>
+                        <button onclick="selectOption('sugar', '全糖')" class="sugar-btn p-2 rounded-lg border text-center font-semibold border-gray-200 hover:border-amber-400">全糖</button>
+                    </div>
+                </div>
+
+                <!-- Ice Selector -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">冰量調整：</label>
+                    <div id="ice-options" class="grid grid-cols-4 gap-2 text-xs">
+                        <button onclick="selectOption('ice', '去冰')" class="ice-btn p-2 rounded-lg border text-center font-semibold border-amber-400 bg-amber-50 text-amber-900">去冰</button>
+                        <button onclick="selectOption('ice', '微冰')" class="ice-btn p-2 rounded-lg border text-center font-semibold border-gray-200 hover:border-amber-400">微冰</button>
+                        <button onclick="selectOption('ice', '少冰')" class="ice-btn p-2 rounded-lg border text-center font-semibold border-gray-200 hover:border-amber-400">少冰</button>
+                        <button onclick="selectOption('ice', '正常冰')" class="ice-btn p-2 rounded-lg border text-center font-semibold border-gray-200 hover:border-amber-400">正常冰</button>
+                    </div>
+                </div>
+
+                <!-- Quantity -->
+                <div class="flex justify-between items-center pt-2">
+                    <span class="text-sm font-bold text-gray-700">數量：</span>
+                    <div class="flex items-center space-x-3 bg-gray-100 rounded-lg p-1">
+                        <button onclick="changeQty(-1)" class="w-8 h-8 rounded-md bg-white shadow flex items-center justify-center font-bold text-gray-700 hover:bg-amber-100">-</button>
+                        <span id="modal-qty" class="font-bold w-6 text-center">1</span>
+                        <button onclick="changeQty(1)" class="w-8 h-8 rounded-md bg-white shadow flex items-center justify-center font-bold text-gray-700 hover:bg-amber-100">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-gray-50 border-t flex items-center justify-between">
+                <div>
+                    <span class="text-xs text-gray-500">金額合計</span>
+                    <p id="modal-item-price" class="text-xl font-black text-red-600">NT$ 0</p>
+                </div>
+                <button onclick="confirmAddToCart()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg transition">
+                    加入購物車
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
+            <h3 class="text-xl font-bold text-amber-950 mb-4 border-b pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-circle-check text-green-600"></i> 確認完成訂單
+            </h3>
+            
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">聯絡姓名</label>
+                    <input type="text" id="cust-name" placeholder="例：楊先生" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-amber-400 outline-none">
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">電話號碼</label>
+                    <input type="tel" id="cust-phone" placeholder="0912-345-678" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-amber-400 outline-none">
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">取餐方式</label>
+                    <select id="cust-type" class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-amber-400 outline-none">
+                        <option value="自取">現場自取</option>
+                        <option value="外送">外送專線服務</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">備註需求</label>
+                    <textarea id="cust-note" placeholder="例如：少熱、袋子分裝..." class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-amber-400 outline-none h-16"></textarea>
+                </div>
+                <!-- Google Sheet Web App URL 設定 (可預設填入) -->
+                <div>
+                    <label class="block font-bold text-xs text-gray-500 mb-1"><i class="fa-solid fa-table-cells text-green-600"></i> Google 試算表 API 網址 (GAS Web App URL)</label>
+                    <input type="url" id="gas-url" value="https://script.google.com/macros/s/AKfycbweAbW0ZWhlG9HHh-loN15N-ueSO9r_V-9_JxzwoxHBitBkPgHQtxD_2W2QocDy86D1/exec" placeholder="https://script.google.com/macros/s/.../exec" class="w-full border rounded-lg p-2 text-xs focus:ring-2 focus:ring-amber-400 outline-none bg-gray-50">
+                </div>
+            </div>
+
+            <div class="mt-6 flex space-x-3">
+                <button onclick="closeCheckoutModal()" class="w-1/2 border border-gray-300 font-bold py-2.5 rounded-xl hover:bg-gray-50">取消</button>
+                <button onclick="submitOrder()" id="submit-btn" class="w-1/2 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow flex items-center justify-center space-x-2">
+                    <span>送出訂單</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert / Toast Message Container -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-gray-900 text-white px-5 py-3 rounded-xl shadow-2xl z-50 transition transform translate-y-20 opacity-0 flex items-center space-x-2">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-green-400"></i>
+        <span id="toast-msg">已成功加入購物車！</span>
+    </div>
+
+    <script>
+        // Menu Data based on the Menu Image
+        const menuData = [
+            {
+                category: "老大招牌推薦",
+                icon: "🔥",
+                items: [
+                    { name: "老大波霸奶茶", tag: "", prices: { S: 35, M: 45, L: 55 }, desc: "香濃奶茶搭配 Q 彈手工波霸", color: "from-amber-700 to-amber-900" },
+                    { name: "楊老大特調水果茶", tag: "推薦", prices: { S: 45, M: 55, L: 65 }, desc: "新鮮果香與特選茶湯完美融合", color: "from-orange-500 to-amber-600" },
+                    { name: "濃郁手作黑糖鮮奶", tag: "", prices: { S: 50, M: 60, L: 70 }, desc: "手炒黑糖紋路，純鮮奶濃厚滋味", color: "from-yellow-900 to-amber-950" }
+                ]
+            },
+            {
+                category: "經典原茶系列",
+                icon: "🍃",
+                items: [
+                    { name: "炭焙鐵觀音", tag: "", prices: { S: 25, M: 30, L: 35 }, desc: "深邃炭焙香氣，韻味悠長", color: "from-amber-900 to-yellow-900" },
+                    { name: "茉莉綠茶", tag: "", prices: { S: 20, M: 25, L: 30 }, desc: "清新茉莉花香，回甘順口", color: "from-green-500 to-emerald-600" },
+                    { name: "熟成阿薩姆紅茶", tag: "", prices: { S: 20, M: 25, L: 30 }, desc: "經典濃郁茶感，溫潤甘甜", color: "from-red-700 to-amber-800" },
+                    { name: "頂級高山金萱", tag: "", prices: { S: 25, M: 35, L: 40 }, desc: "高山清香，帶有淡淡奶香氣", color: "from-yellow-600 to-green-600" }
+                ]
+            },
+            {
+                category: "濃郁奶茶與鮮奶",
+                icon: "🧋",
+                items: [
+                    { name: "英式奶茶", tag: "", prices: { S: 35, M: 45, L: 50 }, desc: "經典英式濃郁風味", color: "from-amber-600 to-orange-700" },
+                    { name: "茉香奶綠", tag: "", prices: { S: 35, M: 45, L: 50 }, desc: "花香與奶香交織的優雅選擇", color: "from-emerald-600 to-teal-700" },
+                    { name: "觀音拿鐵", tag: "", prices: { S: 45, M: 55, L: 65 }, desc: "重焙鐵觀音融合優質鮮奶", color: "from-amber-800 to-stone-700" },
+                    { name: "鮮奶紅茶", tag: "", prices: { S: 45, M: 55, L: 65 }, desc: "阿薩姆紅茶與香醇鮮奶的經典比例", color: "from-amber-700 to-red-800" }
+                ]
+            },
+            {
+                category: "消暑冰沙與果茶",
+                icon: "🍋",
+                items: [
+                    { name: "爆爽檸檬青茶", tag: "", prices: { S: 35, M: 45, L: 55 }, desc: "新鮮檸檬榨汁，酸甜解膩", color: "from-lime-500 to-green-600" },
+                    { name: "芒果冰沙", tag: "季節限定", prices: { S: 50, M: 60, L: 70 }, desc: "盛夏芒果香甜濃郁盛宴", color: "from-amber-400 to-yellow-500" },
+                    { name: "翡翠百香雙響炮", tag: "", prices: { S: 40, M: 50, L: 60 }, desc: "百香果粒與雙重配料口口感十足", color: "from-yellow-500 to-orange-600" }
+                ]
+            }
+        ];
+
+        // State
+        let cart = [];
+        let currentItem = null;
+        let selectedSize = 'M';
+        let selectedSugar = '微糖';
+        let selectedIce = '去冰';
+        let modalQty = 1;
+
+        // Render Menu
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = '';
+
+            menuData.forEach((cat, catIdx) => {
+                const catEl = document.createElement('div');
+                catEl.id = `cat-${catIdx}`;
+                catEl.className = 'space-y-4';
+
+                catEl.innerHTML = `
+                    <h2 class="text-xl font-black text-amber-950 flex items-center gap-2 border-l-4 border-amber-500 pl-3">
+                        <span>${cat.icon}</span> ${cat.category}
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${cat.items.map((item, itemIdx) => `
+                            <div class="bg-white rounded-2xl p-4 shadow-sm border border-amber-100 hover:shadow-md transition flex justify-between items-center">
+                                <div class="space-y-1 pr-2">
+                                    <div class="flex items-center gap-2">
+                                        <h3 class="font-bold text-gray-800 text-base">${item.name}</h3>
+                                        ${item.tag ? `<span class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded font-bold">${item.tag}</span>` : ''}
+                                    </div>
+                                    <p class="text-xs text-gray-500">${item.desc}</p>
+                                    <div class="flex space-x-3 text-xs font-bold text-amber-900 pt-2">
+                                        ${item.prices.S ? `<span>S: $${item.prices.S}</span>` : ''}
+                                        ${item.prices.M ? `<span>M: $${item.prices.M}</span>` : ''}
+                                        ${item.prices.L ? `<span>L: $${item.prices.L}</span>` : ''}
+                                    </div>
+                                </div>
+                                <button onclick="openModal(${catIdx}, ${itemIdx})" class="bg-amber-500 hover:bg-amber-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow flex-shrink-0 transition active:scale-95">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(catEl);
+            });
+        }
+
+        // Open Customization Modal
+        function openModal(catIdx, itemIdx) {
+            currentItem = menuData[catIdx].items[itemIdx];
+            document.getElementById('modal-item-name').innerText = currentItem.name;
+            
+            // Available sizes
+            const sizes = Object.keys(currentItem.prices);
+            selectedSize = sizes.includes('M') ? 'M' : sizes[0];
+            modalQty = 1;
+            document.getElementById('modal-qty').innerText = modalQty;
+
+            renderSizeButtons(sizes);
+            updateModalPrice();
+            
+            document.getElementById('item-modal').classList.remove('hidden');
+        }
+
+        function renderSizeButtons(sizes) {
+            const container = document.getElementById('size-options');
+            container.innerHTML = sizes.map(size => `
+                <button onclick="selectSize('${size}')" class="size-btn p-2.5 rounded-xl border text-center font-bold text-sm ${selectedSize === size ? 'border-amber-500 bg-amber-50 text-amber-900 ring-2 ring-amber-400' : 'border-gray-200 text-gray-700 hover:border-amber-300'}">
+                    ${size} (NT$ ${currentItem.prices[size]})
+                </button>
+            `).join('');
+        }
+
+        function selectSize(size) {
+            selectedSize = size;
+            const sizes = Object.keys(currentItem.prices);
+            renderSizeButtons(sizes);
+            updateModalPrice();
+        }
+
+        function selectOption(type, val) {
+            if (type === 'sugar') {
+                selectedSugar = val;
+                document.querySelectorAll('.sugar-btn').forEach(btn => {
+                    if (btn.innerText === val) {
+                        btn.className = 'sugar-btn p-2 rounded-lg border text-center font-semibold border-amber-400 bg-amber-50 text-amber-900';
+                    } else {
+                        btn.className = 'sugar-btn p-2 rounded-lg border text-center font-semibold border-gray-200 hover:border-amber-400 text-gray-700';
+                    }
+                });
+            } else if (type === 'ice') {
+                selectedIce = val;
+                document.querySelectorAll('.ice-btn').forEach(btn => {
+                    if (btn.innerText === val) {
+                        btn.className = 'ice-btn p-2 rounded-lg border text-center font-semibold border-amber-400 bg-amber-50 text-amber-900';
+                    } else {
+                        btn.className = 'ice-btn p-2 rounded-lg border text-center font-semibold border-gray-200 hover:border-amber-400 text-gray-700';
+                    }
+                });
+            }
+        }
+
+        function changeQty(delta) {
+            if (modalQty + delta >= 1) {
+                modalQty += delta;
+                document.getElementById('modal-qty').innerText = modalQty;
+                updateModalPrice();
+            }
+        }
+
+        function updateModalPrice() {
+            const unitPrice = currentItem.prices[selectedSize];
+            const total = unitPrice * modalQty;
+            document.getElementById('modal-item-price').innerText = `NT$ ${total}`;
+        }
+
+        function closeModal() {
+            document.getElementById('item-modal').classList.add('hidden');
+        }
+
+        // Add to Cart Logic
+        function confirmAddToCart() {
+            const unitPrice = currentItem.prices[selectedSize];
+            const existingIndex = cart.findIndex(i => 
+                i.name === currentItem.name && 
+                i.size === selectedSize && 
+                i.sugar === selectedSugar && 
+                i.ice === selectedIce
+            );
+
+            if (existingIndex > -1) {
+                cart[existingIndex].qty += modalQty;
+            } else {
+                cart.push({
+                    name: currentItem.name,
+                    size: selectedSize,
+                    sugar: selectedSugar,
+                    ice: selectedIce,
+                    price: unitPrice,
+                    qty: modalQty
+                });
+            }
+
+            closeModal();
+            updateCartUI();
+            showToast(`已新增 ${currentItem.name} 至購物車！`);
+        }
+
+        // Update Cart UI & Calculate Buy 1 Get 1 Free Discount
+        function updateCartUI() {
+            const cartContainer = document.getElementById('cart-items');
+            const cartCountBadge = document.getElementById('cart-count');
+            const cartTotalBadge = document.getElementById('cart-total-badge');
+            const subtotalEl = document.getElementById('subtotal-price');
+            const discountEl = document.getElementById('discount-price');
+            const totalEl = document.getElementById('total-price');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            let totalQty = 0;
+            let subtotal = 0;
+            let allItemPrices = [];
+
+            cartContainer.innerHTML = '';
+
+            if (cart.length === 0) {
+                cartContainer.innerHTML = `
+                    <div class="text-center py-8 text-gray-400">
+                        <i class="fa-solid fa-mug-hot text-4xl mb-2 text-amber-200"></i>
+                        <p>購物車空空的，快去選購好茶吧！</p>
+                    </div>
+                `;
+                checkoutBtn.disabled = true;
+                checkoutBtn.className = "w-full bg-gray-300 text-gray-500 font-bold py-3 rounded-xl shadow transition duration-200 flex items-center justify-center space-x-2 cursor-not-allowed";
+            } else {
+                cart.forEach((item, index) => {
+                    totalQty += item.qty;
+                    const itemTotal = item.price * item.qty;
+                    subtotal += itemTotal;
+
+                    // Push each item price individually for Buy 1 Get 1 Free calculation
+                    for (let i = 0; i < item.qty; i++) {
+                        allItemPrices.push(item.price);
+                    }
+
+                    const itemEl = document.createElement('div');
+                    itemEl.className = "py-3 flex justify-between items-center";
+                    itemEl.innerHTML = `
+                        <div class="space-y-0.5">
+                            <h4 class="font-bold text-gray-800 text-sm">${item.name} <span class="text-amber-600">(${item.size})</span></h4>
+                            <p class="text-xs text-gray-500">${item.sugar} / ${item.ice}</p>
+                            <p class="text-xs font-bold text-amber-900">NT$ ${item.price} × ${item.qty}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="flex items-center space-x-1 border rounded-lg px-2 py-0.5 bg-gray-50">
+                                <button onclick="updateCartQty(${index}, -1)" class="text-gray-500 font-bold hover:text-amber-600">-</button>
+                                <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
+                                <button onclick="updateCartQty(${index}, 1)" class="text-gray-500 font-bold hover:text-amber-600">+</button>
+                            </div>
+                            <button onclick="removeCartItem(${index})" class="text-gray-400 hover:text-red-500 text-sm p-1">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    `;
+                    cartContainer.appendChild(itemEl);
+                });
+
+                checkoutBtn.disabled = false;
+                checkoutBtn.className = "w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-xl shadow-lg transition duration-200 flex items-center justify-center space-x-2 cursor-pointer";
+            }
+
+            // Calculate Buy 1 Get 1 Free (Discount 1 cheapest item for every 2 items)
+            allItemPrices.sort((a, b) => a - b);
+            const freeItemsCount = Math.floor(allItemPrices.length / 2);
+            let discount = 0;
+            for (let i = 0; i < freeItemsCount; i++) {
+                discount += allItemPrices[i];
+            }
+
+            const grandTotal = subtotal - discount;
+
+            cartCountBadge.innerText = totalQty;
+            cartTotalBadge.innerText = `${totalQty} 項商品`;
+            subtotalEl.innerText = `NT$ ${subtotal}`;
+            discountEl.innerText = `- NT$ ${discount}`;
+            totalEl.innerText = `NT$ ${grandTotal}`;
+        }
+
+        function updateCartQty(index, delta) {
+            if (cart[index].qty + delta > 0) {
+                cart[index].qty += delta;
+            } else {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function removeCartItem(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            const sidebar = document.querySelector('aside');
+            sidebar.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Checkout Modal Logic
+        function openCheckoutModal() {
+            if (cart.length === 0) return;
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
+
+        async function submitOrder() {
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const type = document.getElementById('cust-type').value;
+            const note = document.getElementById('cust-note').value.trim();
+            const gasUrl = document.getElementById('gas-url').value.trim();
+
+            if (!name || !phone) {
+                alert('請填寫聯絡姓名與電話號碼！');
+                return;
+            }
+
+            // 計算金額與買一送一折扣
+            let totalQty = 0;
+            let subtotal = 0;
+            let allItemPrices = [];
+
+            cart.forEach(item => {
+                totalQty += item.qty;
+                subtotal += item.price * item.qty;
+                for (let i = 0; i < item.qty; i++) {
+                    allItemPrices.push(item.price);
+                }
+            });
+
+            allItemPrices.sort((a, b) => a - b);
+            const freeItemsCount = Math.floor(allItemPrices.length / 2);
+            let discount = 0;
+            for (let i = 0; i < freeItemsCount; i++) {
+                discount += allItemPrices[i];
+            }
+            const grandTotal = subtotal - discount;
+
+            const orderPayload = {
+                timestamp: new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" }),
+                name: name,
+                phone: phone,
+                type: type,
+                note: note,
+                items: cart,
+                totalQty: totalQty,
+                subtotal: subtotal,
+                discount: discount,
+                total: grandTotal
+            };
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>處理中...</span>`;
+
+            // 若有填寫 GAS URL 則傳送到 Google 試算表
+            if (gasUrl) {
+                try {
+                    // 使用 text/plain fetch 避開嚴格的 CORS preflight 限制
+                    await fetch(gasUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8',
+                        },
+                        body: JSON.stringify(orderPayload)
+                    });
+                } catch (err) {
+                    console.error("寫入 Google 試算表失敗:", err);
+                }
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<span>送出訂單</span>`;
+
+            closeCheckoutModal();
+            cart = [];
+            updateCartUI();
+            
+            showToast('🎉 訂單已成功送出並同步至試算表！');
+        }
+
+        // Toast Notification Helper
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Fetch Logo URL from Google Sheets CSV
+        function loadLogoFromCSV() {
+            const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR5UYPZz05cDCFBbZgK6PJnUp7ePr5brgrEJEkZ_B2byhn81VmHZ5SWS24ZBeT_ksSASChq54HWUPSW/pub?output=csv';
+            
+            fetch(csvUrl)
+                .then(response => response.text())
+                .then(data => {
+                    // Extract URL from CSV content
+                    const lines = data.split('\n');
+                    let imageUrl = '';
+                    
+                    for (let line of lines) {
+                        const cleanLine = line.trim().replace(/^"|"$/g, '');
+                        if (cleanLine.startsWith('http://') || cleanLine.startsWith('https://')) {
+                            imageUrl = cleanLine;
+                            break;
+                        }
+                    }
+
+                    if (imageUrl) {
+                        const logoImg = document.getElementById('brand-logo-img');
+                        const fallback = document.getElementById('brand-logo-fallback');
+                        logoImg.src = imageUrl;
+                        logoImg.classList.remove('hidden');
+                        fallback.classList.add('hidden');
+                    }
+                })
+                .catch(err => {
+                    console.log('Logo CSV 讀取預設備用圖示');
+                });
+        }
+
+        // Init
+        window.onload = function() {
+            renderMenu();
+            loadLogoFromCSV();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台南兩天一夜文青慢活之旅</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter & Noto Serif TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tainan: {
+                            red: '#9E2A2B',
+                            wood: '#8C6D58',
+                            cream: '#FDFBF7',
+                            sage: '#6B8E23',
+                            dark: '#2B2A29',
+                            amber: '#D97706',
+                            sand: '#F3EFE6'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FDFBF7;
+            color: #2B2A29;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        .serif-title {
+            font-family: 'Noto Serif TC', serif;
+        }
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 2rem;
+            bottom: 1rem;
+            left: 1.25rem;
+            width: 2px;
+            background-color: #E5E0D8;
+            z-index: 0;
+        }
+        .custom-shadow {
+            box-shadow: 0 10px 30px -5px rgba(140, 109, 88, 0.08);
+        }
+        .smooth-transition {
+            transition: all 0.3s ease-in-out;
+        }
+        /* Modal Backdrop Fade */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Header Section -->
+    <header class="relative bg-tainan-wood text-white py-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div class="absolute inset-0 opacity-20 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1596422846543-75c6fc197f07?auto=format&fit=crop&q=80');"></div>
+        <div class="relative max-w-4xl mx-auto text-center space-y-4">
+            <span class="inline-block px-3 py-1 bg-amber-600/80 text-xs tracking-wider rounded-full uppercase font-medium">Tainan 2D1N Slow Travel</span>
+            <h1 class="text-3xl sm:text-5xl font-bold serif-title tracking-wide">台南文青慢活之旅</h1>
+            <p class="text-tainan-sand/90 text-sm sm:text-base max-w-2xl mx-auto font-light leading-relaxed">
+                穿梭於中西區與北區的舊城巷弄，點擊卡片查看詳細景點資訊與導航！
+            </p>
+            <div class="pt-2 flex justify-center gap-4 text-xs sm:text-sm text-tainan-sand/80">
+                <span><i class="fa-solid fa-motorcycle mr-1"></i> 車程 5-15 分鐘</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-utensils mr-1"></i> 美食與古蹟</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-mug-saucer mr-1"></i> 特色老宅咖啡</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 w-full flex-grow space-y-8">
+
+        <!-- Visual Route Path Summary Card -->
+        <section class="bg-white rounded-2xl p-6 border border-stone-200 custom-shadow space-y-4">
+            <h2 class="text-lg font-bold serif-title text-tainan-wood flex items-center justify-between">
+                <span><i class="fa-solid fa-route text-tainan-red mr-2"></i> 行程順路動線圖</span>
+                <span class="text-xs font-sans font-normal text-stone-500 bg-stone-100 px-2.5 py-1 rounded-full">點擊下方卡片查看詳細介紹</span>
+            </h2>
+
+            <!-- Day 1 Route Flow -->
+            <div id="route-day1" class="space-y-2">
+                <p class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Day 1 順路順序：</p>
+                <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-medium">
+                    <span class="px-2.5 py-1 bg-stone-100 text-stone-700 rounded-lg">1. 台南車站</span>
+                    <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    <span class="px-2.5 py-1 bg-red-100 text-tainan-red rounded-lg">2. 國華街美食</span>
+                    <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    <span class="px-2.5 py-1 bg-stone-100 text-stone-700 rounded-lg">3. 台南市美術館二館</span>
+                    <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg">4. here Kyoto</span>
+                    <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    <span class="px-2.5 py-1 bg-stone-100 text-stone-700 rounded-lg">5. 神農街/永樂市場</span>
+                    <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    <span class="px-2.5 py-1 bg-purple-100 text-purple-900 rounded-lg">6. 䖙 Thenn Leh</span>
+                </div>
+            </div>
+
+            <!-- Day 2 Route Flow (Initially Hidden) -->
+            <div id="route-day2" class="space-y-2 hidden">
+                <p class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Day 2 順路順序：</p>
+                <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-medium">
+                    <span class="px-2.5 py-1 bg-red-100 text-tainan-red rounded-lg">1. 文章牛肉湯</span>
+                    <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    <span class="px-2.5 py-1 bg-stone-100 text-stone-700 rounded-lg">2. 林百貨</span>
+                    <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg">3. 錫鼓 Tin Drum</span>
+                    <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    <span class="px-2.5 py-1 bg-stone-100 text-stone-700 rounded-lg">4. KOEMON</span>
+                    <i class="fa-solid fa-chevron-right text-stone-300 text-xs"></i>
+                    <span class="px-2.5 py-1 bg-stone-100 text-stone-700 rounded-lg">5. 台南車站返程</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <div class="flex justify-center border-b border-stone-200">
+            <button id="tab-day1" onclick="switchDay(1)" class="tab-btn px-6 py-3 font-semibold text-base sm:text-lg border-b-2 border-tainan-red text-tainan-red transition-all flex items-center gap-2">
+                <i class="fa-solid fa-calendar-day"></i> Day 1：老屋與午後浪漫散策
+            </button>
+            <button id="tab-day2" onclick="switchDay(2)" class="tab-btn px-6 py-3 font-semibold text-base sm:text-lg border-b-2 border-transparent text-gray-500 hover:text-tainan-wood transition-all flex items-center gap-2">
+                <i class="fa-solid fa-sun"></i> Day 2：昭和老派與經典古蹟
+            </button>
+        </div>
+
+        <!-- DAY 1 Timeline Content -->
+        <div id="day1-content" class="space-y-6 relative timeline-line">
+
+            <!-- Item 1 -->
+            <div onclick="openModal('station')" class="cursor-pointer group relative z-10 flex items-start gap-4 sm:gap-6 bg-white p-5 rounded-xl border border-stone-100 custom-shadow hover:border-tainan-wood/50 transition-all">
+                <div class="w-10 h-10 rounded-full bg-tainan-sand text-tainan-wood flex items-center justify-center shrink-0 font-bold text-sm">
+                    10:30
+                </div>
+                <div class="flex-grow space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-tainan-red transition-colors flex items-center gap-2">
+                            抵達台南火車站 → 租車/寄放行李
+                            <i class="fa-solid fa-circle-info text-xs text-stone-400 group-hover:text-tainan-red"></i>
+                        </h3>
+                        <span class="text-xs px-2.5 py-1 bg-amber-50 text-amber-700 rounded-md font-medium"><i class="fa-solid fa-motorcycle mr-1"></i> 機車約 7 分鐘至國華街</span>
+                    </div>
+                    <p class="text-stone-600 text-sm">準備好心情，租好機車或準備搭乘 YouBike，展開漫遊之旅。（點擊查看租車與寄物建議）</p>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div onclick="openModal('guohua')" class="cursor-pointer group relative z-10 flex items-start gap-4 sm:gap-6 bg-white p-5 rounded-xl border border-stone-100 custom-shadow hover:border-tainan-wood/50 transition-all">
+                <div class="w-10 h-10 rounded-full bg-tainan-red text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                    11:10
+                </div>
+                <div class="flex-grow space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-tainan-red transition-colors flex items-center gap-2">
+                            午餐：國華街美食（邱家小卷米粉、炸雞洋行）
+                            <i class="fa-solid fa-circle-info text-xs text-stone-400 group-hover:text-tainan-red"></i>
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-red-50 text-tainan-red font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-star text-amber-500 mr-1"></i>4.1</span>
+                            <span class="text-xs text-stone-400">至南美館約 4 分鐘</span>
+                        </div>
+                    </div>
+                    <p class="text-stone-600 text-sm">湯頭鮮甜、小卷 Q 彈，是台南最具代表性的傳統小吃之一。（點擊查看必吃餐點與排隊技巧）</p>
+                    <div class="text-xs text-stone-500 bg-stone-50 p-2 rounded-lg flex items-center gap-2">
+                        <i class="fa-regular fa-clock"></i> 營業時間：11:00–17:00（週一公休）
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div onclick="openModal('tnam')" class="cursor-pointer group relative z-10 flex items-start gap-4 sm:gap-6 bg-white p-5 rounded-xl border border-stone-100 custom-shadow hover:border-tainan-wood/50 transition-all">
+                <div class="w-10 h-10 rounded-full bg-stone-700 text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                    12:50
+                </div>
+                <div class="flex-grow space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-tainan-red transition-colors flex items-center gap-2">
+                            絕美純白建築：台南市美術館二館
+                            <i class="fa-solid fa-circle-info text-xs text-stone-400 group-hover:text-tainan-red"></i>
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-red-50 text-tainan-red font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-star text-amber-500 mr-1"></i>4.6</span>
+                            <span class="text-xs text-stone-400">步行 3 分鐘至開山路</span>
+                        </div>
+                    </div>
+                    <p class="text-stone-600 text-sm">由日本建築大師坂茂設計，碎形屋頂漏下的陽光極美。（點擊查看最佳拍照點與展覽門票資訊）</p>
+                    <div class="text-xs text-stone-500 bg-stone-50 p-2 rounded-lg flex items-center gap-4">
+                        <span><i class="fa-regular fa-clock mr-1"></i> 10:00–18:00（週一公休）</span>
+                        <span><i class="fa-solid fa-ticket mr-1"></i> 門票 NT$200</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div onclick="openModal('here')" class="cursor-pointer group relative z-10 flex items-start gap-4 sm:gap-6 bg-white p-5 rounded-xl border border-stone-100 custom-shadow hover:border-tainan-wood/50 transition-all">
+                <div class="w-10 h-10 rounded-full bg-amber-700 text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                    15:00
+                </div>
+                <div class="flex-grow space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-tainan-red transition-colors flex items-center gap-2">
+                            日系京都感：here Kyoto 台南・開山・清水
+                            <i class="fa-solid fa-circle-info text-xs text-stone-400 group-hover:text-tainan-red"></i>
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-red-50 text-tainan-red font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-star text-amber-500 mr-1"></i>4.3</span>
+                            <span class="text-xs text-stone-400">車程約 10 分鐘</span>
+                        </div>
+                    </div>
+                    <p class="text-stone-600 text-sm">來自京都的超人氣咖啡廳海外首店！空間通透。（點擊查看推薦飲品與停車須知）</p>
+                    <div class="text-xs text-amber-800 bg-amber-50 p-2 rounded-lg flex items-center justify-between">
+                        <span><i class="fa-regular fa-clock mr-1"></i> 07:30–15:00（週三公休）</span>
+                        <span class="font-medium text-amber-700">⚠️ 建議提早至 15:00 前進店</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 5 -->
+            <div onclick="openModal('shennong')" class="cursor-pointer group relative z-10 flex items-start gap-4 sm:gap-6 bg-white p-5 rounded-xl border border-stone-100 custom-shadow hover:border-tainan-wood/50 transition-all">
+                <div class="w-10 h-10 rounded-full bg-tainan-wood text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                    17:15
+                </div>
+                <div class="flex-grow space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-tainan-red transition-colors flex items-center gap-2">
+                            傍晚漫步：神農街老街 + 永樂市場晚餐
+                            <i class="fa-solid fa-circle-info text-xs text-stone-400 group-hover:text-tainan-red"></i>
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-red-50 text-tainan-red font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-star text-amber-500 mr-1"></i>4.4</span>
+                            <span class="text-xs text-stone-400">至深夜咖啡約 6 分鐘</span>
+                        </div>
+                    </div>
+                    <p class="text-stone-600 text-sm">華燈初上時，神農街的燈籠亮起，老屋散發出濃厚的歷史韻味。（點擊查看周邊晚餐推薦）</p>
+                </div>
+            </div>
+
+            <!-- Item 6 -->
+            <div onclick="openModal('thenn')" class="cursor-pointer group relative z-10 flex items-start gap-4 sm:gap-6 bg-white p-5 rounded-xl border border-stone-100 custom-shadow hover:border-tainan-wood/50 transition-all border-l-4 border-l-purple-900">
+                <div class="w-10 h-10 rounded-full bg-purple-900 text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                    19:40
+                </div>
+                <div class="flex-grow space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-tainan-red transition-colors flex items-center gap-2">
+                            台南獨有「躺平」深夜珈琲：䖙 Thenn Leh
+                            <i class="fa-solid fa-circle-info text-xs text-stone-400 group-hover:text-tainan-red"></i>
+                        </h3>
+                        <span class="text-xs bg-red-50 text-tainan-red font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-star text-amber-500 mr-1"></i>4.6</span>
+                    </div>
+                    <p class="text-stone-600 text-sm">主打「能躺就不要坐」的究極放鬆哲學！二樓不限時榻榻米空間。（點擊查看候位建議與必點滷味）</p>
+                    <div class="text-xs text-purple-900 bg-purple-50 p-2 rounded-lg flex items-center justify-between">
+                        <span><i class="fa-regular fa-clock mr-1"></i> 15:00–00:00</span>
+                        <span>全面現場候位，無預約</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- DAY 2 Timeline Content (Initially Hidden) -->
+        <div id="day2-content" class="space-y-6 relative timeline-line hidden">
+
+            <!-- Item 1 -->
+            <div onclick="openModal('article')" class="cursor-pointer group relative z-10 flex items-start gap-4 sm:gap-6 bg-white p-5 rounded-xl border border-stone-100 custom-shadow hover:border-tainan-wood/50 transition-all">
+                <div class="w-10 h-10 rounded-full bg-tainan-red text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                    08:30
+                </div>
+                <div class="flex-grow space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-tainan-red transition-colors flex items-center gap-2">
+                            早餐：文章牛肉湯（安平店或市區分店）
+                            <i class="fa-solid fa-circle-info text-xs text-stone-400 group-hover:text-tainan-red"></i>
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-red-50 text-tainan-red font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-star text-amber-500 mr-1"></i>4.3</span>
+                            <span class="text-xs text-stone-400">至林百貨約 8 分鐘</span>
+                        </div>
+                    </div>
+                    <p class="text-stone-600 text-sm">在地人與遊客都熱愛的經典，現燙溫體牛肉質極度鮮嫩。（點擊查看沾醬吃法與分店說明）</p>
+                    <div class="text-xs text-stone-500 bg-stone-50 p-2 rounded-lg">
+                        <i class="fa-regular fa-clock mr-1"></i> 24小時營業（視各分店週一/二有部分公休調整）
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div onclick="openModal('hayashi')" class="cursor-pointer group relative z-10 flex items-start gap-4 sm:gap-6 bg-white p-5 rounded-xl border border-stone-100 custom-shadow hover:border-tainan-wood/50 transition-all">
+                <div class="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                    10:00
+                </div>
+                <div class="flex-grow space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-tainan-red transition-colors flex items-center gap-2">
+                            復古摩登：林百貨（五層樓仔）
+                            <i class="fa-solid fa-circle-info text-xs text-stone-400 group-hover:text-tainan-red"></i>
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-red-50 text-tainan-red font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-star text-amber-500 mr-1"></i>4.4</span>
+                            <span class="text-xs text-stone-400">車程約 5 分鐘</span>
+                        </div>
+                    </div>
+                    <p class="text-stone-600 text-sm">1932 年開幕的南台灣首間百貨公司，保留指針式電梯與神社。（點擊查看參觀重點）</p>
+                    <div class="text-xs text-amber-800 bg-amber-50 p-2 rounded-lg flex items-center justify-between">
+                        <span><i class="fa-regular fa-clock mr-1"></i> 11:00–21:00</span>
+                        <span>💡 10:00 可先於外圍拍攝復古建築</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div onclick="openModal('tindrum')" class="cursor-pointer group relative z-10 flex items-start gap-4 sm:gap-6 bg-white p-5 rounded-xl border border-stone-100 custom-shadow hover:border-tainan-wood/50 transition-all">
+                <div class="w-10 h-10 rounded-full bg-tainan-wood text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                    11:40
+                </div>
+                <div class="flex-grow space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-tainan-red transition-colors flex items-center gap-2">
+                            午餐與日式庭園：錫鼓 Tin Drum
+                            <i class="fa-solid fa-circle-info text-xs text-stone-400 group-hover:text-tainan-red"></i>
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-red-50 text-tainan-red font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-star text-amber-500 mr-1"></i>4.6</span>
+                            <span class="text-xs text-stone-400">至北區咖啡約 10 分鐘</span>
+                        </div>
+                    </div>
+                    <p class="text-stone-600 text-sm">隱身在極窄巷弄內，擁有廣闊庭院的日式木造老建築。（點擊查看進店注意事項與推薦早午餐）</p>
+                    <div class="text-xs text-stone-500 bg-stone-50 p-2 rounded-lg flex items-center justify-between">
+                        <span><i class="fa-regular fa-clock mr-1"></i> 10:00–17:30（週二公休）</span>
+                        <span class="text-red-700">🚫 無接待 10 歲以下孩童</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div onclick="openModal('koemon')" class="cursor-pointer group relative z-10 flex items-start gap-4 sm:gap-6 bg-white p-5 rounded-xl border border-stone-100 custom-shadow hover:border-tainan-wood/50 transition-all">
+                <div class="w-10 h-10 rounded-full bg-stone-800 text-white flex items-center justify-center shrink-0 font-bold text-sm">
+                    14:00
+                </div>
+                <div class="flex-grow space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-tainan-red transition-colors flex items-center gap-2">
+                            侘寂風甜點午茶：KOEMON
+                            <i class="fa-solid fa-circle-info text-xs text-stone-400 group-hover:text-tainan-red"></i>
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-red-50 text-tainan-red font-bold px-2 py-0.5 rounded"><i class="fa-solid fa-star text-amber-500 mr-1"></i>4.6</span>
+                            <span class="text-xs text-stone-400">至車站 3-5 分鐘</span>
+                        </div>
+                    </div>
+                    <p class="text-stone-600 text-sm">隱身在火車站附近的日式侘寂風老宅。甜點水準極高。（點擊查看招牌甜點介紹）</p>
+                    <div class="text-xs text-stone-500 bg-stone-50 p-2 rounded-lg">
+                        <i class="fa-regular fa-clock mr-1"></i> 11:30–18:00（週四公休）
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 5 -->
+            <div onclick="openModal('return')" class="cursor-pointer group relative z-10 flex items-start gap-4 sm:gap-6 bg-white p-5 rounded-xl border border-stone-100 custom-shadow hover:border-tainan-wood/50 transition-all">
+                <div class="w-10 h-10 rounded-full bg-tainan-sand text-tainan-wood flex items-center justify-center shrink-0 font-bold text-sm">
+                    16:00
+                </div>
+                <div class="flex-grow space-y-2">
+                    <h3 class="text-lg font-bold text-gray-800 group-hover:text-tainan-red transition-colors flex items-center gap-2">
+                        依依不捨：回火車站取行李、返程
+                        <i class="fa-solid fa-circle-info text-xs text-stone-400 group-hover:text-tainan-red"></i>
+                    </h3>
+                    <p class="text-stone-600 text-sm">KOEMON 距離台南火車站極近，時間充裕不奔波，帶著滿滿的回憶返程。</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Concierge Tips Card -->
+        <section class="bg-tainan-sand/50 rounded-2xl p-6 border border-tainan-sand/80 space-y-4">
+            <h2 class="text-xl font-bold serif-title text-tainan-wood flex items-center gap-2">
+                <i class="fa-solid fa-lightbulb text-amber-600"></i> Concierge 貼心在地提點
+            </h2>
+            <div class="grid sm:grid-cols-2 gap-4 text-sm text-stone-700">
+                <div class="bg-white p-4 rounded-xl border border-stone-100">
+                    <h4 class="font-bold text-stone-800 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-person-walking text-amber-700"></i> 1. 巷弄步行須知
+                    </h4>
+                    <p class="text-stone-600 leading-relaxed text-xs sm:text-sm">
+                        本行程中的 <strong>錫鼓</strong>、<strong>䖙 Thenn Leh</strong> 都位於極為狹窄的純住宅區巷弄內，汽機車皆無法駛入。請將車輛停在巷外大馬路（如開山路、府前路）再步行進入，並請保持安靜。
+                    </p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-stone-100">
+                    <h4 class="font-bold text-stone-800 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-hourglass-half text-amber-700"></i> 2. 不限時的等待
+                    </h4>
+                    <p class="text-stone-600 leading-relaxed text-xs sm:text-sm">
+                        <strong>䖙 Thenn Leh</strong> 由於完全不限用餐時間，且空間座位較少，若遇到客滿可能需要現場等候較久。建議傍晚一開門或稍微避開假日最尖峰的 20:00 前往。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Dynamic Window -->
+    <div id="info-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 custom-shadow relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-stone-100 text-stone-500 hover:bg-stone-200 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modal-content">
+                <!-- Content injected dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-stone-400 py-6 text-center text-xs">
+        <p>台南兩天一夜文青慢活之旅 • 祝您旅途愉快！</p>
+    </footer>
+
+    <!-- Interactive Script -->
+    <script>
+        const spotDetails = {
+            station: {
+                title: "台南火車站 → 租車/寄放行李",
+                category: "交通節點",
+                rating: "-",
+                address: "台南市東區北門路二段4號",
+                highlights: "・站前有多家優質機車租賃店（如阿里山、前鋒租車）<br>・YouBike 2.0 站點位於前站出口右側<br>・若太早到可先將大行李寄放於車站行李託運房或租車店",
+                tips: "建議出發前預約好機車，假日時段台南租車需求較高。",
+                searchUrl: "https://www.google.com/maps/search/?api=1&query=台南火車站"
+            },
+            guohua: {
+                title: "國華街美食 (邱家小卷米粉、炸雞洋行)",
+                category: "傳統美食 / 必吃小吃",
+                rating: "4.1★",
+                address: "台南市中西區國華街三段",
+                highlights: "・<strong>邱家小卷米粉</strong>：湯頭以新鮮小卷熬煮，鮮甜清爽；小卷口感極度 Q 彈。<br>・<strong>炸雞洋行</strong>：使用八角與獨門香料醃製，推薦「三兩腿」，外皮酥脆肉汁飽滿。",
+                tips: "邱家內用需先排隊點餐結帳，平日中午約需排隊 15 分鐘，建議避開 12:00 正尖峰。",
+                searchUrl: "https://www.google.com/maps/search/?api=1&query=邱家小卷米粉"
+            },
+            tnam: {
+                title: "台南市美術館二館",
+                category: "文化展覽 / 地標建築",
+                rating: "4.6★",
+                address: "台南市中西區忠義路二段1號",
+                highlights: "・由普立茲克獎得主坂茂建築師設計，以台南鳳凰花為概念的五角形幾何碎形屋頂。<br>・光影穿透屋頂灑落中庭的景致為全館最大亮點。<br>・頂樓設有南美春室 Green Sun Cafe 可享用限定甜點與飲料。",
+                tips: "門票 $200 可同時參觀一館與二館。戶外大階梯與白牆是熱門拍照打卡點。",
+                searchUrl: "https://www.google.com/maps/search/?api=1&query=台南市美術館二館"
+            },
+            here: {
+                title: "here Kyoto 台南・開山・清水",
+                category: "特色咖啡廳 / 日式簡約",
+                rating: "4.3★",
+                address: "台南市中西區開山路 (開山老宅巷弄門口)",
+                highlights: "・日本京都超人氣咖啡品牌海外首間直營店！<br>・<strong>推薦餐點</strong>：here's Latte（焙茶香氣濃厚）、現烤極酥可麗露。<br>・極簡白色與木質調裝潢，氣氛沉靜浪漫。",
+                tips: "營業時間較早（07:30–15:00），賣完會提前休息，一定要在 15:00 前進店！",
+                searchUrl: "https://www.google.com/maps/search/?api=1&query=here+Kyoto+台南"
+            },
+            shennong: {
+                title: "神農街老街 + 永樂市場",
+                category: "歷史老街 / 夜間散策",
+                rating: "4.4★",
+                address: "台南市中西區神農街",
+                highlights: "・保存最完整的清代街屋之一，傍晚燈籠點亮時極具復古懷舊氛圍。<br>・巷弄內隱藏諸多手作選物店與獨立藝廊。<br>・晚餐可順遊至永樂市場享用水仙宮粽子、割包或海安路燒烤。",
+                tips: "街道狹窄且仍有居民住在此處，拍照參觀時請注意降低音量。",
+                searchUrl: "https://www.google.com/maps/search/?api=1&query=神農街"
+            },
+            thenn: {
+                title: "䖙 Thenn Leh (深夜珈琲)",
+                category: "深夜老宅咖啡 / 榻榻米空間",
+                rating: "4.6★",
+                address: "台南市中西區巷弄內",
+                highlights: "・台語「躺下來」的意思，二樓榻榻米區提供軟墊讓客人自在躺臥。<br>・不限用餐時間，提供特調咖啡、高山茶與獨家現滷豆乾鹹食。<br>・深夜氣氛安靜極具療癒感。",
+                tips: "無預約制度，一律現場候位。建議 15:00 開門首波或 21:00 後離峰前往。",
+                searchUrl: "https://www.google.com/maps/search/?api=1&query=䖙+Thenn+Leh"
+            },
+            article: {
+                title: "文章牛肉湯",
+                category: "在地經典早餐 / 溫體牛肉",
+                rating: "4.3★",
+                address: "台南市安平區位點 / 市區分店",
+                highlights: "・每天新鮮直送的台南溫體牛肉，以滾燙高湯現沖，肉質呈粉紅色極為鮮嫩。<br>・推薦牛肉湯附贈牛肉燥飯，搭配薑絲與特製甜醬油膏最在地。",
+                tips: "早晨 08:30 前往排隊時間較短，內用先找座位再點餐。",
+                searchUrl: "https://www.google.com/maps/search/?api=1&query=文章牛肉湯"
+            },
+            hayashi: {
+                title: "林百貨 (五層樓仔)",
+                category: "昭和復古百貨 / 古蹟地標",
+                rating: "4.4★",
+                address: "台南市中西區忠義路二段63號",
+                highlights: "・1932 年開幕，南台灣第一間設有電梯的百貨公司。<br>・保留指針式復古電梯、二戰彈孔牆面與頂樓的「神社」。<br>・全館販售台南在地文創商品與優質伴手禮。",
+                tips: "11:00 營業，若 10:00 抵達可在對面拍攝建築全景與復古街景。",
+                searchUrl: "https://www.google.com/maps/search/?api=1&query=林百貨"
+            },
+            tindrum: {
+                title: "錫鼓 Tin Drum",
+                category: "日式庭園老宅 / 早午餐",
+                rating: "4.6★",
+                address: "台南市中西區開山路巷弄",
+                highlights: "・市區極罕見擁有寬廣日式庭院的雙層木造老屋。<br>・坐在榻榻米上透過木格窗欣賞綠意庭園，極具京都情調。<br>・<strong>推薦餐點</strong>：日式早午餐拼盤、靜岡抹茶牛奶、鬆餅。",
+                tips: "嚴格規範：無接待 10 歲以下孩童。位於極窄巷弄，車輛請停在開山路大馬路邊。",
+                searchUrl: "https://www.google.com/maps/search/?api=1&query=錫鼓+Tin+Drum"
+            },
+            koemon: {
+                title: "KOEMON (侘寂風甜點)",
+                category: "極致法式甜點 / 侘寂空間",
+                rating: "4.6★",
+                address: "台南市北區 (近火車站步行範圍)",
+                highlights: "・精緻的現代侘寂風格裝潢，灰泥質感與光影搭配極美。<br>・甜點水準極高，外型與口感層次兼具。<br>・<strong>必點品項</strong>：「烏龍焙茶」蛋糕（濃郁茶香與幕斯層次）。",
+                tips: "離火車站極近，非常適合返程前作為最後一站甜點完美的句點。",
+                searchUrl: "https://www.google.com/maps/search/?api=1&query=KOEMON+台南"
+            },
+            return: {
+                title: "返程台南火車站",
+                category: "交通節點",
+                rating: "-",
+                address: "台南市東區北門路二段4號",
+                highlights: "・歸還機車/自行車<br>・領取寄存行李<br>・購買伴手禮（如葡萄王餅舖或站前老店）後搭車返家",
+                tips: "建議提早 20 分鐘抵達車站取行李與買票。",
+                searchUrl: "https://www.google.com/maps/search/?api=1&query=台南火車站"
+            }
+        };
+
+        function switchDay(day) {
+            const day1Btn = document.getElementById('tab-day1');
+            const day2Btn = document.getElementById('tab-day2');
+            const day1Content = document.getElementById('day1-content');
+            const day2Content = document.getElementById('day2-content');
+            const routeDay1 = document.getElementById('route-day1');
+            const routeDay2 = document.getElementById('route-day2');
+
+            if (day === 1) {
+                day1Btn.className = "tab-btn px-6 py-3 font-semibold text-base sm:text-lg border-b-2 border-tainan-red text-tainan-red transition-all flex items-center gap-2";
+                day2Btn.className = "tab-btn px-6 py-3 font-semibold text-base sm:text-lg border-b-2 border-transparent text-gray-500 hover:text-tainan-wood transition-all flex items-center gap-2";
+                day1Content.classList.remove('hidden');
+                day2Content.classList.add('hidden');
+                routeDay1.classList.remove('hidden');
+                routeDay2.classList.add('hidden');
+            } else {
+                day2Btn.className = "tab-btn px-6 py-3 font-semibold text-base sm:text-lg border-b-2 border-tainan-red text-tainan-red transition-all flex items-center gap-2";
+                day1Btn.className = "tab-btn px-6 py-3 font-semibold text-base sm:text-lg border-b-2 border-transparent text-gray-500 hover:text-tainan-wood transition-all flex items-center gap-2";
+                day2Content.classList.remove('hidden');
+                day1Content.classList.add('hidden');
+                routeDay2.classList.remove('hidden');
+                routeDay1.classList.add('hidden');
+            }
+        }
+
+        function openModal(key) {
+            const data = spotDetails[key];
+            if (!data) return;
+
+            const modalContent = document.getElementById('modal-content');
+            modalContent.innerHTML = `
+                <div class="space-y-3">
+                    <span class="inline-block text-xs font-semibold px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full">${data.category}</span>
+                    <h3 class="text-xl font-bold text-gray-900 serif-title flex items-center justify-between">
+                        ${data.title}
+                        ${data.rating !== '-' ? `<span class="text-sm font-sans bg-red-50 text-tainan-red px-2 py-0.5 rounded"><i class="fa-solid fa-star text-amber-500 mr-1"></i>${data.rating}</span>` : ''}
+                    </h3>
+                    <p class="text-xs text-stone-500"><i class="fa-solid fa-location-dot mr-1 text-tainan-red"></i>${data.address}</p>
+                    <hr class="border-stone-100 my-2">
+                    <div class="space-y-2">
+                        <h4 class="text-xs font-bold text-stone-700 uppercase tracking-wider">🌟 亮點與特色必點</h4>
+                        <p class="text-stone-600 text-sm leading-relaxed">${data.highlights}</p>
+                    </div>
+                    <div class="space-y-2 bg-amber-50/60 p-3 rounded-xl border border-amber-100">
+                        <h4 class="text-xs font-bold text-amber-900 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-exclamation text-amber-600"></i> 貼心提醒 / 排隊避坑
+                        </h4>
+                        <p class="text-amber-950 text-xs leading-relaxed">${data.tips}</p>
+                    </div>
+                    <div class="pt-2">
+                        <a href="${data.searchUrl}" target="_blank" rel="noopener noreferrer" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-tainan-wood hover:bg-tainan-red text-white text-sm font-medium rounded-xl transition-colors">
+                            <i class="fa-solid fa-map-location-dot"></i> 開啟 Google 地圖導航
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('info-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('info-modal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside box
+        document.getElementById('info-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

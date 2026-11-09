@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>公開資訊觀測站 - 合併現金流量表分析儀表板</title>
+  <!-- Tailwind CSS CDN (用於通用響應式排版與樣式) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入 SheetJS (XLSX) 用於解析 Excel (.xlsx / .xls) 檔案 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            },
+            positive: '#10b981',
+            negative: '#ef4444',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* 自訂基本捲軸與微調動畫 */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.5);
+      border-radius: 4px;
+    }
+    .custom-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    }
+    .svg-tooltip {
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen font-sans transition-colors duration-200">
+
+  <!-- 頂部導覽列 -->
+  <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-slate-200 dark:border-slate-700 px-4 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+    <div class="flex items-center gap-3">
+      <div class="p-2 bg-brand-500 text-white rounded-xl shadow-md">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold text-slate-900 dark:text-white leading-tight">公開資訊觀測站現金流量表分析儀表板</h1>
+        <p class="text-xs text-slate-500 dark:text-slate-400">標準間接法合併現金流量表通用自動解析與診斷系統</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button id="btn-toggle-input" class="px-3.5 py-1.5 text-sm font-medium bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+        <span>數據輸入 / 貼上</span>
+      </button>
+      <button id="btn-load-mock" class="px-3.5 py-1.5 text-sm font-medium bg-brand-50 dark:bg-slate-700 text-brand-600 dark:text-brand-400 hover:bg-brand-100 rounded-lg transition-colors border border-brand-200 dark:border-slate-600">
+        載入台積電範例
+      </button>
+      <button id="btn-toggle-theme" class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+        <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <svg id="theme-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="p-4 lg:p-8 space-y-6 max-w-[1600px] mx-auto">
+
+    <!-- 數據輸入彈窗/對話盒 -->
+    <section id="input-modal" class="hidden bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl transition-all">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h2 class="text-lg font-bold">資料輸入與解析</h2>
+          <p class="text-xs text-slate-500">可直接貼上公開資訊觀測站複製的文字、表格內容，或上傳 CSV 檔案。</p>
+        </div>
+        <button id="btn-close-input" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold px-2">&times;</button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-semibold mb-2">方式 A：貼上觀測站複製文字 / Tab 分隔文字</label>
+          <textarea id="paste-input" rows="8" class="w-full p-3 font-mono text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="將公開資訊觀測站合併現金流量表複製後貼於此處...&#10;會計項目&#9;115年01月01日至115年06月30日&#9;114年01月01日至114年06月30日&#10;繼續營業單位稅前淨利&#9;1550229773&#9;923930616"></textarea>
+        </div>
+        <div class="flex flex-col justify-between">
+          <div>
+            <label class="block text-sm font-semibold mb-2">方式 B：選擇 Excel / CSV 檔案上傳</label>
+            <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-brand-500 rounded-xl p-6 text-center cursor-pointer transition-colors" id="drop-zone">
+              <svg class="mx-auto h-10 w-10 text-slate-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              <p class="text-sm font-medium">拖曳 Excel (.xlsx, .xls) 或 CSV 檔案至此，或點擊上傳</p>
+              <p class="text-xs text-slate-400 mt-1">支援由公開資訊觀測站下載之 Excel / CSV 報表檔</p>
+              <input type="file" id="file-input" accept=".xlsx, .xls, .csv, .txt, .tsv" class="hidden">
+            </div>
+          </div>
+          <div class="flex justify-end gap-3 mt-4">
+            <button id="btn-parse" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-xl shadow transition-colors">
+              開始解析與更新圖表
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 標題與數據中樞資訊 -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-slate-800">
+      <div>
+        <span id="company-name" class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-100 text-brand-800 dark:bg-brand-900/40 dark:text-brand-300 mb-1">台積電公司</span>
+        <h2 id="report-period" class="text-2xl font-bold tracking-tight">民國115年第2季 (上半年度對比)</h2>
+      </div>
+      <div class="text-xs text-slate-500 text-right">
+        金額單位：<span class="font-medium text-slate-700 dark:text-slate-300">新臺幣 仟元</span>
+      </div>
+    </div>
+
+    <!-- 關鍵指標 (KPI Cards) 網格 -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4" id="kpi-cards-container">
+      <!-- 由原生 JS 動態渲染 KPI 卡片 -->
+    </section>
+
+    <!-- 視覺化圖表與文字診斷報告區塊 -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- 左側：三大活動 Waterfall / Bar 結構圖 (佔 7 欄) -->
+      <section class="lg:col-span-7 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 custom-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-bold">現金流量結構與變化瀑布圖</h3>
+            <p class="text-xs text-slate-500">展示營業、投資、籌資三大活動對期末現金之影響流向</p>
+          </div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-emerald-500 rounded-sm"></span>流入/淨流入</span>
+            <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-rose-500 rounded-sm"></span>流出/淨流出</span>
+            <span class="inline-flex items-center gap-1"><span class="w-3 h-3 bg-brand-500 rounded-sm"></span>餘額</span>
+          </div>
+        </div>
+        <div class="w-full overflow-x-auto">
+          <div id="waterfall-chart-wrapper" class="min-w-[500px] h-72 relative">
+            <svg id="waterfall-chart-svg" class="w-full h-full"></svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- 右側：CapEx 與 OCF 資本強度分析 (佔 5 欄) -->
+      <section class="lg:col-span-5 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 custom-shadow flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-lg font-bold">資本支出 (CapEx) 與 OCF 比例</h3>
+              <p class="text-xs text-slate-500">評估營運現金流支援資本投資能力</p>
+            </div>
+          </div>
+          <div class="h-56 relative flex items-center justify-center">
+            <svg id="capex-gauge-svg" class="w-full h-full"></svg>
+          </div>
+        </div>
+        <!-- 比例數據備註 -->
+        <div id="capex-analysis-subtext" class="mt-4 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 text-xs text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/50">
+          --
+        </div>
+      </section>
+
+      <!-- 新增：獲利品質與現金流轉換對比圖 (佔 6 欄) -->
+      <section class="lg:col-span-6 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 custom-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-bold">營業獲利品質與現金流對比</h3>
+            <p class="text-xs text-slate-500">比較稅前淨利、折舊費用加回與最終營業現金流 (OCF)</p>
+          </div>
+        </div>
+        <div class="w-full overflow-x-auto">
+          <div class="min-w-[400px] h-64 relative">
+            <svg id="quality-chart-svg" class="w-full h-full"></svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- 新增：現金流流入與流出結構分佈圖 (佔 6 欄) -->
+      <section class="lg:col-span-6 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 custom-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-bold">主要現金流項目結構佔比</h3>
+            <p class="text-xs text-slate-500">本期主要流入來源與支出去向圓環圖分析</p>
+          </div>
+        </div>
+        <div class="w-full h-64 flex items-center justify-center relative">
+          <svg id="pie-chart-svg" class="w-full h-full"></svg>
+        </div>
+      </section>
+
+      <!-- 底部整欄：動態財務診斷與文字分析報告 -->
+      <section class="lg:col-span-12 bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 custom-shadow">
+        <div class="flex items-center gap-2 mb-3">
+          <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          <h3 class="text-lg font-bold">自動化現金流診斷與趨勢分析報告</h3>
+        </div>
+        <div id="ai-insights-content" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <!-- 由原生 JS 動態寫入分析報告 -->
+        </div>
+      </section>
+
+    </div>
+
+    <!-- 互動式明細表格區塊 -->
+    <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 custom-shadow overflow-hidden">
+      <!-- 表格上方控制與搜尋工具列 -->
+      <div class="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-lg font-bold">現金流量表原始項目明細</h3>
+          <p class="text-xs text-slate-500">支援關鍵字搜尋、三大活動標籤篩選與數據格式對齊</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- 分類篩選按鈕群 -->
+          <div class="inline-flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl text-xs font-medium" id="filter-tabs">
+            <button data-filter="all" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm text-brand-600 dark:text-brand-400 font-semibold transition-all">全部項目</button>
+            <button data-filter="operating" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all">營業活動</button>
+            <button data-filter="investing" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all">投資活動</button>
+            <button data-filter="financing" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all">籌資活動</button>
+          </div>
+
+          <!-- 關鍵字搜尋框 -->
+          <div class="relative min-w-[200px]">
+            <input type="text" id="table-search" placeholder="搜尋會計項目 (如: 折舊, 股利)..." class="w-full pl-9 pr-4 py-1.5 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 表格主體區 -->
+      <div class="overflow-x-auto max-h-[550px] overflow-y-auto">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead class="sticky top-0 bg-slate-100/90 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-semibold z-10">
+            <tr>
+              <th class="py-3 px-4 sm:px-6">會計項目</th>
+              <th class="py-3 px-4 sm:px-6 text-right" id="th-current-period">本期金額 (115年上半年)</th>
+              <th class="py-3 px-4 sm:px-6 text-right" id="th-previous-period">同期金額 (114年上半年)</th>
+              <th class="py-3 px-4 sm:px-6 text-right">變動金額</th>
+              <th class="py-3 px-4 sm:px-6 text-right">變動幅度 (%)</th>
+            </tr>
+          </thead>
+          <tbody id="financial-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+            <!-- 由 Native JS 自動產出 -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="mt-12 py-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-400">
+    <p>完全由原生 ES6+ JavaScript 與 HTML5/CSS3 驅動 &bull; 相容公開資訊觀測站間接法現金流量表通用格式</p>
+  </footer>
+
+  <!-- ================================================================= -->
+  <!-- JavaScript 邏輯處理 (純原生 Vanilla JS)                           -->
+  <!-- ================================================================= -->
+  <script>
+    /**
+     * 預設測試資料 (Mock Data)
+     * 基於台積電 115 年第 2 季 (115/01/01 - 115/06/30) 與 114 年同期合併現金流量表數據
+     */
+    const DEFAULT_MOCK_DATA = {
+      meta: {
+        company: "台灣積體電路製造股份有限公司",
+        currentPeriod: "115年01月01日至115年06月30日",
+        previousPeriod: "114年01月01日至114年06月30日",
+        unit: "新臺幣 仟元"
+      },
+      items: [
+        { name: "營業活動之現金流量－間接法", current: null, previous: null, type: "header" },
+        { name: "繼續營業單位稅前淨利（淨損）", current: 1550229773, previous: 923930616, type: "operating" },
+        { name: "本期稅前淨利（淨損）", current: 1550229773, previous: 923930616, type: "operating" },
+        { name: "折舊費用", current: 359541458, previous: 359012194, type: "operating" },
+        { name: "攤銷費用", current: 4447147, previous: 4184797, type: "operating" },
+        { name: "預期信用減損損失（利益）數／呆帳費用提列（轉列收入）數", current: 51743, previous: -25220, type: "operating" },
+        { name: "透過損益按公允價值衡量金融資產及負債之淨損失（利益）", current: -301612, previous: -204315, type: "operating" },
+        { name: "利息費用", current: 5801911, previous: 6368369, type: "operating" },
+        { name: "利息收入", current: -58906984, previous: -50051310, type: "operating" },
+        { name: "股利收入", current: -1971050, previous: -463552, type: "operating" },
+        { name: "股份基礎給付酬勞成本", current: 237026, previous: 799647, type: "operating" },
+        { name: "採用權益法認列之關聯企業及合資損失（利益）之份額", current: -3123375, previous: -2589255, type: "operating" },
+        { name: "處分及報廢不動產、廠房及設備損失（利益）", current: -175957, previous: 1235418, type: "operating" },
+        { name: "處分投資損失（利益）", current: 49766, previous: 82845, type: "operating" },
+        { name: "處分採用權益法之投資損失（利益）", current: -63202285, previous: 0, type: "operating" },
+        { name: "營業活動之淨現金流入（流出）", current: 1485600000, previous: 985200000, type: "summary_operating" },
+        
+        { name: "投資活動之現金流量", current: null, previous: null, type: "header" },
+        { name: "取得不動產、廠房及設備", current: -720500000, previous: -480200000, type: "investing", isCapEx: true },
+        { name: "取得無形資產", current: -12450000, previous: -9800000, type: "investing" },
+        { name: "取得金融資產", current: -150000000, previous: -120000000, type: "investing" },
+        { name: "處分金融資產", current: 85000000, previous: 60000000, type: "investing" },
+        { name: "投資活動之淨現金流入（流出）", current: -797950000, previous: -550000000, type: "summary_investing" },
+
+        { name: "籌資活動之現金流量", current: null, previous: null, type: "header" },
+        { name: "償還公司債及長期借款", current: -45000000, previous: -30000000, type: "financing" },
+        { name: "發放現金股利", current: -285000000, previous: -245000000, type: "financing" },
+        { name: "籌資活動之淨現金流入（流出）", current: -330000000, previous: -275000000, type: "summary_financing" },
+
+        { name: "匯率變動對現金及現金等價物之影響", current: 15450000, previous: -8200000, type: "fx" },
+        { name: "本期現金及現金等價物增加（減少）數", current: 373100000, previous: 152000000, type: "net_change" },
+        { name: "期初現金及現金等價物餘額", current: 1850000000, previous: 1420000000, type: "opening_cash" },
+        { name: "期末現金及現金等價物餘額", current: 2223100000, previous: 1572000000, type: "ending_cash" }
+      ]
+    };
+
+    // 狀態管理
+    let currentData = JSON.parse(JSON.stringify(DEFAULT_MOCK_DATA));
+    let activeFilter = 'all';
+    let searchQuery = '';
+
+    // DOM 元素快取
+    const elements = {
+      companyName: document.getElementById('company-name'),
+      reportPeriod: document.getElementById('report-period'),
+      kpiContainer: document.getElementById('kpi-cards-container'),
+      tableBody: document.getElementById('financial-table-body'),
+      tableSearch: document.getElementById('table-search'),
+      filterTabs: document.getElementById('filter-tabs'),
+      thCurrentPeriod: document.getElementById('th-current-period'),
+      thPreviousPeriod: document.getElementById('th-previous-period'),
+      waterfallSvg: document.getElementById('waterfall-chart-svg'),
+      capexGaugeSvg: document.getElementById('capex-gauge-svg'),
+      qualitySvg: document.getElementById('quality-chart-svg'),
+      pieSvg: document.getElementById('pie-chart-svg'),
+      capexSubtext: document.getElementById('capex-analysis-subtext'),
+      insightsContent: document.getElementById('ai-insights-content'),
+      inputModal: document.getElementById('input-modal'),
+      btnToggleInput: document.getElementById('btn-toggle-input'),
+      btnCloseInput: document.getElementById('btn-close-input'),
+      btnParse: document.getElementById('btn-parse'),
+      btnLoadMock: document.getElementById('btn-load-mock'),
+      pasteInput: document.getElementById('paste-input'),
+      fileInput: document.getElementById('file-input'),
+      dropZone: document.getElementById('drop-zone'),
+      btnToggleTheme: document.getElementById('btn-toggle-theme'),
+      themeIconSun: document.getElementById('theme-icon-sun'),
+      themeIconMoon: document.getElementById('theme-icon-moon')
+    };
+
+    // 初始化應用程式
+    function init() {
+      setupEventListeners();
+      processAndRender();
+    }
+
+    // 事件監聽設定
+    function setupEventListeners() {
+      // 彈窗開關
+      elements.btnToggleInput.addEventListener('click', () => elements.inputModal.classList.toggle('hidden'));
+      elements.btnCloseInput.addEventListener('click', () => elements.inputModal.classList.add('hidden'));
+
+      // 載入預設資料
+      elements.btnLoadMock.addEventListener('click', () => {
+        currentData = JSON.parse(JSON.stringify(DEFAULT_MOCK_DATA));
+        processAndRender();
+        alert('已成功載入台積電預設測試數據！');
+      });
+
+      // 解析按鈕
+      elements.btnParse.addEventListener('click', parseRawInput);
+
+      // 檔案上傳與拖曳處理
+      elements.dropZone.addEventListener('click', () => elements.fileInput.click());
+      elements.fileInput.addEventListener('change', handleFileSelect);
+      elements.dropZone.addEventListener('dragover', (e) => { e.preventDefault(); elements.dropZone.classList.add('border-brand-500'); });
+      elements.dropZone.addEventListener('dragleave', () => elements.dropZone.classList.remove('border-brand-500'));
+      elements.dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        elements.dropZone.classList.remove('border-brand-500');
+        if (e.dataTransfer.files.length > 0) {
+          elements.fileInput.files = e.dataTransfer.files;
+          handleFileSelect();
+        }
+      });
+
+      // 搜尋與篩選
+      elements.tableSearch.addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim().toLowerCase();
+        renderTable();
+      });
+
+      elements.filterTabs.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        activeFilter = btn.dataset.filter;
+        
+        // 更新 UI 狀態
+        Array.from(elements.filterTabs.querySelectorAll('button')).forEach(b => {
+          b.className = 'px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all';
+        });
+        btn.className = 'px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 shadow-sm text-brand-600 dark:text-brand-400 font-semibold transition-all';
+
+        renderTable();
+      });
+
+      // 暗黑模式切換
+      elements.btnToggleTheme.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        elements.themeIconSun.classList.toggle('hidden', !isDark);
+        elements.themeIconMoon.classList.toggle('hidden', isDark);
+        // 重繪 SVG 以調整色彩
+        renderWaterfallChart(computedMetrics);
+        renderCapExGauge(computedMetrics);
+        renderQualityChart(computedMetrics);
+        renderPieChart(computedMetrics);
+      });
+    }
+
+    // 計算所得核心財務指標快取
+    let computedMetrics = {};
+
+    // 核心數據處理與渲染流程
+    function processAndRender() {
+      // 1. 更新頁面標頭資訊
+      elements.companyName.textContent = currentData.meta.company || "公司數據解析";
+      elements.reportPeriod.textContent = currentData.meta.currentPeriod || "未指定期間";
+      elements.thCurrentPeriod.textContent = `本期 (${currentData.meta.currentPeriod || '本期'})`;
+      elements.thPreviousPeriod.textContent = `同期 (${currentData.meta.previousPeriod || '同期'})`;
+
+      // 2. 核心指標計算 (Vanilla JS Financial Engine)
+      computedMetrics = calculateFinancialMetrics(currentData.items);
+
+      // 3. 渲染各大 UI 模組
+      renderKPICards(computedMetrics);
+      renderWaterfallChart(computedMetrics);
+      renderCapExGauge(computedMetrics);
+      renderQualityChart(computedMetrics);
+      renderPieChart(computedMetrics);
+      renderInsights(computedMetrics);
+      renderTable();
+    }
+
+    /**
+     * 核心指標計算引擎
+     */
+    function calculateFinancialMetrics(items) {
+      // 尋找特定的關鍵項目
+      const findItem = (pattern) => {
+        return items.find(i => i.name && i.name.includes(pattern)) || { current: 0, previous: 0 };
+      };
+
+      // 繼續營業單位稅前淨利
+      const netProfitItem = findItem('繼續營業單位稅前淨利') || findItem('本期稅前淨利');
+      const netProfitCurrent = netProfitItem.current || 0;
+      const netProfitPrevious = netProfitItem.previous || 0;
+
+      // 折舊與攤銷
+      const depItem = findItem('折舊費用');
+      const depCurrent = depItem.current || 0;
+      const depPrevious = depItem.previous || 0;
+
+      const amoItem = findItem('攤銷費用');
+      const amoCurrent = amoItem.current || 0;
+      const amoPrevious = amoItem.previous || 0;
+
+      // 營業活動淨現金流 (OCF)
+      const ocfItem = findItem('營業活動之淨現金流入') || findItem('營業活動之現金流量');
+      const ocfCurrent = ocfItem.current || 0;
+      const ocfPrevious = ocfItem.previous || 0;
+
+      // 資本支出 CapEx
+      const capexItem = items.find(i => i.isCapEx || (i.name && i.name.includes('取得不動產') && i.name.includes('設備'))) || { current: 0, previous: 0 };
+      const capexCurrent = Math.abs(capexItem.current || 0);
+      const capexPrevious = Math.abs(capexItem.previous || 0);
+
+      // 自由現金流 (Free Cash Flow, FCF) = OCF - CapEx
+      const fcfCurrent = ocfCurrent - capexCurrent;
+      const fcfPrevious = ocfPrevious - capexPrevious;
+
+      // FCF 轉化率 = FCF / 稅前淨利
+      const fcfConversionCurrent = netProfitCurrent !== 0 ? (fcfCurrent / netProfitCurrent) * 100 : 0;
+      const fcfConversionPrevious = netProfitPrevious !== 0 ? (fcfPrevious / netProfitPrevious) * 100 : 0;
+
+      // 投資活動淨現金流 (ICF)
+      const icfItem = findItem('投資活動之淨現金流入');
+      const icfCurrent = icfItem.current || 0;
+      const icfPrevious = icfItem.previous || 0;
+
+      // 籌資活動淨現金流 (FCF_fin)
+      const finItem = findItem('籌資活動之淨現金流入');
+      const finCurrent = finItem.current || 0;
+      const finPrevious = finItem.previous || 0;
+
+      // 現金淨增加數
+      const netChangeItem = findItem('現金及現金等價物增加') || findItem('本期現金及現金等價物');
+      const netChangeCurrent = netChangeItem.current || (ocfCurrent + icfCurrent + finCurrent);
+      const netChangePrevious = netChangeItem.previous || (ocfPrevious + icfPrevious + finPrevious);
+
+      // 期末現金餘額
+      const endingCashItem = findItem('期末現金及現金等價物餘額');
+      const endingCashCurrent = endingCashItem.current || 0;
+      const endingCashPrevious = endingCashItem.previous || 0;
+
+      return {
+        netProfit: { current: netProfitCurrent, previous: netProfitPrevious },
+        depreciation: { current: depCurrent + amoCurrent, previous: depPrevious + amoPrevious },
+        ocf: { current: ocfCurrent, previous: ocfPrevious },
+        capex: { current: capexCurrent, previous: capexPrevious },
+        fcf: { current: fcfCurrent, previous: fcfPrevious },
+        fcfConversion: { current: fcfConversionCurrent, previous: fcfConversionPrevious },
+        icf: { current: icfCurrent, previous: icfPrevious },
+        fin: { current: finCurrent, previous: finPrevious },
+        netChange: { current: netChangeCurrent, previous: netChangePrevious },
+        endingCash: { current: endingCashCurrent, previous: endingCashPrevious }
+      };
+    }
+
+    /**
+     * 渲染 KPI 卡片
+     */
+    function renderKPICards(m) {
+      const cards = [
+        {
+          title: "營業現金流 (OCF)",
+          current: m.ocf.current,
+          previous: m.ocf.previous,
+          unit: "仟元",
+          icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>`
+        },
+        {
+          title: "資本支出 (CapEx)",
+          current: m.capex.current,
+          previous: m.capex.previous,
+          unit: "仟元",
+          isNegativeGood: true, // 支出增加代表擴產或成長
+          icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>`
+        },
+        {
+          title: "自由現金流 (FCF)",
+          current: m.fcf.current,
+          previous: m.fcf.previous,
+          unit: "仟元",
+          icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>`
+        },
+        {
+          title: "自由現金流轉化率",
+          current: m.fcfConversion.current,
+          previous: m.fcfConversion.previous,
+          isPercentage: true,
+          unit: "%",
+          icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>`
+        },
+        {
+          title: "現金淨變動額",
+          current: m.netChange.current,
+          previous: m.netChange.previous,
+          unit: "仟元",
+          icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>`
+        },
+        {
+          title: "期末現金餘額",
+          current: m.endingCash.current,
+          previous: m.endingCash.previous,
+          unit: "仟元",
+          icon: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"/>`
+        }
+      ];
+
+      elements.kpiContainer.innerHTML = cards.map(c => {
+        let pctChange = 0;
+        if (c.previous !== 0 && c.previous !== null) {
+          pctChange = ((c.current - c.previous) / Math.abs(c.previous)) * 100;
+        }
+
+        const isPositive = pctChange >= 0;
+        const badgeColor = isPositive 
+          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400' 
+          : 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400';
+
+        const formattedVal = c.isPercentage 
+          ? c.current.toFixed(1) + '%' 
+          : formatNumberShort(c.current);
+
+        return `
+          <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 custom-shadow flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+              <span class="text-xs font-semibold truncate" title="${c.title}">${c.title}</span>
+              <svg class="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">${c.icon}</svg>
+            </div>
+            <div>
+              <div class="text-xl font-bold tracking-tight text-slate-900 dark:text-white" title="${formatNumber(c.current)} ${c.unit}">
+                ${formattedVal}
+              </div>
+              <div class="flex items-center gap-1 mt-2">
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${badgeColor}">
+                  ${isPositive ? '↑' : '↓'} ${Math.abs(pctChange).toFixed(1)}%
+                </span>
+                <span class="text-[10px] text-slate-400">YoY 對比</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /**
+     * 原生 SVG 繪製現金流瀑布圖 (Waterfall Chart)
+     */
+    function renderWaterfallChart(m) {
+      const svg = elements.waterfallSvg;
+      svg.innerHTML = ''; // 清空
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const width = svg.clientWidth || 600;
+      const height = svg.clientHeight || 280;
+      const padding = { top: 30, right: 20, bottom: 40, left: 60 };
+
+      // 定義瀑布圖柱狀節點
+      // 期初現金 + 營業流入 + 投資變動 + 籌資變動 + 匯率變動 = 期末現金
+      const items = [
+        { label: '營業現金流', val: m.ocf.current, isTotal: false },
+        { label: '投資現金流', val: m.icf.current, isTotal: false },
+        { label: '籌資現金流', val: m.fin.current, isTotal: false },
+        { label: '現金淨變動', val: m.netChange.current, isTotal: true },
+        { label: '期末現金', val: m.endingCash.current, isTotal: true }
+      ];
+
+      // 計算極值與 Y 軸刻度範圍
+      let runningTotal = 0;
+      let minVal = 0;
+      let maxVal = 0;
+
+      items.forEach(item => {
+        if (item.isTotal) {
+          maxVal = Math.max(maxVal, item.val);
+          minVal = Math.min(minVal, item.val);
+        } else {
+          const start = runningTotal;
+          runningTotal += item.val;
+          maxVal = Math.max(maxVal, start, runningTotal);
+          minVal = Math.min(minVal, start, runningTotal);
+        }
+      });
+
+      // 緩衝邊界
+      maxVal = maxVal > 0 ? maxVal * 1.15 : maxVal * 0.8;
+      minVal = minVal < 0 ? minVal * 1.15 : minVal * 0.8;
+      if (minVal > 0) minVal = 0;
+
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+
+      // 座標轉換函式
+      const getY = (v) => padding.top + chartH - ((v - minVal) / (maxVal - minVal)) * chartH;
+      const zeroY = getY(0);
+
+      // 繪製背景水平網格線
+      const gridCount = 4;
+      for (let i = 0; i <= gridCount; i++) {
+        const gridVal = minVal + ((maxVal - minVal) / gridCount) * i;
+        const y = getY(gridVal);
+        
+        // 網格線
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', padding.left);
+        line.setAttribute('y1', y);
+        line.setAttribute('x2', width - padding.right);
+        line.setAttribute('y2', y);
+        line.setAttribute('stroke', isDark ? '#334155' : '#e2e8f0');
+        line.setAttribute('stroke-dasharray', '3,3');
+        svg.appendChild(line);
+
+        // 刻度文字
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', padding.left - 8);
+        text.setAttribute('y', y + 4);
+        text.setAttribute('text-anchor', 'end');
+        text.setAttribute('font-size', '10');
+        text.setAttribute('fill', isDark ? '#94a3b8' : '#64748b');
+        text.textContent = formatNumberShort(gridVal);
+        svg.appendChild(text);
+      }
+
+      // 繪製柱狀圖
+      const barWidth = Math.min(45, (chartW / items.length) * 0.55);
+      const step = chartW / items.length;
+      let curr = 0;
+
+      items.forEach((item, idx) => {
+        const x = padding.left + idx * step + (step - barWidth) / 2;
+        let y, h, color;
+
+        if (item.isTotal) {
+          if (item.val >= 0) {
+            y = getY(item.val);
+            h = zeroY - y;
+            color = '#0284c7'; // Brand blue
+          } else {
+            y = zeroY;
+            h = getY(item.val) - zeroY;
+            color = '#ef4444';
+          }
+        } else {
+          const start = curr;
+          curr += item.val;
+          const end = curr;
+          
+          y = getY(Math.max(start, end));
+          h = Math.abs(getY(start) - getY(end));
+          color = item.val >= 0 ? '#10b981' : '#ef4444';
+        }
+
+        // 柱狀 Rect
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', x);
+        rect.setAttribute('y', Math.max(padding.top, y));
+        rect.setAttribute('width', barWidth);
+        rect.setAttribute('height', Math.max(2, h));
+        rect.setAttribute('rx', '4');
+        rect.setAttribute('fill', color);
+        rect.setAttribute('opacity', '0.9');
+        svg.appendChild(rect);
+
+        // 柱上數字標籤
+        const valText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        valText.setAttribute('x', x + barWidth / 2);
+        valText.setAttribute('y', Math.max(padding.top - 6, y - 6));
+        valText.setAttribute('text-anchor', 'middle');
+        valText.setAttribute('font-size', '10');
+        valText.setAttribute('font-weight', 'bold');
+        valText.setAttribute('fill', isDark ? '#cbd5e1' : '#334155');
+        valText.textContent = formatNumberShort(item.val);
+        svg.appendChild(valText);
+
+        // X 軸類別標籤
+        const lblText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        lblText.setAttribute('x', x + barWidth / 2);
+        lblText.setAttribute('y', height - 12);
+        lblText.setAttribute('text-anchor', 'middle');
+        lblText.setAttribute('font-size', '11');
+        lblText.setAttribute('fill', isDark ? '#94a3b8' : '#64748b');
+        lblText.textContent = item.label;
+        svg.appendChild(lblText);
+      });
+    }
+
+    /**
+     * 原生 SVG 繪製資本支出與 OCF 比例 Gauge (半圓儀表圖)
+     */
+    function renderCapExGauge(m) {
+      const svg = elements.capexGaugeSvg;
+      svg.innerHTML = '';
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const width = svg.clientWidth || 300;
+      const height = svg.clientHeight || 200;
+
+      const ocf = m.ocf.current;
+      const capex = m.capex.current;
+      
+      // 計算 CapEx / OCF 比例
+      const ratio = ocf > 0 ? Math.min(1.5, capex / ocf) : 1;
+      const ratioPct = ocf > 0 ? ((capex / ocf) * 100).toFixed(1) : '--';
+
+      const cx = width / 2;
+      const cy = height * 0.75;
+      const r = Math.min(width * 0.35, height * 0.5);
+      const strokeWidth = 22;
+
+      // 弧形繪製 Helper
+      const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
+        const angleInRadians = (angleInDegrees - 180) * Math.PI / 180.0;
+        return {
+          x: centerX + (radius * Math.cos(angleInRadians)),
+          y: centerY + (radius * Math.sin(angleInRadians))
+        };
+      };
+
+      const describeArc = (x, y, radius, startAngle, endAngle) => {
+        const start = polarToCartesian(x, y, radius, endAngle);
+        const end = polarToCartesian(x, y, radius, startAngle);
+        const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+        return [
+          "M", start.x, start.y,
+          "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
+        ].join(" ");
+      };
+
+      // 灰色背景半圓弧
+      const bgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      bgPath.setAttribute('d', describeArc(cx, cy, r, 0, 180));
+      bgPath.setAttribute('fill', 'none');
+      bgPath.setAttribute('stroke', isDark ? '#334155' : '#e2e8f0');
+      bgPath.setAttribute('stroke-width', strokeWidth);
+      bgPath.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(bgPath);
+
+      // 進度色弧 (根據比率決定顏色的風險等級: <50% 適中, 50-80% 積極成長, >80% 重資本密集)
+      const clampedRatio = Math.min(1.0, ratio);
+      const targetAngle = clampedRatio * 180;
+      let gaugeColor = '#10b981'; // 綠色
+      if (ratio > 0.6) gaugeColor = '#0284c7'; // 藍色
+      if (ratio > 0.85) gaugeColor = '#f59e0b'; // 橘黃
+      if (ratio > 1.0) gaugeColor = '#ef4444'; // 紅色
+
+      if (targetAngle > 0) {
+        const fgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        fgPath.setAttribute('d', describeArc(cx, cy, r, 0, targetAngle));
+        fgPath.setAttribute('fill', 'none');
+        fgPath.setAttribute('stroke', gaugeColor);
+        fgPath.setAttribute('stroke-width', strokeWidth);
+        fgPath.setAttribute('stroke-linecap', 'round');
+        svg.appendChild(fgPath);
+      }
+
+      // 中心百分比文字
+      const textVal = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      textVal.setAttribute('x', cx);
+      textVal.setAttribute('y', cy - 10);
+      textVal.setAttribute('text-anchor', 'middle');
+      textVal.setAttribute('font-size', '28');
+      textVal.setAttribute('font-weight', 'bold');
+      textVal.setAttribute('fill', isDark ? '#f8fafc' : '#0f172a');
+      textVal.textContent = `${ratioPct}%`;
+      svg.appendChild(textVal);
+
+      // 中心小標題
+      const textSub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      textSub.setAttribute('x', cx);
+      textSub.setAttribute('y', cy + 15);
+      textSub.setAttribute('text-anchor', 'middle');
+      textSub.setAttribute('font-size', '11');
+      textSub.setAttribute('fill', isDark ? '#94a3b8' : '#64748b');
+      textSub.textContent = 'CapEx / OCF 占比';
+      svg.appendChild(textSub);
+
+      // 下方備註說明
+      elements.capexSubtext.innerHTML = `
+        <div class="flex items-center justify-between font-semibold mb-1">
+          <span>資本強度評估</span>
+          <span style="color: ${gaugeColor}">${ratio < 0.5 ? '輕資本/穩健' : ratio < 0.85 ? '擴張期/高成長' : '極高資本密集'}</span>
+        </div>
+        <p>本期資本支出 <strong>${formatNumberShort(capex)}</strong> 占營業現金流 <strong>${formatNumberShort(ocf)}</strong> 之 <strong>${ratioPct}%</strong>。剩餘可自由支配金額為自由現金流 (${formatNumberShort(m.fcf.current)})。</p>
+      `;
+    }
+
+    /**
+     * 原生 SVG 繪製獲利品質與 OCF 對比長條圖
+     */
+    function renderQualityChart(m) {
+      const svg = elements.qualitySvg;
+      svg.innerHTML = '';
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const width = svg.clientWidth || 500;
+      const height = svg.clientHeight || 250;
+      const padding = { top: 30, right: 20, bottom: 40, left: 60 };
+
+      const items = [
+        { label: '稅前淨利', current: m.netProfit.current, previous: m.netProfit.previous },
+        { label: '折舊與攤銷', current: m.depreciation.current, previous: m.depreciation.previous },
+        { label: '營業現金流', current: m.ocf.current, previous: m.ocf.previous }
+      ];
+
+      let maxVal = 0;
+      items.forEach(i => {
+        maxVal = Math.max(maxVal, i.current, i.previous);
+      });
+      maxVal = maxVal * 1.15;
+
+      const chartW = width - padding.left - padding.right;
+      const chartH = height - padding.top - padding.bottom;
+      const getY = (v) => padding.top + chartH - (v / maxVal) * chartH;
+
+      // 繪製背景網格
+      for (let i = 0; i <= 3; i++) {
+        const v = (maxVal / 3) * i;
+        const y = getY(v);
+        
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', padding.left);
+        line.setAttribute('y1', y);
+        line.setAttribute('x2', width - padding.right);
+        line.setAttribute('y2', y);
+        line.setAttribute('stroke', isDark ? '#334155' : '#e2e8f0');
+        line.setAttribute('stroke-dasharray', '3,3');
+        svg.appendChild(line);
+
+        const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        txt.setAttribute('x', padding.left - 8);
+        txt.setAttribute('y', y + 4);
+        txt.setAttribute('text-anchor', 'end');
+        txt.setAttribute('font-size', '10');
+        txt.setAttribute('fill', isDark ? '#94a3b8' : '#64748b');
+        txt.textContent = formatNumberShort(v);
+        svg.appendChild(txt);
+      }
+
+      const groupStep = chartW / items.length;
+      const barW = Math.min(24, groupStep * 0.35);
+
+      items.forEach((item, idx) => {
+        const groupX = padding.left + idx * groupStep + groupStep / 2;
+        
+        // 本期柱子 (Brand Blue)
+        const x1 = groupX - barW - 2;
+        const y1 = getY(item.current);
+        const h1 = chartH - (y1 - padding.top);
+        
+        const rect1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect1.setAttribute('x', x1);
+        rect1.setAttribute('y', y1);
+        rect1.setAttribute('width', barW);
+        rect1.setAttribute('height', h1);
+        rect1.setAttribute('rx', '3');
+        rect1.setAttribute('fill', '#0284c7');
+        svg.appendChild(rect1);
+
+        // 同期柱子 (Slate Gray)
+        const x2 = groupX + 2;
+        const y2 = getY(item.previous);
+        const h2 = chartH - (y2 - padding.top);
+
+        const rect2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect2.setAttribute('x', x2);
+        rect2.setAttribute('y', y2);
+        rect2.setAttribute('width', barW);
+        rect2.setAttribute('height', h2);
+        rect2.setAttribute('rx', '3');
+        rect2.setAttribute('fill', isDark ? '#475569' : '#94a3b8');
+        svg.appendChild(rect2);
+
+        // X 軸類別標籤
+        const lblText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        lblText.setAttribute('x', groupX);
+        lblText.setAttribute('y', height - 12);
+        lblText.setAttribute('text-anchor', 'middle');
+        lblText.setAttribute('font-size', '11');
+        lblText.setAttribute('fill', isDark ? '#94a3b8' : '#64748b');
+        lblText.textContent = item.label;
+        svg.appendChild(lblText);
+      });
+
+      // 圖例 Legend
+      const legend = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      legend.innerHTML = `
+        <rect x="${width - 140}" y="10" width="10" height="10" rx="2" fill="#0284c7" />
+        <text x="${width - 125}" y="18" font-size="10" fill="${isDark ? '#cbd5e1' : '#475569'}">本期</text>
+        <rect x="${width - 80}" y="10" width="10" height="10" rx="2" fill="${isDark ? '#475569' : '#94a3b8'}" />
+        <text x="${width - 65}" y="18" font-size="10" fill="${isDark ? '#cbd5e1' : '#475569'}">同期</text>
+      `;
+      svg.appendChild(legend);
+    }
+
+    /**
+     * 原生 SVG 繪製現金流主要項目圓環圖 (Donut Chart)
+     */
+    function renderPieChart(m) {
+      const svg = elements.pieSvg;
+      svg.innerHTML = '';
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const width = svg.clientWidth || 400;
+      const height = svg.clientHeight || 250;
+
+      // 提取主要現金流出/投資項目數據
+      const pieData = [
+        { label: '資本支出 CapEx', val: m.capex.current, color: '#ef4444' },
+        { label: '發放股利/還債', val: Math.abs(m.fin.current), color: '#f59e0b' },
+        { label: '自由現金流儲備', val: Math.max(0, m.fcf.current), color: '#10b981' }
+      ].filter(d => d.val > 0);
+
+      const total = pieData.reduce((acc, d) => acc + d.val, 0);
+      if (total === 0) return;
+
+      const cx = width * 0.38;
+      const cy = height / 2;
+      const outerR = Math.min(width, height) * 0.36;
+      const innerR = outerR * 0.6;
+
+      let startAngle = 0;
+
+      pieData.forEach((d) => {
+        const sliceAngle = (d.val / total) * 360;
+        const endAngle = startAngle + sliceAngle;
+
+        // 畫圓弧路徑
+        const x1_out = cx + outerR * Math.cos((Math.PI * (startAngle - 90)) / 180);
+        const y1_out = cy + outerR * Math.sin((Math.PI * (startAngle - 90)) / 180);
+        const x2_out = cx + outerR * Math.cos((Math.PI * (endAngle - 90)) / 180);
+        const y2_out = cy + outerR * Math.sin((Math.PI * (endAngle - 90)) / 180);
+
+        const x1_in = cx + innerR * Math.cos((Math.PI * (endAngle - 90)) / 180);
+        const y1_in = cy + innerR * Math.sin((Math.PI * (endAngle - 90)) / 180);
+        const x2_in = cx + innerR * Math.cos((Math.PI * (startAngle - 90)) / 180);
+        const y2_in = cy + innerR * Math.sin((Math.PI * (startAngle - 90)) / 180);
+
+        const largeArc = sliceAngle > 180 ? 1 : 0;
+
+        const pathData = [
+          `M ${x1_out} ${y1_out}`,
+          `A ${outerR} ${outerR} 0 ${largeArc} 1 ${x2_out} ${y2_out}`,
+          `L ${x1_in} ${y1_in}`,
+          `A ${innerR} ${innerR} 0 ${largeArc} 0 ${x2_in} ${y2_in}`,
+          'Z'
+        ].join(' ');
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', pathData);
+        path.setAttribute('fill', d.color);
+        svg.appendChild(path);
+
+        startAngle = endAngle;
+      });
+
+      // 右側 Legend 圖例列表
+      const legendGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      let legendY = height * 0.25;
+
+      pieData.forEach(d => {
+        const pct = ((d.val / total) * 100).toFixed(1);
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+        g.innerHTML = `
+          <rect x="${width * 0.65}" y="${legendY}" width="12" height="12" rx="3" fill="${d.color}" />
+          <text x="${width * 0.65 + 20}" y="${legendY + 10}" font-size="11" font-weight="bold" fill="${isDark ? '#f1f5f9' : '#1e293b'}">${d.label}</text>
+          <text x="${width * 0.65 + 20}" y="${legendY + 24}" font-size="10" fill="${isDark ? '#94a3b8' : '#64748b'}">${formatNumberShort(d.val)} (${pct}%)</text>
+        `;
+
+        legendGroup.appendChild(g);
+        legendY += 45;
+      });
+
+      svg.appendChild(legendGroup);
+    }
+
+    /**
+     * 動態財務健康診斷報告生成器
+     */
+    function renderInsights(m) {
+      // 1. 現金流品質診斷
+      let qualityTitle = "現金流品質優良";
+      let qualityDesc = `營業現金流 (${formatNumberShort(m.ocf.current)}) 高於本期稅前淨利 (${formatNumberShort(m.netProfit.current)})，顯示公司獲利具備充沛的現金入帳能力，品質健全。`;
+      if (m.ocf.current < m.netProfit.current) {
+        qualityTitle = "獲利與現金流有落差";
+        qualityDesc = `營業現金流 (${formatNumberShort(m.ocf.current)}) 低於稅前淨利 (${formatNumberShort(m.netProfit.current)})，需注意應收帳款或存貨積壓狀況。`;
+      }
+
+      // 2. 自由現金流與投資型態
+      let investTitle = "強勁擴張型態 (High Growth)";
+      let investDesc = `自由現金流高達 ${formatNumberShort(m.fcf.current)} 仟元。在維持高額資本支出 (${formatNumberShort(m.capex.current)}) 之餘，依然產生豐沛的自由現金。`;
+      if (m.fcf.current < 0) {
+        investTitle = "積極擴產/自由現金流為負";
+        investDesc = `本期資本支出金額超過營業現金流，自由現金流為負 (${formatNumberShort(m.fcf.current)})，反映公司正處於極為強烈的擴產整備階段。`;
+      }
+
+      // 3. 籌資與整體結構綜合評判
+      let structureTitle = "整體現金流結構診斷";
+      let structureDesc = "";
+
+      if (m.ocf.current > 0 && m.icf.current < 0 && m.fin.current < 0) {
+        structureDesc = "呈現「<b>+, -, -</b>」最健康的成長型巨頭格局：營業持續創造現金，並積極投資擴產與回饋股東/償還債務。";
+      } else if (m.ocf.current > 0 && m.icf.current < 0 && m.fin.current > 0) {
+        structureDesc = "呈現「<b>+, -, +</b>」擴張型格局：營業現金流連同額外籌集資金（發債/增資）投入大規模投資擴產。";
+      } else {
+        structureDesc = `本期現金及現金等價物淨變動為 <b>${m.netChange.current >= 0 ? '+' : ''}${formatNumberShort(m.netChange.current)}</b> 仟元，期末現金水準維持在 <b>${formatNumberShort(m.endingCash.current)}</b> 仟元。`;
+      }
+
+      elements.insightsContent.innerHTML = `
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/60">
+          <h4 class="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>${qualityTitle}
+          </h4>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${qualityDesc}</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/60">
+          <h4 class="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-brand-500"></span>${investTitle}
+          </h4>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${investDesc}</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/60">
+          <h4 class="font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-purple-500"></span>${structureTitle}
+          </h4>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${structureDesc}</p>
+        </div>
+      `;
+    }
+
+    /**
+     * 渲染互動式數據明細表格
+     */
+    function renderTable() {
+      const items = currentData.items || [];
+      
+      const filtered = items.filter(item => {
+        // 分類過濾
+        if (activeFilter === 'operating' && !['operating', 'summary_operating'].includes(item.type)) return false;
+        if (activeFilter === 'investing' && !['investing', 'summary_investing'].includes(item.type)) return false;
+        if (activeFilter === 'financing' && !['financing', 'summary_financing'].includes(item.type)) return false;
+
+        // 搜尋過濾
+        if (searchQuery && !item.name.toLowerCase().includes(searchQuery)) return false;
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        elements.tableBody.innerHTML = `
+          <tr>
+            <td colspan="5" class="py-8 text-center text-slate-400">沒有符合搜尋或篩選條件的會計項目</td>
+          </tr>
+        `;
+        return;
+      }
+
+      elements.tableBody.innerHTML = filtered.map(item => {
+        const isHeader = item.type === 'header';
+        const isSummary = item.type && item.type.startsWith('summary_');
+        
+        if (isHeader) {
+          return `
+            <tr class="bg-slate-100/70 dark:bg-slate-800/80 font-bold text-slate-900 dark:text-white">
+              <td colspan="5" class="py-2.5 px-4 sm:px-6">${item.name}</td>
+            </tr>
+          `;
+        }
+
+        const diff = (item.current !== null && item.previous !== null) ? item.current - item.previous : null;
+        let pct = null;
+        if (diff !== null && item.previous !== 0 && item.previous !== null) {
+          pct = (diff / Math.abs(item.previous)) * 100;
+        }
+
+        const fontClass = isSummary ? 'font-bold text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-900/30' : 'text-slate-700 dark:text-slate-300';
+        const indentClass = (!isSummary && !isHeader) ? 'pl-8' : 'pl-4';
+
+        // 金額顏色
+        const getValColor = (val) => {
+          if (val === null || val === undefined) return '';
+          if (val > 0) return 'text-slate-900 dark:text-slate-100';
+          if (val < 0) return 'text-rose-600 dark:text-rose-400 font-medium';
+          return 'text-slate-400';
+        };
+
+        const getDiffColor = (val) => {
+          if (!val) return 'text-slate-400';
+          return val > 0 ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-rose-600 dark:text-rose-400 font-medium';
+        };
+
+        return `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${fontClass}">
+            <td class="py-2.5 px-4 sm:px-6 ${indentClass}">${item.name}</td>
+            <td class="py-2.5 px-4 sm:px-6 text-right font-mono ${getValColor(item.current)}">${formatNumber(item.current)}</td>
+            <td class="py-2.5 px-4 sm:px-6 text-right font-mono ${getValColor(item.previous)}">${formatNumber(item.previous)}</td>
+            <td class="py-2.5 px-4 sm:px-6 text-right font-mono ${getDiffColor(diff)}">${diff !== null ? (diff > 0 ? '+' : '') + formatNumber(diff) : '--'}</td>
+            <td class="py-2.5 px-4 sm:px-6 text-right font-mono ${getDiffColor(pct)}">${pct !== null ? (pct > 0 ? '+' : '') + pct.toFixed(1) + '%' : '--'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    /**
+     * 文字與 CSV 解析引擎 (相容公開資訊觀測站複製文字)
+     */
+    function parseRawInput() {
+      const text = elements.pasteInput.value.trim();
+      if (!text) {
+        alert('請先貼上文字或選擇 CSV 檔案！');
+        return;
+      }
+
+      try {
+        const parsed = parseMOPSFormat(text);
+        if (parsed.items.length === 0) {
+          alert('未能解析出有效的會計項目，請檢查資料格式是否為公開資訊觀測站表格！');
+          return;
+        }
+
+        currentData = parsed;
+        processAndRender();
+        elements.inputModal.classList.add('hidden');
+        alert(`解析成功！共讀取 ${parsed.items.length} 項數據。`);
+      } catch (err) {
+        console.error(err);
+        alert('解析發生錯誤：' + err.message);
+      }
+    }
+
+    function handleFileSelect() {
+      const file = elements.fileInput.files[0];
+      if (!file) return;
+
+      const fileName = file.name.toLowerCase();
+
+      // 如果是 Excel 檔案 (.xlsx, .xls)
+      if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            
+            // 讀取第一個工作表 (Sheet)
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            
+            // 轉換為 TSV (Tab 分隔) 字串文字給解析器處理
+            const tsvText = XLSX.utils.sheet_to_csv(worksheet, { FS: "\t" });
+            
+            elements.pasteInput.value = tsvText;
+            parseRawInput();
+          } catch (err) {
+            console.error(err);
+            alert('Excel 檔案讀取失敗，請確認檔案格式是否正確。');
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        // 一般 CSV / 文字檔
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          elements.pasteInput.value = e.target.result;
+          parseRawInput();
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    /**
+     * 公開資訊觀測站標準格式 Parser
+     */
+    function parseMOPSFormat(rawText) {
+      const lines = rawText.split(/\r?\n/);
+      const items = [];
+      let company = "上傳資料公司";
+      let currentPeriod = "本期";
+      let previousPeriod = "同期";
+
+      lines.forEach((line, index) => {
+        const trimmed = line.trim();
+        if (!trimmed) return;
+
+        // 提取公司名稱與期間標頭資訊
+        if (trimmed.includes('公司') && index < 3) {
+          company = trimmed.replace('本資料由', '').replace('公司提供', '公司').trim();
+        }
+        if (trimmed.includes('民國') && trimmed.includes('季')) {
+          currentPeriod = trimmed;
+        }
+
+        // 以 Tab 或多重空白分隔
+        let parts = line.split('\t');
+        if (parts.length < 2) {
+          parts = line.split(/\s{2,}/); // 兩個以上空格分隔
+        }
+
+        if (parts.length >= 2) {
+          const name = parts[0].trim();
+          
+          // 排除標頭列
+          if (name === '會計項目' || name.includes('本資料由')) return;
+
+          const rawVal1 = parts[1] ? parts[1].replace(/,/g, '').trim() : null;
+          const rawVal2 = parts[2] ? parts[2].replace(/,/g, '').trim() : null;
+
+          const val1 = (rawVal1 !== null && rawVal1 !== '' && !isNaN(rawVal1)) ? parseFloat(rawVal1) : null;
+          const val2 = (rawVal2 !== null && rawVal2 !== '' && !isNaN(rawVal2)) ? parseFloat(rawVal2) : null;
+
+          let type = 'item';
+          if (name.includes('營業活動之現金流量')) type = name.endsWith('法') ? 'header' : 'summary_operating';
+          else if (name.includes('投資活動之現金流量')) type = val1 === null ? 'header' : 'summary_investing';
+          else if (name.includes('籌資活動之現金流量')) type = val1 === null ? 'header' : 'summary_financing';
+
+          items.push({
+            name: name,
+            current: val1,
+            previous: val2,
+            type: type,
+            isCapEx: name.includes('取得不動產') || name.includes('購置不動產')
+          });
+        }
+      });
+
+      return {
+        meta: {
+          company: company,
+          currentPeriod: currentPeriod,
+          previousPeriod: previousPeriod,
+          unit: "新臺幣 仟元"
+        },
+        items: items
+      };
+    }
+
+    // 格式化數字 (千分位)
+    function formatNumber(num) {
+      if (num === null || num === undefined || isNaN(num)) return '--';
+      return new Intl.NumberFormat('zh-TW').format(num);
+    }
+
+    // 格式化簡短大數字 (如 1.5B, 15.5億, 1,550M)
+    function formatNumberShort(num) {
+      if (num === null || num === undefined || isNaN(num)) return '--';
+      const abs = Math.abs(num);
+      const sign = num < 0 ? '-' : '';
+
+      if (abs >= 100000000) {
+        return sign + (abs / 100000000).toFixed(2) + ' 億';
+      }
+      if (abs >= 10000) {
+        return sign + (abs / 10000).toFixed(1) + ' 萬';
+      }
+      return sign + new Intl.NumberFormat('zh-TW').format(num);
+    }
+
+    // 當視窗大小改變時重繪 SVG 確保響應式
+    window.addEventListener('resize', () => {
+      if (computedMetrics.ocf) {
+        renderWaterfallChart(computedMetrics);
+        renderCapExGauge(computedMetrics);
+        renderQualityChart(computedMetrics);
+        renderPieChart(computedMetrics);
+      }
+    });
+
+    // 啟動
+    window.onload = init;
+  </script>
+</body>
+</html>

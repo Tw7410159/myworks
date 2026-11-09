@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>企業級資料去識別化工具 (Local Data Anonymizer)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SheetJS (xlsx.full.min.js) 讀寫 Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight">企業資料去識別化網頁工具</h1>
+          <p class="text-xs text-slate-500 flex items-center">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 inline-block"></span>
+            100% 本地端瀏覽器運算 · 零資料上傳風險
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="btn-export-data" disabled onclick="exportProcessedData()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white rounded-lg font-medium text-sm transition flex items-center shadow-sm disabled:cursor-not-allowed">
+          <i data-lucide="download" class="w-4 h-4 mr-1.5"></i> 匯出去識別化檔案
+        </button>
+        <button id="btn-export-mapping" disabled onclick="exportMappingTable()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 disabled:bg-slate-300 text-white rounded-lg font-medium text-sm transition flex items-center shadow-sm disabled:cursor-not-allowed">
+          <i data-lucide="key" class="w-4 h-4 mr-1.5"></i> 匯出對照表
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+
+    <!-- Upload Dropzone (When no file loaded) -->
+    <div id="upload-zone" class="bg-white border-2 border-dashed border-slate-300 hover:border-indigo-400 transition-colors rounded-2xl p-12 text-center shadow-sm flex flex-col items-center justify-center cursor-pointer">
+      <input type="file" id="file-input" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleFileSelect(event)" />
+      <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-4">
+        <i data-lucide="file-up" class="w-8 h-8"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-slate-800 mb-1">上傳 Excel 或 CSV 檔案</h3>
+      <p class="text-sm text-slate-500 mb-4 max-w-md">支援包含多個工作表的 `.xlsx`、`.xls` 或單頁 `.csv`。資料不會離開放開您的裝置。</p>
+      <div class="flex items-center space-x-3">
+        <button onclick="document.getElementById('file-input').click()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl text-sm transition shadow-sm flex items-center">
+          <i data-lucide="file-up" class="w-4 h-4 mr-1.5"></i> 選擇檔案
+        </button>
+        <button onclick="loadDemoData()" class="px-5 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-medium rounded-xl text-sm transition shadow-sm flex items-center">
+          <i data-lucide="sparkles" class="w-4 h-4 mr-1.5"></i> 載入測試範例資料
+        </button>
+      </div>
+    </div>
+
+    <!-- Workspace Dashboard (Hidden by default) -->
+    <div id="workspace-zone" class="hidden flex-1 flex flex-col gap-6">
+      
+      <!-- Top File Info Toolbar -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center space-x-3">
+          <div class="bg-slate-100 p-2 rounded-lg text-slate-600">
+            <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h2 id="current-filename" class="font-semibold text-slate-800 text-sm">--</h2>
+            <div id="file-stats" class="text-xs text-slate-500 flex items-center gap-3">
+              <!-- Stats injected here -->
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <button onclick="autoDetectSensitivities()" class="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-lg text-xs font-semibold flex items-center transition">
+            <i data-lucide="wand-2" class="w-3.5 h-3.5 mr-1"></i> 自動辨識敏感欄位
+          </button>
+          <button onclick="resetAllConfig()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-medium transition">
+            重設設定
+          </button>
+          <button onclick="document.getElementById('file-input').click()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-medium transition flex items-center">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 mr-1"></i> 更換檔案
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Layout: Sidebar Config & Data Preview -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 items-start">
+        
+        <!-- Left Panel: Sheet & Column Anonymization Rules -->
+        <div class="lg:col-span-4 bg-white rounded-xl border border-slate-200 p-4 shadow-sm flex flex-col gap-4">
+          
+          <!-- Sheet Selector Tabs -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">1. 選擇工作表 (Worksheets)</label>
+            <div id="sheet-tabs" class="flex flex-wrap gap-1.5 border-b border-slate-200 pb-2">
+              <!-- Dynamic Tabs -->
+            </div>
+          </div>
+
+          <!-- Column Rules Form -->
+          <div class="flex-1 flex flex-col">
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-xs font-bold uppercase tracking-wider text-slate-500">2. 欄位去識別化策略設定</label>
+              <span id="sheet-col-count" class="text-xs text-slate-400">-- 欄位</span>
+            </div>
+
+            <div id="columns-config-list" class="space-y-3 max-h-[520px] overflow-y-auto pr-1">
+              <!-- Dynamic Column Config Cards -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Data Preview & Log -->
+        <div class="lg:col-span-8 flex flex-col gap-4">
+          <!-- Data Preview Table -->
+          <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+            <div class="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+              <div class="flex items-center space-x-2">
+                <i data-lucide="eye" class="w-4 h-4 text-slate-500"></i>
+                <h3 class="text-sm font-semibold text-slate-700">去識別化數據即時預覽 (前 20 筆)</h3>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
+                  即時同步更新
+                </span>
+              </div>
+            </div>
+            
+            <div class="overflow-x-auto max-h-[480px]">
+              <table id="preview-table" class="w-full text-xs text-left border-collapse">
+                <thead class="bg-slate-100 text-slate-600 font-semibold sticky top-0 border-b border-slate-200">
+                  <tr id="preview-thead">
+                    <!-- Dynamic Headers -->
+                  </tr>
+                </thead>
+                <tbody id="preview-tbody" class="divide-y divide-slate-200 text-slate-700 font-mono">
+                  <!-- Dynamic Rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Processing & Mapping Preview Box -->
+          <div class="bg-slate-900 text-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-2">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <div class="flex items-center space-x-2 text-xs font-semibold text-indigo-400">
+                <i data-lucide="cpu" class="w-4 h-4"></i>
+                <span>關聯性 mapping & 規則統計</span>
+              </div>
+              <span id="mapping-count" class="text-xs text-slate-400">目前累積假名映射筆數: 0</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              系統使用全域全鏈結代碼庫 (Global Hash Salt)。相同原始值的敏感數據在選擇「假名化 (Pseudonymization)」時，無論跨工作表或同欄位，均會轉換為一致的代碼，精確保留關聯分析能力。
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-800 text-white px-4 py-3 rounded-xl shadow-lg text-sm flex items-center space-x-2 z-50 pointer-events-none">
+    <i data-lucide="info" class="w-4 h-4 text-indigo-400"></i>
+    <span id="toast-msg">提示訊息</span>
+  </div>
+
+  <script>
+    // State management
+    let rawWorkbook = null;
+    let fileName = '';
+    let sheetsData = {};      // { sheetName: [ {col1: val, col2: val}, ... ] }
+    let sheetHeaders = {};    // { sheetName: [ col1, col2, ... ] }
+    let currentSheet = '';
+    let anonymizationRules = {}; // { sheetName: { colName: { method: 'none', options: {} } } }
+    
+    // Global Hash Dictionary for Pseudonymization to preserve cross-sheet correlations
+    let globalMapping = {}; 
+    const salt = Math.random().toString(36).substring(2, 10);
+
+    // Dynamic Lucide icon initialization
+    lucide.createIcons();
+
+    // Drag and Drop listeners
+    const dropZone = document.getElementById('upload-zone');
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('border-indigo-500', 'bg-indigo-50/50');
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50');
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-indigo-500', 'bg-indigo-50/50');
+      if (e.dataTransfer.files.length) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    function handleFileSelect(e) {
+      if (e.target.files.length) {
+        handleFile(e.target.files[0]);
+      }
+    }
+
+    // Load Built-in Demo Data for Instant Testing
+    function loadDemoData() {
+      fileName = 'Demo_Corporate_Data.xlsx';
+      
+      const demoSheet1 = [
+        { "員工編號": "EMP-001", "姓名": "張小明", "身分證號": "A123456789", "手機號碼": "0912-345-678", "電子郵件": "ming.chang@company.com", "通訊地址": "台北市大安區敦化南路二段100號", "職稱": "資深工程師", "月薪資": 75000 },
+        { "員工編號": "EMP-002", "姓名": "林美麗", "身分證號": "B220987654", "手機號碼": "0923-456-789", "電子郵件": "meili.lin@company.com", "通訊地址": "新北市板橋區縣民大道一段88號", "職稱": "產品經理", "月薪資": 88000 },
+        { "員工編號": "EMP-003", "姓名": "陳大華", "身分證號": "C109876543", "手機號碼": "0934-567-890", "電子郵件": "dahua.chen@company.com", "通訊地址": "台中市西區台灣大道二段250號", "職稱": "財務分析師", "月薪資": 62000 },
+        { "員工編號": "EMP-004", "姓名": "黃志強", "身分證號": "D188765432", "手機號碼": "0945-678-901", "電子郵件": "jq.huang@company.com", "通訊地址": "高雄市苓雅區四維三路2號", "職稱": "行銷專員", "月薪資": 48000 },
+        { "員工編號": "EMP-005", "姓名": "李雅婷", "身分證號": "E212345678", "手機號碼": "0956-789-012", "電子郵件": "yating.lee@company.com", "通訊地址": "桃園市中壢區中正路150號", "職稱": "HR主任", "月薪資": 68000 }
+      ];
+
+      const demoSheet2 = [
+        { "交易單號": "TX-2024-001", "經辦姓名": "張小明", "客戶名稱": "宏達企業", "信用卡號": "4571-8890-1234-5678", "交易金額": 450000, "交易日期": "2024-03-15" },
+        { "交易單號": "TX-2024-002", "經辦姓名": "林美麗", "客戶名稱": "遠東科技", "信用卡號": "5412-7512-3456-7890", "交易金額": 1280000, "交易日期": "2024-03-16" },
+        { "交易單號": "TX-2024-003", "經辦姓名": "張小明", "客戶名稱": "聯發創新", "信用卡號": "4571-9988-7766-5544", "交易金額": 89000, "交易日期": "2024-03-18" },
+        { "交易單號": "TX-2024-004", "經辦姓名": "陳大華", "客戶名稱": "國泰貿易", "信用卡號": "3782-8224-1123-9999", "交易金額": 2300000, "交易日期": "2024-03-20" }
+      ];
+
+      sheetsData = {
+        "員工基本資料": demoSheet1,
+        "財務交易紀錄": demoSheet2
+      };
+
+      sheetHeaders = {
+        "員工基本資料": Object.keys(demoSheet1[0]),
+        "財務交易紀錄": Object.keys(demoSheet2[0])
+      };
+
+      // Create dummy raw workbook object structure for metadata counts
+      rawWorkbook = {
+        SheetNames: ["員工基本資料", "財務交易紀錄"]
+      };
+
+      anonymizationRules = {};
+      globalMapping = {};
+
+      rawWorkbook.SheetNames.forEach(name => {
+        anonymizationRules[name] = {};
+        sheetHeaders[name].forEach(header => {
+          anonymizationRules[name][header] = {
+            method: 'none',
+            options: {
+              maskChar: '*',
+              maskKeepStart: 1,
+              maskKeepEnd: 1,
+              scaleFactor: 0.85,
+              noiseLevel: 5,
+              genStep: 10000,
+              suppressValue: '[CONFIDENTIAL]'
+            }
+          };
+        });
+      });
+
+      currentSheet = "員工基本資料";
+      autoDetectSensitivities();
+
+      document.getElementById('upload-zone').classList.add('hidden');
+      document.getElementById('workspace-zone').classList.remove('hidden');
+      document.getElementById('btn-export-data').disabled = false;
+      document.getElementById('btn-export-mapping').disabled = false;
+      document.getElementById('current-filename').innerText = fileName;
+
+      renderSheetTabs();
+      renderColumnRules();
+      updatePreview();
+      showToast('已成功載入示範範例資料！');
+    }
+
+    // Read Excel / CSV File
+    function handleFile(file) {
+      fileName = file.name;
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          rawWorkbook = XLSX.read(data, { type: 'array', cellDates: true });
+          
+          sheetsData = {};
+          sheetHeaders = {};
+          anonymizationRules = {};
+          globalMapping = {};
+
+          rawWorkbook.SheetNames.forEach(name => {
+            const worksheet = rawWorkbook.Sheets[name];
+            // Read headers explicitly
+            const json = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+            sheetsData[name] = json;
+            
+            if (json.length > 0) {
+              sheetHeaders[name] = Object.keys(json[0]);
+            } else {
+              sheetHeaders[name] = [];
+            }
+
+            // Init rules for sheet
+            anonymizationRules[name] = {};
+            sheetHeaders[name].forEach(header => {
+              anonymizationRules[name][header] = {
+                method: 'none',
+                options: {
+                  maskChar: '*',
+                  maskKeepStart: 1,
+                  maskKeepEnd: 1,
+                  scaleFactor: 0.85,
+                  noiseLevel: 5, // %
+                  genStep: 10000,
+                  suppressValue: '[CONFIDENTIAL]'
+                }
+              };
+            });
+          });
+
+          currentSheet = rawWorkbook.SheetNames[0];
+          
+          // Trigger Auto Detection
+          autoDetectSensitivities();
+          
+          // Show workspace UI
+          document.getElementById('upload-zone').classList.add('hidden');
+          document.getElementById('workspace-zone').classList.remove('hidden');
+          document.getElementById('btn-export-data').disabled = false;
+          document.getElementById('btn-export-mapping').disabled = false;
+          
+          document.getElementById('current-filename').innerText = fileName;
+
+          renderSheetTabs();
+          renderColumnRules();
+          updatePreview();
+          showToast('成功載入檔案與工作表！');
+
+        } catch (err) {
+          console.error(err);
+          showToast('無法解析檔案，請確定格式為正確的 Excel 或 CSV。');
+        }
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+
+    // Auto-detect sensitive columns (Regex matching headers and sample values)
+    function autoDetectSensitivities() {
+      const patterns = {
+        name: /(姓名|name|聯絡人|客戶名)/i,
+        idCard: /(身分證|證號|id_card|passport|護照)/i,
+        phone: /(電話|手機|phone|mobile|tel)/i,
+        email: /(email|郵件|信箱)/i,
+        financial: /(金額|薪資|收入|金額|價格|單價|體重|利潤|price|salary|amount|revenue|cost)/i,
+        address: /(地址|住址|address)/i,
+        creditCard: /(卡號|credit_card|card_num)/i
+      };
+
+      let detectedCount = 0;
+
+      Object.keys(sheetsData).forEach(sheet => {
+        const headers = sheetHeaders[sheet];
+        const data = sheetsData[sheet];
+
+        headers.forEach(header => {
+          let rule = anonymizationRules[sheet][header];
+          
+          // Check header matching
+          if (patterns.name.test(header)) {
+            rule.method = 'pseudonym';
+            detectedCount++;
+          } else if (patterns.idCard.test(header) || patterns.creditCard.test(header)) {
+            rule.method = 'mask';
+            rule.options.maskKeepStart = 3;
+            rule.options.maskKeepEnd = 2;
+            detectedCount++;
+          } else if (patterns.phone.test(header)) {
+            rule.method = 'mask';
+            rule.options.maskKeepStart = 4;
+            rule.options.maskKeepEnd = 2;
+            detectedCount++;
+          } else if (patterns.email.test(header)) {
+            rule.method = 'mask';
+            rule.options.maskKeepStart = 2;
+            rule.options.maskKeepEnd = 4;
+            detectedCount++;
+          } else if (patterns.financial.test(header)) {
+            rule.method = 'noise'; // Perturbation
+            rule.options.noiseLevel = 5;
+            detectedCount++;
+          } else if (patterns.address.test(header)) {
+            rule.method = 'generalize';
+            detectedCount++;
+          }
+        });
+      });
+
+      renderColumnRules();
+      updatePreview();
+      showToast(`自動辨識完成，共標記 ${detectedCount} 個潛在敏感欄位`);
+    }
+
+    // Render Worksheets Tab Buttons
+    function renderSheetTabs() {
+      const container = document.getElementById('sheet-tabs');
+      container.innerHTML = '';
+      
+      rawWorkbook.SheetNames.forEach(name => {
+        const btn = document.createElement('button');
+        const isActive = name === currentSheet;
+        btn.className = `px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
+          isActive 
+            ? 'bg-indigo-600 text-white shadow-sm' 
+            : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+        }`;
+        btn.innerText = `${name} (${sheetsData[name].length})`;
+        btn.onclick = () => {
+          currentSheet = name;
+          renderSheetTabs();
+          renderColumnRules();
+          updatePreview();
+        };
+        container.appendChild(btn);
+      });
+
+      // Update Top Stats
+      const totalRows = Object.values(sheetsData).reduce((acc, curr) => acc + curr.length, 0);
+      document.getElementById('file-stats').innerHTML = `
+        <span><i data-lucide="layers" class="w-3.5 h-3.5 inline mr-1"></i>${rawWorkbook.SheetNames.length} 個工作表</span>
+        <span><i data-lucide="database" class="w-3.5 h-3.5 inline mr-1"></i>共 ${totalRows} 筆資料</span>
+      `;
+      lucide.createIcons();
+    }
+
+    // Render Anonymization rules selector for each column in active sheet
+    function renderColumnRules() {
+      const container = document.getElementById('columns-config-list');
+      container.innerHTML = '';
+
+      const headers = sheetHeaders[currentSheet] || [];
+      document.getElementById('sheet-col-count').innerText = `${headers.length} 欄位`;
+
+      headers.forEach(col => {
+        const rule = anonymizationRules[currentSheet][col];
+        
+        const card = document.createElement('div');
+        card.className = "p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs";
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between font-semibold text-slate-700">
+            <span class="truncate max-w-[150px]" title="${col}">${col}</span>
+            <select onchange="updateColumnMethod('${currentSheet}', '${col}', this.value)" class="bg-white border border-slate-300 rounded px-2 py-1 font-normal text-xs text-slate-700 focus:outline-none focus:border-indigo-500">
+              <option value="none" ${rule.method === 'none' ? 'selected' : ''}>不處理 (Keep)</option>
+              <option value="pseudonym" ${rule.method === 'pseudonym' ? 'selected' : ''}>假名化 (Pseudonym)</option>
+              <option value="mask" ${rule.method === 'mask' ? 'selected' : ''}>遮罩 (Masking)</option>
+              <option value="generalize" ${rule.method === 'generalize' ? 'selected' : ''}>泛化 (Generalization)</option>
+              <option value="scale" ${rule.method === 'scale' ? 'selected' : ''}>等比例縮放 (Scale)</option>
+              <option value="noise" ${rule.method === 'noise' ? 'selected' : ''}>數值微擾 (Noise)</option>
+              <option value="suppress" ${rule.method === 'suppress' ? 'selected' : ''}>完全抹除 (Suppress)</option>
+            </select>
+          </div>
+          <div id="opts-${currentSheet}-${col}" class="pt-1 border-t border-slate-200/60 text-slate-500">
+            ${renderOptionControls(currentSheet, col, rule)}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Sub-controls depending on chosen method
+    function renderOptionControls(sheet, col, rule) {
+      const opts = rule.options;
+      switch (rule.method) {
+        case 'mask':
+          return `
+            <div class="grid grid-cols-3 gap-2 items-center">
+              <div>保留前: <input type="number" min="0" value="${opts.maskKeepStart}" onchange="updateRuleOption('${sheet}', '${col}', 'maskKeepStart', this.value)" class="w-12 border rounded px-1 text-center bg-white"></div>
+              <div>保留後: <input type="number" min="0" value="${opts.maskKeepEnd}" onchange="updateRuleOption('${sheet}', '${col}', 'maskKeepEnd', this.value)" class="w-12 border rounded px-1 text-center bg-white"></div>
+              <div>符號: <input type="text" maxlength="1" value="${opts.maskChar}" onchange="updateRuleOption('${sheet}', '${col}', 'maskChar', this.value)" class="w-8 border rounded text-center bg-white"></div>
+            </div>
+          `;
+        case 'scale':
+          return `
+            <div class="flex items-center space-x-2">
+              <span>縮放倍率:</span>
+              <input type="number" step="0.05" value="${opts.scaleFactor}" onchange="updateRuleOption('${sheet}', '${col}', 'scaleFactor', this.value)" class="w-20 border rounded px-1.5 py-0.5 bg-white">
+              <span class="text-slate-400">(如: 0.85 即 -15%)</span>
+            </div>
+          `;
+        case 'noise':
+          return `
+            <div class="flex items-center space-x-2">
+              <span>隨機微擾範圍 (±%):</span>
+              <input type="number" min="1" max="100" value="${opts.noiseLevel}" onchange="updateRuleOption('${sheet}', '${col}', 'noiseLevel', this.value)" class="w-16 border rounded px-1 py-0.5 bg-white">
+              <span>%</span>
+            </div>
+          `;
+        case 'generalize':
+          return `
+            <div class="flex items-center space-x-2">
+              <span>數值級距:</span>
+              <input type="number" value="${opts.genStep}" onchange="updateRuleOption('${sheet}', '${col}', 'genStep', this.value)" class="w-20 border rounded px-1 py-0.5 bg-white">
+              <span class="text-slate-400">(地址將自動取縣市/鄉鎮)</span>
+            </div>
+          `;
+        case 'suppress':
+          return `
+            <div class="flex items-center space-x-2">
+              <span>替代文字:</span>
+              <input type="text" value="${opts.suppressValue}" onchange="updateRuleOption('${sheet}', '${col}', 'suppressValue', this.value)" class="w-32 border rounded px-1.5 py-0.5 bg-white">
+            </div>
+          `;
+        case 'pseudonym':
+          return `<div class="text-indigo-600 flex items-center"><i data-lucide="link" class="w-3 h-3 mr-1"></i>全球唯一導向 (雜湊保持一致關聯性)</div>`;
+        default:
+          return `<div class="text-slate-400">保留原始資料不修改</div>`;
+      }
+    }
+
+    function updateColumnMethod(sheet, col, method) {
+      anonymizationRules[sheet][col].method = method;
+      renderColumnRules();
+      updatePreview();
+    }
+
+    function updateRuleOption(sheet, col, key, val) {
+      anonymizationRules[sheet][col].options[key] = isNaN(val) ? val : parseFloat(val);
+      updatePreview();
+    }
+
+    function resetAllConfig() {
+      Object.keys(anonymizationRules).forEach(sheet => {
+        Object.keys(anonymizationRules[sheet]).forEach(col => {
+          anonymizationRules[sheet][col].method = 'none';
+        });
+      });
+      renderColumnRules();
+      updatePreview();
+      showToast('已重設所有欄位去識別化設定');
+    }
+
+    // Core Anonymization Algorithm Logic
+    function anonymizeValue(val, rule) {
+      if (val === null || val === undefined || val === '') return '';
+      const strVal = String(val).trim();
+
+      switch (rule.method) {
+        case 'pseudonym':
+          // Hash-based pseudonymization to retain correlation
+          const key = `${strVal}_${salt}`;
+          if (!globalMapping[strVal]) {
+            let hash = 0;
+            for (let i = 0; i < key.length; i++) {
+              hash = (hash << 5) - hash + key.charCodeAt(i);
+              hash |= 0;
+            }
+            const pseudoCode = 'ID_' + Math.abs(hash).toString(36).toUpperCase().padStart(6, '0');
+            globalMapping[strVal] = pseudoCode;
+          }
+          return globalMapping[strVal];
+
+        case 'mask':
+          const { maskKeepStart, maskKeepEnd, maskChar } = rule.options;
+          const charSymbol = maskChar || '*';
+          if (strVal.length <= maskKeepStart + maskKeepEnd) {
+            return charSymbol.repeat(strVal.length);
+          }
+          const start = strVal.substring(0, maskKeepStart);
+          const end = strVal.substring(strVal.length - maskKeepEnd);
+          const middle = charSymbol.repeat(strVal.length - maskKeepStart - maskKeepEnd);
+          return `${start}${middle}${end}`;
+
+        case 'generalize':
+          // Numeric Generalization vs Address Generalization
+          const num = Number(strVal);
+          if (!isNaN(num)) {
+            const step = rule.options.genStep || 10000;
+            const lower = Math.floor(num / step) * step;
+            const upper = lower + step;
+            return `${lower} ~ ${upper}`;
+          }
+          // Address generalization regex (Taiwan / Standard address)
+          const addrMatch = strVal.match(/^(.+?[縣市].+?[區市鎮鄉])(.*)/);
+          if (addrMatch) {
+            return `${addrMatch[1]}***`;
+          }
+          return strVal.length > 4 ? strVal.substring(0, 4) + '***' : strVal;
+
+        case 'scale':
+          const numScale = Number(strVal);
+          if (isNaN(numScale)) return strVal;
+          const factor = rule.options.scaleFactor ?? 1;
+          return (numScale * factor).toFixed(2);
+
+        case 'noise':
+          const numNoise = Number(strVal);
+          if (isNaN(numNoise)) return strVal;
+          const percent = (rule.options.noiseLevel || 5) / 100;
+          // Uniform random noise between [-percent, +percent]
+          const randomFactor = 1 + (Math.random() * 2 * percent - percent);
+          return Math.round(numNoise * randomFactor);
+
+        case 'suppress':
+          return rule.options.suppressValue || '[CONFIDENTIAL]';
+
+        case 'none':
+        default:
+          return val;
+      }
+    }
+
+    // Real-time Preview Table Renderer
+    function updatePreview() {
+      const headers = sheetHeaders[currentSheet] || [];
+      const data = sheetsData[currentSheet] || [];
+      const previewRows = data.slice(0, 20);
+
+      // Render Header
+      const thead = document.getElementById('preview-thead');
+      thead.innerHTML = headers.map(h => {
+        const rule = anonymizationRules[currentSheet][h];
+        const isModified = rule.method !== 'none';
+        return `
+          <th class="px-3 py-2 border-r border-slate-200 font-medium ${isModified ? 'bg-indigo-50 text-indigo-700' : ''}">
+            <div class="flex items-center justify-between gap-1">
+              <span>${h}</span>
+              ${isModified ? `<span class="text-[10px] px-1 bg-indigo-200 text-indigo-800 rounded font-normal">${rule.method}</span>` : ''}
+            </div>
+          </th>
+        `;
+      }).join('');
+
+      // Render Body
+      const tbody = document.getElementById('preview-tbody');
+      tbody.innerHTML = previewRows.map(row => {
+        return `
+          <tr class="hover:bg-slate-50 transition">
+            ${headers.map(h => {
+              const rule = anonymizationRules[currentSheet][h];
+              const rawVal = row[h];
+              const anonVal = anonymizeValue(rawVal, rule);
+              const isChanged = rawVal !== anonVal;
+              return `
+                <td class="px-3 py-2 border-r border-slate-200 truncate max-w-[200px] ${isChanged ? 'bg-amber-50/60 text-amber-900 font-semibold' : ''}">
+                  ${anonVal}
+                </td>
+              `;
+            }).join('')}
+          </tr>
+        `;
+      }).join('');
+
+      // Update mapping stats count
+      document.getElementById('mapping-count').innerText = `目前累積假名映射對應筆數: ${Object.keys(globalMapping).length}`;
+    }
+
+    // Process all datasets for export
+    function processAllData() {
+      const processedWorkbookData = {};
+
+      Object.keys(sheetsData).forEach(sheetName => {
+        const rows = sheetsData[sheetName];
+        const headers = sheetHeaders[sheetName];
+
+        const processedRows = rows.map(row => {
+          let newRow = {};
+          headers.forEach(h => {
+            const rule = anonymizationRules[sheetName][h];
+            newRow[h] = anonymizeValue(row[h], rule);
+          });
+          return newRow;
+        });
+
+        processedWorkbookData[sheetName] = processedRows;
+      });
+
+      return processedWorkbookData;
+    }
+
+    // Export De-identified File (Excel)
+    function exportProcessedData() {
+      try {
+        const processedData = processAllData();
+        const wb = XLSX.utils.book_new();
+
+        Object.keys(processedData).forEach(sheetName => {
+          const ws = XLSX.utils.json_to_sheet(processedData[sheetName]);
+          XLSX.utils.book_append_sheet(wb, ws, sheetName);
+        });
+
+        const outFileName = fileName.replace(/\.[^/.]+$/, "") + "_Anonymized.xlsx";
+        XLSX.writeFile(wb, outFileName);
+        showToast(`已匯出去識別化檔案: ${outFileName}`);
+      } catch (err) {
+        console.error(err);
+        showToast('匯出過程發生錯誤！');
+      }
+    }
+
+    // Export Mapping Table
+    function exportMappingTable() {
+      const mappingList = Object.keys(globalMapping).map(original => ({
+        'Original_Value (原始敏感資料)': original,
+        'Pseudonym_Code (去識別化代碼)': globalMapping[original]
+      }));
+
+      if (mappingList.length === 0) {
+        showToast('目前無任何「假名化 (Pseudonymization)」對照資料');
+        return;
+      }
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(mappingList);
+      XLSX.utils.book_append_sheet(wb, ws, "MappingTable");
+
+      const outFileName = fileName.replace(/\.[^/.]+$/, "") + "_MappingTable.xlsx";
+      XLSX.writeFile(wb, outFileName);
+      showToast(`已匯出 mapping 對照對映表`);
+    }
+
+    // Toast Utility
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
